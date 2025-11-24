@@ -97,12 +97,32 @@ def main() -> None:
         print("Usage: zil <path-to-zil-file>")
         sys.exit(1)
 
-    # TODO: Load ZIL file and initialize world
-    print(f"Loading: {sys.argv[1]}")
-    print("Note: File loading not yet implemented")
+    from pathlib import Path
+    from zil_interpreter.loader.world_loader import WorldLoader
 
-    world = WorldState()
+    zil_file = Path(sys.argv[1])
+    if not zil_file.exists():
+        print(f"Error: File not found: {zil_file}")
+        sys.exit(1)
+
+    # Load game world
+    loader = WorldLoader()
+
+    try:
+        world, executor = loader.load_world(zil_file)
+        print(f"Loaded: {zil_file}")
+        print(f"Routines: {len(executor.routines)}")
+        print(f"Objects: {len(world.objects)}")
+        print()
+    except Exception as e:
+        print(f"Error loading game: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
+    # Create REPL with loaded world
     repl = REPL(world)
+    repl.engine.executor = executor  # Use loaded executor
     repl.run()
 
 
