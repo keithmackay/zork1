@@ -1,8 +1,11 @@
+export type GameVersion = "zork1" | "zork2" | "zork3";
+
 export interface GameState {
   history: string[];
   lastCommand: string;
   timestamp: number;
-  gameName: string;
+  gameName: GameVersion;
+  gameFile: string;
 }
 
 export interface SavedGame {

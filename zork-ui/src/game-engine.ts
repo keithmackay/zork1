@@ -4,21 +4,23 @@ import type { GameEngineResponse } from "./types";
 export class GameEngine {
   private process: Subprocess | null = null;
   private zorkFile: string;
+  private buffer: string = "";
 
-  constructor(zorkFile: string = "zork1/zork1.zil") {
+  constructor(zorkFile: string = "tests/fixtures/simple_game.zil") {
     this.zorkFile = zorkFile;
   }
 
   async start(): Promise<string> {
     // Start Python ZIL interpreter with JSON mode
-    const zorkPath = `/Users/Keith.MacKay/Projects/zork1/${this.zorkFile}`;
+    const projectRoot = "/Users/Keith.MacKay/Projects/zork1";
+    const zorkPath = `${projectRoot}/${this.zorkFile}`;
 
     this.process = spawn({
       cmd: ["python3", "-m", "zil_interpreter", zorkPath, "--json"],
       stdout: "pipe",
       stdin: "pipe",
       stderr: "pipe",
-      cwd: "/Users/Keith.MacKay/Projects/zork1",
+      cwd: projectRoot,
     });
 
     // Read initial output
@@ -31,10 +33,9 @@ export class GameEngine {
       throw new Error("Game engine not started");
     }
 
-    // Send command
-    const writer = this.process.stdin.getWriter();
-    await writer.write(new TextEncoder().encode(`${command}\n`));
-    writer.releaseLock();
+    // Send command using Bun's write method
+    this.process.stdin.write(`${command}\n`);
+    this.process.stdin.flush();
 
     // Read JSON response
     const response = await this.readJsonResponse();
@@ -51,38 +52,42 @@ export class GameEngine {
       return {};
     }
 
-    const reader = this.process.stdout.getReader();
-    let buffer = "";
+    const stdout = this.process.stdout;
+    const reader = stdout.getReader();
 
     try {
       while (true) {
         const { value, done } = await reader.read();
 
-        if (done) break;
+        if (done) {
+          return { output: "", error: "Process ended" };
+        }
 
         if (value) {
-          buffer += new TextDecoder().decode(value);
+          this.buffer += new TextDecoder().decode(value);
 
           // Check if we have a complete JSON line
-          const newlineIndex = buffer.indexOf("\n");
+          const newlineIndex = this.buffer.indexOf("\n");
           if (newlineIndex >= 0) {
-            const jsonLine = buffer.substring(0, newlineIndex);
-            buffer = buffer.substring(newlineIndex + 1);
+            const jsonLine = this.buffer.substring(0, newlineIndex);
+            this.buffer = this.buffer.substring(newlineIndex + 1);
 
             try {
-              return JSON.parse(jsonLine);
+              const parsed = JSON.parse(jsonLine);
+              reader.releaseLock();
+              return parsed;
             } catch (e) {
               console.error("Failed to parse JSON:", jsonLine);
+              reader.releaseLock();
               return { output: jsonLine };
             }
           }
         }
       }
-    } finally {
+    } catch (error) {
       reader.releaseLock();
+      throw error;
     }
-
-    return {};
   }
 
   async stop(): Promise<void> {

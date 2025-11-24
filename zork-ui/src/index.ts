@@ -19,6 +19,7 @@ class ZorkTerminal {
       lastCommand: "",
       timestamp: Date.now(),
       gameName: "zork1",
+      gameFile: "tests/fixtures/simple_game.zil",
     };
   }
 
@@ -41,7 +42,7 @@ class ZorkTerminal {
 
     switch (choice) {
       case "1":
-        await this.startNewGame();
+        await this.selectGameMenu();
         break;
       case "2":
         await this.loadGameMenu();
@@ -58,19 +59,71 @@ class ZorkTerminal {
     }
   }
 
+  async selectGameMenu(): Promise<void> {
+    this.ui.clear();
+    this.ui.printInfo("Select which game to play:");
+    this.ui.printMenu([
+      "Zork I: The Great Underground Empire",
+      "Zork II: The Wizard of Frobozz",
+      "Zork III: The Dungeon Master",
+      "Test Game (Simple)",
+      "Back to Main Menu",
+    ]);
+
+    const choice = await this.ui.prompt("Choose game (1-5)");
+
+    const gameConfigs = {
+      "1": {
+        name: "zork1" as const,
+        file: "zork1/zork1.zil",
+        title: "Zork I",
+      },
+      "2": {
+        name: "zork2" as const,
+        file: "../zork2/zork2.zil",
+        title: "Zork II",
+      },
+      "3": {
+        name: "zork3" as const,
+        file: "../zork3/zork3.zil",
+        title: "Zork III",
+      },
+      "4": {
+        name: "zork1" as const,
+        file: "tests/fixtures/simple_game.zil",
+        title: "Test Game",
+      },
+    };
+
+    const config = gameConfigs[choice as keyof typeof gameConfigs];
+
+    if (config) {
+      this.gameState.gameName = config.name;
+      this.gameState.gameFile = config.file;
+      this.ui.printSuccess(`Starting ${config.title}...`);
+      await this.startNewGame();
+    } else if (choice === "5") {
+      await this.showMainMenu();
+    } else {
+      this.ui.printError("Invalid option");
+      await this.selectGameMenu();
+    }
+  }
+
   async startNewGame(): Promise<void> {
     this.ui.clear();
     this.ui.printInfo("Starting new game...");
 
     try {
+      // Use the configured game file
+      this.engine = new GameEngine(this.gameState.gameFile);
       const welcomeMessage = await this.engine.start();
       this.isRunning = true;
-      this.gameState = {
-        history: [],
-        lastCommand: "",
-        timestamp: Date.now(),
-        gameName: "zork1",
-      };
+
+      // Reset history but keep game name and file
+      this.gameState.history = [];
+      this.gameState.lastCommand = "";
+      this.gameState.timestamp = Date.now();
 
       // Display welcome message
       this.ui.printOutput(welcomeMessage);
@@ -225,6 +278,8 @@ class ZorkTerminal {
       this.gameState = loadedState;
 
       try {
+        // Start engine with the saved game file
+        this.engine = new GameEngine(loadedState.gameFile);
         const welcomeMessage = await this.engine.start();
         this.isRunning = true;
 
