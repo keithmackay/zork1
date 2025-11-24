@@ -137,3 +137,67 @@ def test_setg_global_variable():
     executor.call_routine("TEST", [])
 
     assert world.get_global("SCORE") == 100
+
+
+def test_rtrue_return():
+    """Test RTRUE returns True."""
+    world = WorldState()
+    executor = RoutineExecutor(world)
+
+    # <ROUTINE IS_OPEN () <RTRUE>>
+    routine = Routine(
+        name="IS_OPEN",
+        args=[],
+        body=[Form(operator=Atom("RTRUE"), args=[])]
+    )
+
+    executor.register_routine(routine)
+    result = executor.call_routine("IS_OPEN", [])
+
+    assert result is True
+
+
+def test_rfalse_return():
+    """Test RFALSE returns False."""
+    world = WorldState()
+    executor = RoutineExecutor(world)
+
+    # <ROUTINE IS_CLOSED () <RFALSE>>
+    routine = Routine(
+        name="IS_CLOSED",
+        args=[],
+        body=[Form(operator=Atom("RFALSE"), args=[])]
+    )
+
+    executor.register_routine(routine)
+    result = executor.call_routine("IS_CLOSED", [])
+
+    assert result is False
+
+
+def test_early_return():
+    """Test RTRUE causes early return."""
+    world = WorldState()
+    output = OutputBuffer()
+    executor = RoutineExecutor(world, output)
+
+    # <ROUTINE TEST ()
+    #   <TELL "Before">
+    #   <RTRUE>
+    #   <TELL "After">>  ; Should not execute
+    routine = Routine(
+        name="TEST",
+        args=[],
+        body=[
+            Form(operator=Atom("TELL"), args=[String("Before")]),
+            Form(operator=Atom("RTRUE"), args=[]),
+            Form(operator=Atom("TELL"), args=[String("After")])
+        ]
+    )
+
+    executor.register_routine(routine)
+    result = executor.call_routine("TEST", [])
+
+    assert result is True
+    assert "Before" in output.get_output()
+    assert "After" not in output.get_output()

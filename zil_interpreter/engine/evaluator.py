@@ -7,6 +7,12 @@ from zil_interpreter.world.game_object import ObjectFlag
 from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
+class ReturnValue(Exception):
+    """Exception to implement early return from routines."""
+    def __init__(self, value):
+        self.value = value
+
+
 class Evaluator:
     """Evaluates ZIL expressions in the context of world state."""
 
@@ -118,6 +124,12 @@ class Evaluator:
 
         elif op == "SETG":
             return self._eval_setg(form.args)
+
+        elif op == "RTRUE":
+            raise ReturnValue(True)
+
+        elif op == "RFALSE":
+            raise ReturnValue(False)
 
         else:
             raise NotImplementedError(f"Form not implemented: {op}")

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 from zil_interpreter.parser.ast_nodes import Routine
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.runtime.output_buffer import OutputBuffer
-from zil_interpreter.engine.evaluator import Evaluator
+from zil_interpreter.engine.evaluator import Evaluator, ReturnValue
 
 
 class RoutineExecutor:
@@ -55,6 +55,8 @@ class RoutineExecutor:
             for expr in routine.body:
                 result = self.evaluator.evaluate(expr)
             return result
+        except ReturnValue as rv:
+            return rv.value
         finally:
             # Restore previous scope
             if old_scope is not None:
