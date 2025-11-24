@@ -60,6 +60,14 @@ from .table_ops import (
     ItableOperation,
     TableOperation,
 )
+from .control_io import (
+    PerformOperation,
+    ApplyOperation,
+    GotoOperation,
+    RandomOperation,
+    PrintdOperation,
+    CrlfOperation,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -147,6 +155,14 @@ def create_default_registry() -> OperationRegistry:
     registry.register(LtableOperation())
     registry.register(ItableOperation())
     registry.register(TableOperation())
+
+    # Control Flow + I/O Operations
+    registry.register(PerformOperation())
+    registry.register(ApplyOperation())
+    registry.register(GotoOperation())
+    registry.register(RandomOperation())
+    registry.register(PrintdOperation())
+    registry.register(CrlfOperation())
 
     return registry
 
