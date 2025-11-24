@@ -1,7 +1,10 @@
 """Control flow operations for ZIL."""
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from zil_interpreter.engine.operations.base import Operation
+
+if TYPE_CHECKING:
+    from zil_interpreter.engine.evaluator import ReturnValue
 
 
 class CondOperation(Operation):
@@ -22,3 +25,29 @@ class CondOperation(Operation):
                     return evaluator.evaluate(result_expr)
 
         return None
+
+
+class RtrueOperation(Operation):
+    """RTRUE - Return true from routine."""
+
+    @property
+    def name(self) -> str:
+        return "RTRUE"
+
+    def execute(self, args: list, evaluator) -> None:
+        # Import here to avoid circular dependency
+        from zil_interpreter.engine.evaluator import ReturnValue
+        raise ReturnValue(True)
+
+
+class RfalseOperation(Operation):
+    """RFALSE - Return false from routine."""
+
+    @property
+    def name(self) -> str:
+        return "RFALSE"
+
+    def execute(self, args: list, evaluator) -> None:
+        # Import here to avoid circular dependency
+        from zil_interpreter.engine.evaluator import ReturnValue
+        raise ReturnValue(False)

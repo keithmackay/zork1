@@ -6,9 +6,17 @@ from .comparison import (
     InCheckOperation,
     FirstCheckOperation,
 )
-from .control import CondOperation
+from .control import CondOperation, RtrueOperation, RfalseOperation
 from .arithmetic import AddOperation
 from .io import TellOperation
+from .object_ops import (
+    MoveOperation,
+    FsetOperation,
+    FclearOperation,
+    GetpOperation,
+    PutpOperation,
+)
+from .variables import SetOperation, SetgOperation
 
 
 def create_default_registry() -> OperationRegistry:
@@ -24,12 +32,25 @@ def create_default_registry() -> OperationRegistry:
 
     # Control
     registry.register(CondOperation())
+    registry.register(RtrueOperation())
+    registry.register(RfalseOperation())
 
     # Arithmetic
     registry.register(AddOperation())
 
     # I/O
     registry.register(TellOperation())
+
+    # Object Operations
+    registry.register(MoveOperation())
+    registry.register(FsetOperation())
+    registry.register(FclearOperation())
+    registry.register(GetpOperation())
+    registry.register(PutpOperation())
+
+    # Variables
+    registry.register(SetOperation())
+    registry.register(SetgOperation())
 
     return registry
 
