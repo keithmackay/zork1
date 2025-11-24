@@ -5,6 +5,7 @@ from zil_interpreter.parser.ast_nodes import Form, Atom, String, Number, ASTNode
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import ObjectFlag
 from zil_interpreter.runtime.output_buffer import OutputBuffer
+from zil_interpreter.engine.operations.base import OperationRegistry
 
 
 class ReturnValue(Exception):
@@ -30,6 +31,7 @@ class Evaluator:
     def __init__(self, world: WorldState, output: Optional[OutputBuffer] = None):
         self.world = world
         self.output = output or OutputBuffer()
+        self.registry = OperationRegistry()
 
     def evaluate(self, expr: Any) -> Any:
         """Evaluate a ZIL expression.
@@ -79,6 +81,11 @@ class Evaluator:
             Result of form evaluation
         """
         op = form.operator.value.upper()
+
+        # Check registry first
+        operation = self.registry.get(op)
+        if operation:
+            return operation.execute(form.args, self)
 
         if op == "EQUAL?":
             return self._eval_equal(form.args)
