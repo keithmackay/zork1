@@ -113,6 +113,12 @@ class Evaluator:
         elif op == "+":
             return self._eval_add(form.args)
 
+        elif op == "SET":
+            return self._eval_set(form.args)
+
+        elif op == "SETG":
+            return self._eval_setg(form.args)
+
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
 
@@ -301,3 +307,31 @@ class Evaluator:
             if isinstance(value, (int, float)):
                 result += value
         return result
+
+    def _eval_set(self, args: list) -> Any:
+        """Evaluate SET form - set local variable."""
+        if len(args) < 2:
+            return None
+
+        var_name = args[0].value if isinstance(args[0], Atom) else str(args[0])
+        value = self.evaluate(args[1])
+
+        # Set in local scope if it exists
+        if hasattr(self, 'local_scope'):
+            self.local_scope[var_name.upper()] = value
+        else:
+            # Fallback to global if no local scope
+            self.world.set_global(var_name.upper(), value)
+
+        return value
+
+    def _eval_setg(self, args: list) -> Any:
+        """Evaluate SETG form - set global variable."""
+        if len(args) < 2:
+            return None
+
+        var_name = args[0].value if isinstance(args[0], Atom) else str(args[0])
+        value = self.evaluate(args[1])
+
+        self.world.set_global(var_name.upper(), value)
+        return value

@@ -93,3 +93,47 @@ def test_routine_multiple_arguments():
     result = executor.call_routine("ADD", [5, 3])
 
     assert result == 8
+
+
+def test_set_local_variable():
+    """Test SET for local variable assignment."""
+    world = WorldState()
+    executor = RoutineExecutor(world)
+
+    # <ROUTINE TEST ()
+    #   <SET X 10>
+    #   <+ .X 5>>
+    routine = Routine(
+        name="TEST",
+        args=[],
+        body=[
+            Form(operator=Atom("SET"), args=[Atom("X"), Number(10)]),
+            Form(operator=Atom("+"), args=[Atom(".X"), Number(5)])
+        ]
+    )
+
+    executor.register_routine(routine)
+    result = executor.call_routine("TEST", [])
+
+    assert result == 15
+
+
+def test_setg_global_variable():
+    """Test SETG for global variable assignment."""
+    world = WorldState()
+    executor = RoutineExecutor(world)
+
+    # <ROUTINE TEST ()
+    #   <SETG SCORE 100>>
+    routine = Routine(
+        name="TEST",
+        args=[],
+        body=[
+            Form(operator=Atom("SETG"), args=[Atom("SCORE"), Number(100)])
+        ]
+    )
+
+    executor.register_routine(routine)
+    executor.call_routine("TEST", [])
+
+    assert world.get_global("SCORE") == 100
