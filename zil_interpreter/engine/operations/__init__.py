@@ -68,6 +68,11 @@ from .control_io import (
     PrintdOperation,
     CrlfOperation,
 )
+from .comparison_objects import (
+    NextQuestionOperation,
+    GetptOperation,
+    PtsizeOperation,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -163,6 +168,11 @@ def create_default_registry() -> OperationRegistry:
     registry.register(RandomOperation())
     registry.register(PrintdOperation())
     registry.register(CrlfOperation())
+
+    # Comparison + Object Operations
+    registry.register(NextQuestionOperation())
+    registry.register(GetptOperation())
+    registry.register(PtsizeOperation())
 
     return registry
 
