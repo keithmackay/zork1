@@ -30,6 +30,7 @@ from .object_ops import (
 )
 from .variables import SetOperation, SetgOperation
 from .logic import AndOperation, OrOperation, NotOperation
+from .string_ops import ConcatOperation, SubstringOperation, PrintcOperation
 
 
 def create_default_registry() -> OperationRegistry:
@@ -87,6 +88,11 @@ def create_default_registry() -> OperationRegistry:
     # Variables
     registry.register(SetOperation())
     registry.register(SetgOperation())
+
+    # String Operations
+    registry.register(ConcatOperation())
+    registry.register(SubstringOperation())
+    registry.register(PrintcOperation())
 
     return registry
 
