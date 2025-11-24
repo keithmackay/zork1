@@ -60,7 +60,8 @@ class ZILLoader:
 
                 elif op == "ROUTINE" and len(node.args) >= 2:
                     name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
-                    args = node.args[1] if isinstance(node.args[1], list) else []
+                    raw_args = node.args[1] if isinstance(node.args[1], list) else []
+                    args = [arg.value if isinstance(arg, Atom) else str(arg) for arg in raw_args]
                     body = node.args[2:] if len(node.args) > 2 else []
                     processed.append(Routine(name=name, args=args, body=body))
 

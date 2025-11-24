@@ -39,3 +39,39 @@ def test_loader_nonexistent_file():
     loader = ZILLoader()
     with pytest.raises(FileNotFoundError):
         loader.load_file(Path("nonexistent.zil"))
+
+
+def test_routine_with_arguments():
+    """Test that ROUTINE with arguments parses correctly."""
+    from zil_interpreter.parser.ast_nodes import Atom
+    from lark import Lark
+    from zil_interpreter.parser.grammar import ZIL_GRAMMAR
+    from zil_interpreter.parser.transformer import ZILTransformer
+
+    # Create inline ZIL code with a routine that has arguments
+    zil_code = '<ROUTINE FOO (X Y) <TELL "test">>'
+
+    # Parse the code
+    parser = Lark(ZIL_GRAMMAR, start='start', parser='lalr')
+    transformer = ZILTransformer()
+    tree = parser.parse(zil_code)
+    ast = transformer.transform(tree)
+
+    # Process through loader - wrap in list since transformer returns single Form
+    loader = ZILLoader()
+    processed = loader._process_top_level([ast])
+
+    # Verify the routine was parsed correctly
+    assert len(processed) == 1
+    routine = processed[0]
+    assert isinstance(routine, Routine)
+    assert routine.name == "FOO"
+
+    # Key assertion: args should be extracted as strings, not Atom objects
+    assert isinstance(routine.args, list)
+    assert len(routine.args) == 2
+    assert routine.args[0] == "X"
+    assert routine.args[1] == "Y"
+    # Verify they are strings, not Atom objects
+    assert isinstance(routine.args[0], str)
+    assert isinstance(routine.args[1], str)
