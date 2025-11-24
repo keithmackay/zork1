@@ -113,3 +113,25 @@ def test_evaluate_tell_with_crlf():
     result = output.get_output()
     assert "Line 1" in result
     assert "Line 2" in result
+
+
+def test_evaluate_move():
+    """Test MOVE form changes object location."""
+    world = WorldState()
+
+    room = GameObject(name="ROOM")
+    lamp = GameObject(name="LAMP", parent=room)
+    player = GameObject(name="PLAYER")
+
+    world.add_object(room)
+    world.add_object(lamp)
+    world.add_object(player)
+
+    evaluator = Evaluator(world)
+
+    # Move lamp to player
+    form = Form(operator=Atom("MOVE"), args=[Atom("LAMP"), Atom("PLAYER")])
+    evaluator.evaluate(form)
+
+    assert lamp.parent == player
+    assert lamp in player.children

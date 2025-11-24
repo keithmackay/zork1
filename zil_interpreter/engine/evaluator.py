@@ -80,6 +80,9 @@ class Evaluator:
         elif op == "TELL":
             return self._eval_tell(form.args)
 
+        elif op == "MOVE":
+            return self._eval_move(form.args)
+
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
 
@@ -155,3 +158,18 @@ class Evaluator:
                 value = self.evaluate(arg)
                 if value is not None:
                     self.output.write(str(value))
+
+    def _eval_move(self, args: list) -> None:
+        """Evaluate MOVE form - move object to new location."""
+        if len(args) < 2:
+            return
+
+        # Get object name directly from atoms (don't evaluate as variables)
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        dest_name = args[1].value if isinstance(args[1], Atom) else str(self.evaluate(args[1]))
+
+        obj = self.world.get_object(obj_name)
+        dest = self.world.get_object(dest_name)
+
+        if obj and dest:
+            obj.move_to(dest)
