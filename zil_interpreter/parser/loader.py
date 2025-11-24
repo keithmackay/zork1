@@ -5,7 +5,7 @@ from typing import List
 from lark import Lark
 from zil_interpreter.parser.grammar import ZIL_GRAMMAR
 from zil_interpreter.parser.transformer import ZILTransformer
-from zil_interpreter.parser.ast_nodes import ASTNode, Form, Atom, Global, Routine
+from zil_interpreter.parser.ast_nodes import ASTNode, Form, Atom, Global, Routine, Object as ObjectNode
 
 
 class ZILLoader:
@@ -64,6 +64,24 @@ class ZILLoader:
                     args = [arg.value if isinstance(arg, Atom) else str(arg) for arg in raw_args]
                     body = node.args[2:] if len(node.args) > 2 else []
                     processed.append(Routine(name=name, args=args, body=body))
+
+                elif op == "OBJECT" and len(node.args) >= 1:
+                    name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
+                    properties = {}
+
+                    # Parse property list from remaining args
+                    for arg in node.args[1:]:
+                        if isinstance(arg, list) and len(arg) > 0:
+                            # Property is a list like (DESC "brass lamp")
+                            prop_name = arg[0].value.upper() if isinstance(arg[0], Atom) else str(arg[0])
+                            prop_value = arg[1] if len(arg) == 2 else arg[1:]
+                            properties[prop_name] = prop_value
+                        elif isinstance(arg, Form):
+                            prop_name = arg.operator.value.upper()
+                            prop_value = arg.args[0] if len(arg.args) == 1 else arg.args
+                            properties[prop_name] = prop_value
+
+                    processed.append(ObjectNode(name=name, properties=properties))
 
                 else:
                     # Keep as generic form
