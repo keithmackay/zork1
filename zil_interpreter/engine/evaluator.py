@@ -41,8 +41,17 @@ class Evaluator:
             return expr.value
 
         elif isinstance(expr, Atom):
-            # Variable lookup
-            return self.world.get_global(expr.value)
+            atom_value = expr.value.upper()
+
+            # Check for local variable reference (.VAR syntax)
+            if atom_value.startswith('.'):
+                var_name = atom_value[1:]  # Remove leading dot
+                if hasattr(self, 'local_scope') and var_name in self.local_scope:
+                    return self.local_scope[var_name]
+                return None
+
+            # Global variable lookup
+            return self.world.get_global(atom_value)
 
         elif isinstance(expr, Form):
             return self._evaluate_form(expr)
@@ -100,6 +109,9 @@ class Evaluator:
 
         elif op == "FIRST?":
             return self._eval_first(form.args)
+
+        elif op == "+":
+            return self._eval_add(form.args)
 
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
@@ -280,3 +292,12 @@ class Evaluator:
 
         # Return first child's name
         return next(iter(container.children)).name
+
+    def _eval_add(self, args: list) -> Any:
+        """Evaluate + (addition)."""
+        result = 0
+        for arg in args:
+            value = self.evaluate(arg)
+            if isinstance(value, (int, float)):
+                result += value
+        return result

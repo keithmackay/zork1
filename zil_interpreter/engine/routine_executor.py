@@ -38,9 +38,26 @@ class RoutineExecutor:
         if not routine:
             raise ValueError(f"Unknown routine: {name}")
 
-        # Execute routine body
-        result = None
-        for expr in routine.body:
-            result = self.evaluator.evaluate(expr)
+        # Create local variable scope
+        local_scope: Dict[str, Any] = {}
 
-        return result
+        # Bind arguments to parameters
+        for param, value in zip(routine.args, args):
+            local_scope[param.upper()] = value
+
+        # Save evaluator's current scope and set new scope
+        old_scope = getattr(self.evaluator, 'local_scope', None)
+        self.evaluator.local_scope = local_scope
+
+        try:
+            # Execute routine body
+            result = None
+            for expr in routine.body:
+                result = self.evaluator.evaluate(expr)
+            return result
+        finally:
+            # Restore previous scope
+            if old_scope is not None:
+                self.evaluator.local_scope = old_scope
+            else:
+                delattr(self.evaluator, 'local_scope')
