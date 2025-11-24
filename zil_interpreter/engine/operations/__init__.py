@@ -7,7 +7,13 @@ from .comparison import (
     FirstCheckOperation,
 )
 from .control import CondOperation, RtrueOperation, RfalseOperation
-from .arithmetic import AddOperation
+from .arithmetic import (
+    AddOperation,
+    SubtractOperation,
+    MultiplyOperation,
+    DivideOperation,
+    ModOperation,
+)
 from .io import TellOperation
 from .object_ops import (
     MoveOperation,
@@ -43,6 +49,10 @@ def create_default_registry() -> OperationRegistry:
 
     # Arithmetic
     registry.register(AddOperation())
+    registry.register(SubtractOperation())
+    registry.register(MultiplyOperation())
+    registry.register(DivideOperation())
+    registry.register(ModOperation())
 
     # I/O
     registry.register(TellOperation())
