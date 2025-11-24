@@ -5,7 +5,7 @@ from zil_interpreter.parser.ast_nodes import Form, Atom, String, Number, ASTNode
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import ObjectFlag
 from zil_interpreter.runtime.output_buffer import OutputBuffer
-from zil_interpreter.engine.operations.base import OperationRegistry
+from zil_interpreter.engine.operations import create_default_registry
 
 
 class ReturnValue(Exception):
@@ -31,7 +31,7 @@ class Evaluator:
     def __init__(self, world: WorldState, output: Optional[OutputBuffer] = None):
         self.world = world
         self.output = output or OutputBuffer()
-        self.registry = OperationRegistry()
+        self.registry = create_default_registry()
 
     def evaluate(self, expr: Any) -> Any:
         """Evaluate a ZIL expression.
@@ -87,10 +87,7 @@ class Evaluator:
         if operation:
             return operation.execute(form.args, self)
 
-        if op == "EQUAL?":
-            return self._eval_equal(form.args)
-
-        elif op == "FSET?":
+        if op == "FSET?":
             return self._eval_fset_check(form.args)
 
         elif op == "VERB?":
@@ -148,14 +145,6 @@ class Evaluator:
                     return executor.call_routine(op, args)
 
             raise NotImplementedError(f"Form not implemented: {op}")
-
-    def _eval_equal(self, args: list) -> bool:
-        """Evaluate EQUAL? comparison."""
-        if len(args) < 2:
-            return False
-        val1 = self.evaluate(args[0])
-        val2 = self.evaluate(args[1])
-        return val1 == val2
 
     def _eval_fset_check(self, args: list) -> bool:
         """Evaluate FSET? flag check."""
