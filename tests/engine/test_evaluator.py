@@ -3,6 +3,7 @@ from zil_interpreter.engine.evaluator import Evaluator
 from zil_interpreter.parser.ast_nodes import Form, Atom, String, Number
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import GameObject, ObjectFlag
+from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
 def test_evaluate_atom():
@@ -86,3 +87,29 @@ def test_evaluate_verb_check():
 
     form2 = Form(operator=Atom("VERB?"), args=[Atom("DROP")])
     assert evaluator.evaluate(form2) is False
+
+
+def test_evaluate_tell():
+    """Test TELL form outputs text to buffer."""
+    world = WorldState()
+    output = OutputBuffer()
+    evaluator = Evaluator(world, output)
+
+    form = Form(operator=Atom("TELL"), args=[String("Hello, world!")])
+    evaluator.evaluate(form)
+
+    assert "Hello, world!" in output.get_output()
+
+
+def test_evaluate_tell_with_crlf():
+    """Test TELL with CR (carriage return)."""
+    world = WorldState()
+    output = OutputBuffer()
+    evaluator = Evaluator(world, output)
+
+    form = Form(operator=Atom("TELL"), args=[String("Line 1"), Atom("CR"), String("Line 2")])
+    evaluator.evaluate(form)
+
+    result = output.get_output()
+    assert "Line 1" in result
+    assert "Line 2" in result

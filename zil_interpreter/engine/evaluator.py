@@ -4,6 +4,7 @@ from typing import Any, Optional
 from zil_interpreter.parser.ast_nodes import Form, Atom, String, Number, ASTNode
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import ObjectFlag
+from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
 class Evaluator:
@@ -20,8 +21,9 @@ class Evaluator:
         "ONBIT": ObjectFlag.ONBIT,
     }
 
-    def __init__(self, world: WorldState):
+    def __init__(self, world: WorldState, output: Optional[OutputBuffer] = None):
         self.world = world
+        self.output = output or OutputBuffer()
 
     def evaluate(self, expr: Any) -> Any:
         """Evaluate a ZIL expression.
@@ -74,6 +76,9 @@ class Evaluator:
 
         elif op == "COND":
             return self._eval_cond(form.args)
+
+        elif op == "TELL":
+            return self._eval_tell(form.args)
 
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
@@ -134,3 +139,19 @@ class Evaluator:
                     return self.evaluate(result_expr)
 
         return None
+
+    def _eval_tell(self, args: list) -> None:
+        """Evaluate TELL form - output text."""
+        for arg in args:
+            if isinstance(arg, Atom):
+                if arg.value.upper() in ("CR", "CRLF"):
+                    self.output.write("\n")
+                else:
+                    # Variable lookup
+                    value = self.evaluate(arg)
+                    if value is not None:
+                        self.output.write(str(value))
+            else:
+                value = self.evaluate(arg)
+                if value is not None:
+                    self.output.write(str(value))
