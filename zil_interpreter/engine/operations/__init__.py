@@ -5,6 +5,12 @@ from .comparison import (
     VerbCheckOperation,
     InCheckOperation,
     FirstCheckOperation,
+    LessThanOperation,
+    GreaterThanOperation,
+    LessEqualOperation,
+    GreaterEqualOperation,
+    ZeroCheckOperation,
+    NumericEqualOperation,
 )
 from .control import CondOperation, RtrueOperation, RfalseOperation
 from .arithmetic import (
@@ -41,6 +47,20 @@ def create_default_registry() -> OperationRegistry:
     registry.register(VerbCheckOperation())
     registry.register(InCheckOperation())
     registry.register(FirstCheckOperation())
+
+    # Numeric comparison operations
+    less_than = LessThanOperation()
+    registry.register(less_than)
+    registry._operations["L?"] = less_than  # Alias L? for <
+
+    greater_than = GreaterThanOperation()
+    registry.register(greater_than)
+    registry._operations["G?"] = greater_than  # Alias G? for >
+
+    registry.register(LessEqualOperation())
+    registry.register(GreaterEqualOperation())
+    registry.register(ZeroCheckOperation())
+    registry.register(NumericEqualOperation())
 
     # Control
     registry.register(CondOperation())

@@ -117,3 +117,100 @@ class FirstCheckOperation(Operation):
 
         # Return first child's name
         return next(iter(obj.children)).name
+
+
+class LessThanOperation(Operation):
+    """< (L?) - Less than comparison."""
+
+    @property
+    def name(self) -> str:
+        return "<"
+
+    def execute(self, args: list, evaluator) -> bool:
+        if len(args) < 2:
+            return False
+        val1 = evaluator.evaluate(args[0])
+        val2 = evaluator.evaluate(args[1])
+        return val1 < val2
+
+
+class GreaterThanOperation(Operation):
+    """> (G?) - Greater than comparison."""
+
+    @property
+    def name(self) -> str:
+        return ">"
+
+    def execute(self, args: list, evaluator) -> bool:
+        if len(args) < 2:
+            return False
+        val1 = evaluator.evaluate(args[0])
+        val2 = evaluator.evaluate(args[1])
+        return val1 > val2
+
+
+class LessEqualOperation(Operation):
+    """<= - Less than or equal comparison."""
+
+    @property
+    def name(self) -> str:
+        return "<="
+
+    def execute(self, args: list, evaluator) -> bool:
+        if len(args) < 2:
+            return False
+        val1 = evaluator.evaluate(args[0])
+        val2 = evaluator.evaluate(args[1])
+        return val1 <= val2
+
+
+class GreaterEqualOperation(Operation):
+    """>= - Greater than or equal comparison."""
+
+    @property
+    def name(self) -> str:
+        return ">="
+
+    def execute(self, args: list, evaluator) -> bool:
+        if len(args) < 2:
+            return False
+        val1 = evaluator.evaluate(args[0])
+        val2 = evaluator.evaluate(args[1])
+        return val1 >= val2
+
+
+class ZeroCheckOperation(Operation):
+    """ZERO? - Check if value is zero."""
+
+    @property
+    def name(self) -> str:
+        return "ZERO?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        if not args:
+            return True
+        val = evaluator.evaluate(args[0])
+        return val == 0
+
+
+class NumericEqualOperation(Operation):
+    """== - Numeric equality comparison."""
+
+    @property
+    def name(self) -> str:
+        return "=="
+
+    def execute(self, args: list, evaluator) -> bool:
+        if len(args) < 2:
+            return False
+
+        # Evaluate first argument as reference
+        first_val = evaluator.evaluate(args[0])
+
+        # Check if all remaining arguments equal the first
+        for arg in args[1:]:
+            val = evaluator.evaluate(arg)
+            if val != first_val:
+                return False
+
+        return True
