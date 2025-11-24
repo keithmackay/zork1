@@ -83,6 +83,12 @@ class Evaluator:
         elif op == "MOVE":
             return self._eval_move(form.args)
 
+        elif op == "FSET":
+            return self._eval_fset(form.args)
+
+        elif op == "FCLEAR":
+            return self._eval_fclear(form.args)
+
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
 
@@ -173,3 +179,35 @@ class Evaluator:
 
         if obj and dest:
             obj.move_to(dest)
+
+    def _eval_fset(self, args: list) -> None:
+        """Evaluate FSET form - set object flag."""
+        if len(args) < 2:
+            return
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        flag_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+
+        obj = self.world.get_object(obj_name)
+        if not obj:
+            return
+
+        flag = self.FLAG_MAP.get(flag_name.upper())
+        if flag:
+            obj.set_flag(flag)
+
+    def _eval_fclear(self, args: list) -> None:
+        """Evaluate FCLEAR form - clear object flag."""
+        if len(args) < 2:
+            return
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        flag_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+
+        obj = self.world.get_object(obj_name)
+        if not obj:
+            return
+
+        flag = self.FLAG_MAP.get(flag_name.upper())
+        if flag:
+            obj.clear_flag(flag)

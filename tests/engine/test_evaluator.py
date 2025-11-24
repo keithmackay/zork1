@@ -135,3 +135,36 @@ def test_evaluate_move():
 
     assert lamp.parent == player
     assert lamp in player.children
+
+
+def test_evaluate_fset():
+    """Test FSET form sets object flags."""
+    world = WorldState()
+    door = GameObject(name="DOOR")
+    world.add_object(door)
+
+    evaluator = Evaluator(world)
+
+    assert not door.has_flag(ObjectFlag.OPEN)
+
+    form = Form(operator=Atom("FSET"), args=[Atom("DOOR"), Atom("OPENBIT")])
+    evaluator.evaluate(form)
+
+    assert door.has_flag(ObjectFlag.OPEN)
+
+
+def test_evaluate_fclear():
+    """Test FCLEAR form clears object flags."""
+    world = WorldState()
+    door = GameObject(name="DOOR")
+    door.set_flag(ObjectFlag.OPEN)
+    world.add_object(door)
+
+    evaluator = Evaluator(world)
+
+    assert door.has_flag(ObjectFlag.OPEN)
+
+    form = Form(operator=Atom("FCLEAR"), args=[Atom("DOOR"), Atom("OPENBIT")])
+    evaluator.evaluate(form)
+
+    assert not door.has_flag(ObjectFlag.OPEN)
