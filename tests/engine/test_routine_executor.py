@@ -201,3 +201,29 @@ def test_early_return():
     assert result is True
     assert "Before" in output.get_output()
     assert "After" not in output.get_output()
+
+
+def test_call_routine_from_expression():
+    """Test calling a routine from within an expression."""
+    world = WorldState()
+    executor = RoutineExecutor(world)
+
+    # <ROUTINE DOUBLE (X) <+ .X .X>>
+    # <ROUTINE TEST () <DOUBLE 5>>
+    double_routine = Routine(
+        name="DOUBLE",
+        args=["X"],
+        body=[Form(operator=Atom("+"), args=[Atom(".X"), Atom(".X")])]
+    )
+
+    test_routine = Routine(
+        name="TEST",
+        args=[],
+        body=[Form(operator=Atom("DOUBLE"), args=[Number(5)])]
+    )
+
+    executor.register_routine(double_routine)
+    executor.register_routine(test_routine)
+
+    result = executor.call_routine("TEST", [])
+    assert result == 10

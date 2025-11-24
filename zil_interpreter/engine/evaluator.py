@@ -132,6 +132,14 @@ class Evaluator:
             raise ReturnValue(False)
 
         else:
+            # Check if it's a routine call
+            if hasattr(self, 'routine_executor'):
+                executor = self.routine_executor
+                if op in executor.routines:
+                    # Evaluate arguments
+                    args = [self.evaluate(arg) for arg in form.args]
+                    return executor.call_routine(op, args)
+
             raise NotImplementedError(f"Form not implemented: {op}")
 
     def _eval_equal(self, args: list) -> bool:

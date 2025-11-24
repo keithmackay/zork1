@@ -14,6 +14,7 @@ class RoutineExecutor:
         self.world = world
         self.output = output or OutputBuffer()
         self.evaluator = Evaluator(world, self.output)
+        self.evaluator.routine_executor = self  # Link back for routine calls
         self.routines: Dict[str, Routine] = {}
 
     def register_routine(self, routine: Routine) -> None:
