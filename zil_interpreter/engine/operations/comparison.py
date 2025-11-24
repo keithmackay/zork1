@@ -57,3 +57,63 @@ class FsetCheckOperation(Operation):
             return False
 
         return obj.has_flag(flag)
+
+
+class VerbCheckOperation(Operation):
+    """VERB? - Check current verb in parser state."""
+
+    @property
+    def name(self) -> str:
+        return "VERB?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        if not args:
+            return False
+
+        verb_name = args[0].value if isinstance(args[0], Atom) else str(args[0])
+        current_verb = evaluator.world.get_global("PRSA")
+        return current_verb == verb_name.upper()
+
+
+class InCheckOperation(Operation):
+    """IN? - Check if object is contained in another."""
+
+    @property
+    def name(self) -> str:
+        return "IN?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        if len(args) < 2:
+            return False
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
+        container_name = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
+
+        obj = evaluator.world.get_object(obj_name)
+        container = evaluator.world.get_object(container_name)
+
+        if not obj or not container:
+            return False
+
+        return obj.parent == container
+
+
+class FirstCheckOperation(Operation):
+    """FIRST? - Get first child of object."""
+
+    @property
+    def name(self) -> str:
+        return "FIRST?"
+
+    def execute(self, args: list, evaluator) -> Any:
+        if not args:
+            return None
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
+        obj = evaluator.world.get_object(obj_name)
+
+        if not obj or not obj.children:
+            return None
+
+        # Return first child's name
+        return next(iter(obj.children)).name

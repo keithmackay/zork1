@@ -87,16 +87,7 @@ class Evaluator:
         if operation:
             return operation.execute(form.args, self)
 
-        if op == "VERB?":
-            return self._eval_verb_check(form.args)
-
-        elif op == "COND":
-            return self._eval_cond(form.args)
-
-        elif op == "TELL":
-            return self._eval_tell(form.args)
-
-        elif op == "MOVE":
+        if op == "MOVE":
             return self._eval_move(form.args)
 
         elif op == "FSET":
@@ -110,15 +101,6 @@ class Evaluator:
 
         elif op == "PUTP":
             return self._eval_putp(form.args)
-
-        elif op == "IN?":
-            return self._eval_in(form.args)
-
-        elif op == "FIRST?":
-            return self._eval_first(form.args)
-
-        elif op == "+":
-            return self._eval_add(form.args)
 
         elif op == "SET":
             return self._eval_set(form.args)
@@ -142,51 +124,6 @@ class Evaluator:
                     return executor.call_routine(op, args)
 
             raise NotImplementedError(f"Form not implemented: {op}")
-
-    def _eval_verb_check(self, args: list) -> bool:
-        """Evaluate VERB? check."""
-        if not args:
-            return False
-
-        verb_name = args[0].value if isinstance(args[0], Atom) else str(args[0])
-        current_verb = self.world.get_global("PRSA")
-
-        return current_verb == verb_name.upper()
-
-    def _eval_cond(self, args: list) -> Any:
-        """Evaluate COND conditional.
-
-        Args:
-            args: List of [condition, result] pairs
-
-        Returns:
-            Result of first true condition
-        """
-        for clause in args:
-            if isinstance(clause, list) and len(clause) >= 2:
-                condition = clause[0]
-                result_expr = clause[1]
-
-                if self.evaluate(condition):
-                    return self.evaluate(result_expr)
-
-        return None
-
-    def _eval_tell(self, args: list) -> None:
-        """Evaluate TELL form - output text."""
-        for arg in args:
-            if isinstance(arg, Atom):
-                if arg.value.upper() in ("CR", "CRLF"):
-                    self.output.write("\n")
-                else:
-                    # Variable lookup
-                    value = self.evaluate(arg)
-                    if value is not None:
-                        self.output.write(str(value))
-            else:
-                value = self.evaluate(arg)
-                if value is not None:
-                    self.output.write(str(value))
 
     def _eval_move(self, args: list) -> None:
         """Evaluate MOVE form - move object to new location."""
@@ -261,45 +198,6 @@ class Evaluator:
         obj = self.world.get_object(obj_name)
         if obj:
             obj.set_property(prop_name.upper(), value)
-
-    def _eval_in(self, args: list) -> bool:
-        """Evaluate IN? form - check if object is in container."""
-        if len(args) < 2:
-            return False
-
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
-        container_name = args[1].value if isinstance(args[1], Atom) else str(self.evaluate(args[1]))
-
-        obj = self.world.get_object(obj_name)
-        container = self.world.get_object(container_name)
-
-        if not obj or not container:
-            return False
-
-        return obj.parent == container
-
-    def _eval_first(self, args: list) -> Optional[str]:
-        """Evaluate FIRST? form - get first child of container."""
-        if not args:
-            return None
-
-        container_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
-        container = self.world.get_object(container_name)
-
-        if not container or not container.children:
-            return None
-
-        # Return first child's name
-        return next(iter(container.children)).name
-
-    def _eval_add(self, args: list) -> Any:
-        """Evaluate + (addition)."""
-        result = 0
-        for arg in args:
-            value = self.evaluate(arg)
-            if isinstance(value, (int, float)):
-                result += value
-        return result
 
     def _eval_set(self, args: list) -> Any:
         """Evaluate SET form - set local variable."""
