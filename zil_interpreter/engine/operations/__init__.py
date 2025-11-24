@@ -79,6 +79,15 @@ from .bit_ops import (
     BtstOperation,
     MapretOperation,
 )
+from .advanced import (
+    PrimtypeOperation,
+    PrintbOperation,
+    IgrtrQuestionOperation,
+    AgainOperation,
+    TypeQuestionOperation,
+    ValueOperation,
+    AgainException,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -185,6 +194,14 @@ def create_default_registry() -> OperationRegistry:
     registry.register(BorOperation())
     registry.register(BtstOperation())
     registry.register(MapretOperation())
+
+    # Advanced Operations
+    registry.register(PrimtypeOperation())
+    registry.register(PrintbOperation())
+    registry.register(IgrtrQuestionOperation())
+    registry.register(AgainOperation())
+    registry.register(TypeQuestionOperation())
+    registry.register(ValueOperation())
 
     return registry
 
