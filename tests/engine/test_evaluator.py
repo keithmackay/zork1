@@ -168,3 +168,33 @@ def test_evaluate_fclear():
     evaluator.evaluate(form)
 
     assert not door.has_flag(ObjectFlag.OPEN)
+
+
+def test_evaluate_getp():
+    """Test GETP form reads object properties."""
+    world = WorldState()
+    chest = GameObject(name="CHEST")
+    chest.set_property("SIZE", 20)
+    chest.set_property("CAPACITY", 100)
+    world.add_object(chest)
+
+    evaluator = Evaluator(world)
+
+    form = Form(operator=Atom("GETP"), args=[Atom("CHEST"), Atom("SIZE")])
+    result = evaluator.evaluate(form)
+
+    assert result == 20
+
+
+def test_evaluate_putp():
+    """Test PUTP form sets object properties."""
+    world = WorldState()
+    chest = GameObject(name="CHEST")
+    world.add_object(chest)
+
+    evaluator = Evaluator(world)
+
+    form = Form(operator=Atom("PUTP"), args=[Atom("CHEST"), Atom("SIZE"), Number(30)])
+    evaluator.evaluate(form)
+
+    assert chest.get_property("SIZE") == 30

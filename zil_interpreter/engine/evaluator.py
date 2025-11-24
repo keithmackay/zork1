@@ -89,6 +89,12 @@ class Evaluator:
         elif op == "FCLEAR":
             return self._eval_fclear(form.args)
 
+        elif op == "GETP":
+            return self._eval_getp(form.args)
+
+        elif op == "PUTP":
+            return self._eval_putp(form.args)
+
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
 
@@ -211,3 +217,30 @@ class Evaluator:
         flag = self.FLAG_MAP.get(flag_name.upper())
         if flag:
             obj.clear_flag(flag)
+
+    def _eval_getp(self, args: list) -> Any:
+        """Evaluate GETP form - get object property."""
+        if len(args) < 2:
+            return None
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        prop_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+
+        obj = self.world.get_object(obj_name)
+        if not obj:
+            return None
+
+        return obj.get_property(prop_name.upper())
+
+    def _eval_putp(self, args: list) -> None:
+        """Evaluate PUTP form - set object property."""
+        if len(args) < 3:
+            return
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        prop_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+        value = self.evaluate(args[2])
+
+        obj = self.world.get_object(obj_name)
+        if obj:
+            obj.set_property(prop_name.upper(), value)
