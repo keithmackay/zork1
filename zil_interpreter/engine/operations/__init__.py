@@ -1,5 +1,5 @@
 from .base import Operation, OperationRegistry
-from .comparison import EqualOperation
+from .comparison import EqualOperation, FsetCheckOperation
 
 
 def create_default_registry() -> OperationRegistry:
@@ -8,6 +8,7 @@ def create_default_registry() -> OperationRegistry:
 
     # Comparison
     registry.register(EqualOperation())
+    registry.register(FsetCheckOperation())
 
     return registry
 

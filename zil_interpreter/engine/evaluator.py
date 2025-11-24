@@ -87,10 +87,7 @@ class Evaluator:
         if operation:
             return operation.execute(form.args, self)
 
-        if op == "FSET?":
-            return self._eval_fset_check(form.args)
-
-        elif op == "VERB?":
+        if op == "VERB?":
             return self._eval_verb_check(form.args)
 
         elif op == "COND":
@@ -145,26 +142,6 @@ class Evaluator:
                     return executor.call_routine(op, args)
 
             raise NotImplementedError(f"Form not implemented: {op}")
-
-    def _eval_fset_check(self, args: list) -> bool:
-        """Evaluate FSET? flag check."""
-        if len(args) < 2:
-            return False
-
-        # Get object name - if it's an Atom, use its value directly (not as variable lookup)
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
-        # Get flag name - same pattern
-        flag_name = args[1].value if isinstance(args[1], Atom) else str(self.evaluate(args[1]))
-
-        obj = self.world.get_object(obj_name)
-        if not obj:
-            return False
-
-        flag = self.FLAG_MAP.get(flag_name.upper())
-        if not flag:
-            return False
-
-        return obj.has_flag(flag)
 
     def _eval_verb_check(self, args: list) -> bool:
         """Evaluate VERB? check."""
