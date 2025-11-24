@@ -73,6 +73,12 @@ from .comparison_objects import (
     GetptOperation,
     PtsizeOperation,
 )
+from .bit_ops import (
+    BandOperation,
+    BorOperation,
+    BtstOperation,
+    MapretOperation,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -173,6 +179,12 @@ def create_default_registry() -> OperationRegistry:
     registry.register(NextQuestionOperation())
     registry.register(GetptOperation())
     registry.register(PtsizeOperation())
+
+    # Bit Operations
+    registry.register(BandOperation())
+    registry.register(BorOperation())
+    registry.register(BtstOperation())
+    registry.register(MapretOperation())
 
     return registry
 
