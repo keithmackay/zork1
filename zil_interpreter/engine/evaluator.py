@@ -95,6 +95,12 @@ class Evaluator:
         elif op == "PUTP":
             return self._eval_putp(form.args)
 
+        elif op == "IN?":
+            return self._eval_in(form.args)
+
+        elif op == "FIRST?":
+            return self._eval_first(form.args)
+
         else:
             raise NotImplementedError(f"Form not implemented: {op}")
 
@@ -244,3 +250,33 @@ class Evaluator:
         obj = self.world.get_object(obj_name)
         if obj:
             obj.set_property(prop_name.upper(), value)
+
+    def _eval_in(self, args: list) -> bool:
+        """Evaluate IN? form - check if object is in container."""
+        if len(args) < 2:
+            return False
+
+        obj_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        container_name = args[1].value if isinstance(args[1], Atom) else str(self.evaluate(args[1]))
+
+        obj = self.world.get_object(obj_name)
+        container = self.world.get_object(container_name)
+
+        if not obj or not container:
+            return False
+
+        return obj.parent == container
+
+    def _eval_first(self, args: list) -> Optional[str]:
+        """Evaluate FIRST? form - get first child of container."""
+        if not args:
+            return None
+
+        container_name = args[0].value if isinstance(args[0], Atom) else str(self.evaluate(args[0]))
+        container = self.world.get_object(container_name)
+
+        if not container or not container.children:
+            return None
+
+        # Return first child's name
+        return next(iter(container.children)).name

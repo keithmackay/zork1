@@ -198,3 +198,45 @@ def test_evaluate_putp():
     evaluator.evaluate(form)
 
     assert chest.get_property("SIZE") == 30
+
+
+def test_evaluate_in_predicate():
+    """Test IN? form checks object containment."""
+    world = WorldState()
+
+    room = GameObject(name="ROOM")
+    lamp = GameObject(name="LAMP", parent=room)
+    player = GameObject(name="PLAYER")
+
+    world.add_object(room)
+    world.add_object(lamp)
+    world.add_object(player)
+
+    evaluator = Evaluator(world)
+
+    form = Form(operator=Atom("IN?"), args=[Atom("LAMP"), Atom("ROOM")])
+    assert evaluator.evaluate(form) is True
+
+    form2 = Form(operator=Atom("IN?"), args=[Atom("LAMP"), Atom("PLAYER")])
+    assert evaluator.evaluate(form2) is False
+
+
+def test_evaluate_first_predicate():
+    """Test FIRST? form returns first child object."""
+    world = WorldState()
+
+    room = GameObject(name="ROOM")
+    lamp = GameObject(name="LAMP", parent=room)
+    sword = GameObject(name="SWORD", parent=room)
+
+    world.add_object(room)
+    world.add_object(lamp)
+    world.add_object(sword)
+
+    evaluator = Evaluator(world)
+
+    form = Form(operator=Atom("FIRST?"), args=[Atom("ROOM")])
+    result = evaluator.evaluate(form)
+
+    # Should return one of the children
+    assert result in ["LAMP", "SWORD"]
