@@ -27,6 +27,9 @@ from .object_ops import (
     FclearOperation,
     GetpOperation,
     PutpOperation,
+    LocOperation,
+    RemoveOperation,
+    HeldOperation,
 )
 from .variables import SetOperation, SetgOperation
 from .logic import AndOperation, OrOperation, NotOperation
@@ -94,6 +97,9 @@ def create_default_registry() -> OperationRegistry:
     registry.register(FclearOperation())
     registry.register(GetpOperation())
     registry.register(PutpOperation())
+    registry.register(LocOperation())
+    registry.register(RemoveOperation())
+    registry.register(HeldOperation())
 
     # Variables
     registry.register(SetOperation())
