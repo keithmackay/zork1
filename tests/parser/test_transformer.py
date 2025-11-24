@@ -55,3 +55,26 @@ def test_transform_nested_form():
     result = transformer.transform(tree)
     assert isinstance(result, Form)
     assert result.operator.value == "COND"
+    # Verify the first arg is a list (not a Lark Tree)
+    assert isinstance(result.args[0], list)
+    assert len(result.args[0]) == 2
+    # Verify nested forms are properly transformed
+    assert isinstance(result.args[0][0], Form)
+    assert result.args[0][0].operator.value == "EQUAL?"
+    assert isinstance(result.args[0][1], Form)
+    assert result.args[0][1].operator.value == "TELL"
+
+
+def test_transform_list():
+    """Test transforming a list (parenthesized expressions)."""
+    parser = Lark(ZIL_GRAMMAR, start='expression', parser='lalr')
+    tree = parser.parse('(1 2 3)')
+    transformer = ZILTransformer()
+    result = transformer.transform(tree)
+    # Result should be a list, not a Lark Tree
+    assert isinstance(result, list)
+    assert len(result) == 3
+    assert all(isinstance(item, Number) for item in result)
+    assert result[0].value == 1
+    assert result[1].value == 2
+    assert result[2].value == 3
