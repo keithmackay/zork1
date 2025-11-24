@@ -31,6 +31,16 @@ from .object_ops import (
 from .variables import SetOperation, SetgOperation
 from .logic import AndOperation, OrOperation, NotOperation
 from .string_ops import ConcatOperation, SubstringOperation, PrintcOperation
+from .list_ops import (
+    LengthOperation,
+    NthOperation,
+    RestOperation,
+    FirstListOperation,
+    NextOperation,
+    BackOperation,
+    EmptyCheckOperation,
+    MemqOperation,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -93,6 +103,16 @@ def create_default_registry() -> OperationRegistry:
     registry.register(ConcatOperation())
     registry.register(SubstringOperation())
     registry.register(PrintcOperation())
+
+    # List Operations
+    registry.register(LengthOperation())
+    registry.register(NthOperation())
+    registry.register(RestOperation())
+    registry.register(FirstListOperation())
+    registry.register(NextOperation())
+    registry.register(BackOperation())
+    registry.register(EmptyCheckOperation())
+    registry.register(MemqOperation())
 
     return registry
 
