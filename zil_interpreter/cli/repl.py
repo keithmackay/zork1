@@ -4,6 +4,7 @@ import sys
 from typing import Optional
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.runtime.output_buffer import OutputBuffer
+from zil_interpreter.engine.game_engine import GameEngine
 
 
 class REPL:
@@ -12,6 +13,7 @@ class REPL:
     def __init__(self, world: WorldState):
         self.world = world
         self.output = OutputBuffer()
+        self.engine = GameEngine(world, self.output)
         self.running = False
 
     def display_welcome(self) -> None:
@@ -77,9 +79,16 @@ class REPL:
         Args:
             command: User input
         """
-        # Placeholder - will be implemented with command parser
-        if command.strip():
-            print(f"[Command not yet implemented: {command}]")
+        if not command.strip():
+            return
+
+        # Execute command through game engine
+        self.engine.execute_command(command)
+
+        # Display output
+        output = self.output.flush()
+        if output:
+            print(output)
 
 
 def main() -> None:
