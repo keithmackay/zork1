@@ -17,11 +17,17 @@ from .object_ops import (
     PutpOperation,
 )
 from .variables import SetOperation, SetgOperation
+from .logic import AndOperation, OrOperation, NotOperation
 
 
 def create_default_registry() -> OperationRegistry:
     """Create registry with all standard operations."""
     registry = OperationRegistry()
+
+    # Logic
+    registry.register(AndOperation())
+    registry.register(OrOperation())
+    registry.register(NotOperation())
 
     # Comparison
     registry.register(EqualOperation())
