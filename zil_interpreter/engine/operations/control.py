@@ -51,3 +51,90 @@ class RfalseOperation(Operation):
         # Import here to avoid circular dependency
         from zil_interpreter.engine.evaluator import ReturnValue
         raise ReturnValue(False)
+
+
+class ReturnOperation(Operation):
+    """RETURN - Return arbitrary value from routine."""
+
+    @property
+    def name(self) -> str:
+        return "RETURN"
+
+    def execute(self, args: list, evaluator) -> None:
+        """Return arbitrary value from routine."""
+        from zil_interpreter.engine.evaluator import ReturnValue
+
+        if not args:
+            raise ReturnValue(None)
+
+        value = evaluator.evaluate(args[0])
+        raise ReturnValue(value)
+
+
+class RepeatOperation(Operation):
+    """REPEAT - Loop construct."""
+
+    @property
+    def name(self) -> str:
+        return "REPEAT"
+
+    def execute(self, args: list, evaluator) -> Any:
+        """Loop construct - executes body repeatedly.
+
+        Note: In ZIL, REPEAT loops are typically broken by RETURN/RTRUE/RFALSE
+        within COND statements. For now, we implement basic iteration semantics.
+        A complete implementation would require more sophisticated control flow.
+        """
+        if not args:
+            return None
+
+        # First arg is loop specification (variables/conditions)
+        loop_spec = args[0] if args else []
+        body = args[1:] if len(args) > 1 else []
+
+        # For basic implementation: execute body once
+        # Full implementation would need break conditions
+        result = None
+        for expr in body:
+            result = evaluator.evaluate(expr)
+
+        return result
+
+
+class MapfOperation(Operation):
+    """MAPF - Map function over collection."""
+
+    @property
+    def name(self) -> str:
+        return "MAPF"
+
+    def execute(self, args: list, evaluator) -> list:
+        """Map function over collection."""
+        if len(args) < 2:
+            return []
+
+        func_arg = args[0]
+        collection = evaluator.evaluate(args[1])
+
+        if not isinstance(collection, list):
+            return []
+
+        results = []
+        for item in collection:
+            # Create a form that calls the function with the item
+            from zil_interpreter.parser.ast_nodes import Atom, Form
+
+            if isinstance(func_arg, Atom):
+                call = Form(func_arg, [item])
+            else:
+                # If func_arg is already evaluated or complex, skip
+                continue
+
+            try:
+                result = evaluator.evaluate(call)
+                results.append(result)
+            except Exception:
+                # If evaluation fails, skip this item
+                continue
+
+        return results

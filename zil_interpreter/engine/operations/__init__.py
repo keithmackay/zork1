@@ -12,7 +12,14 @@ from .comparison import (
     ZeroCheckOperation,
     NumericEqualOperation,
 )
-from .control import CondOperation, RtrueOperation, RfalseOperation
+from .control import (
+    CondOperation,
+    RtrueOperation,
+    RfalseOperation,
+    ReturnOperation,
+    RepeatOperation,
+    MapfOperation,
+)
 from .arithmetic import (
     AddOperation,
     SubtractOperation,
@@ -80,6 +87,9 @@ def create_default_registry() -> OperationRegistry:
     registry.register(CondOperation())
     registry.register(RtrueOperation())
     registry.register(RfalseOperation())
+    registry.register(ReturnOperation())
+    registry.register(RepeatOperation())
+    registry.register(MapfOperation())
 
     # Arithmetic
     registry.register(AddOperation())
