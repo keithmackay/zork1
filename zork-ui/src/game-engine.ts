@@ -3,23 +3,27 @@ import type { GameEngineResponse } from "./types";
 
 export class GameEngine {
   private process: Subprocess | null = null;
-  private currentOutput: string = "";
-  private buffer: string = "";
+  private zorkFile: string;
+
+  constructor(zorkFile: string = "zork1/zork1.zil") {
+    this.zorkFile = zorkFile;
+  }
 
   async start(): Promise<string> {
-    // Start Python ZIL interpreter with zork1.zil file
+    // Start Python ZIL interpreter with JSON mode
+    const zorkPath = `/Users/Keith.MacKay/Projects/zork1/${this.zorkFile}`;
+
     this.process = spawn({
-      cmd: ["python3", "-u", "-m", "zil_interpreter.cli.repl", "/Users/Keith.MacKay/Projects/zork1/zork1/zork1.zil"],
+      cmd: ["python3", "-m", "zil_interpreter", zorkPath, "--json"],
       stdout: "pipe",
       stdin: "pipe",
       stderr: "pipe",
       cwd: "/Users/Keith.MacKay/Projects/zork1",
     });
 
-    // Read initial output (welcome message)
-    await Bun.sleep(200); // Give the process time to start and load
-    const output = await this.readOutput();
-    return output;
+    // Read initial output
+    const response = await this.readJsonResponse();
+    return response.output || "";
   }
 
   async sendCommand(command: string): Promise<GameEngineResponse> {
@@ -28,100 +32,57 @@ export class GameEngine {
     }
 
     // Send command
-    this.process.stdin.write(`${command}\n`);
+    const writer = this.process.stdin.getWriter();
+    await writer.write(new TextEncoder().encode(`${command}\n`));
+    writer.releaseLock();
 
-    // Wait for response
-    await Bun.sleep(50);
-    const output = await this.readOutput();
-
-    // Check for death/completion
-    const isDead = this.checkDeath(output);
-    const isComplete = this.checkCompletion(output);
+    // Read JSON response
+    const response = await this.readJsonResponse();
 
     return {
-      output,
-      isDead,
-      isComplete,
+      output: response.output || "",
+      isDead: response.is_dead || false,
+      isComplete: response.is_complete || false,
     };
   }
 
-  private async readOutput(): Promise<string> {
+  private async readJsonResponse(): Promise<any> {
     if (!this.process || !this.process.stdout) {
-      return "";
+      return {};
     }
+
+    const reader = this.process.stdout.getReader();
+    let buffer = "";
 
     try {
-      const reader = this.process.stdout.getReader();
-      const chunks: Uint8Array[] = [];
-      let totalBytes = 0;
+      while (true) {
+        const { value, done } = await reader.read();
 
-      // Read available data with timeout
-      const timeout = 200;
-      const start = Date.now();
+        if (done) break;
 
-      while (Date.now() - start < timeout) {
-        try {
-          const { value, done } = await Promise.race([
-            reader.read(),
-            new Promise<{ value: undefined; done: boolean }>((resolve) =>
-              setTimeout(() => resolve({ value: undefined, done: false }), 50)
-            ),
-          ]);
+        if (value) {
+          buffer += new TextDecoder().decode(value);
 
-          if (done) break;
-          if (value) {
-            chunks.push(value);
-            totalBytes += value.length;
-          } else {
-            // No data available
-            if (chunks.length > 0) break;
-            await Bun.sleep(10);
+          // Check if we have a complete JSON line
+          const newlineIndex = buffer.indexOf("\n");
+          if (newlineIndex >= 0) {
+            const jsonLine = buffer.substring(0, newlineIndex);
+            buffer = buffer.substring(newlineIndex + 1);
+
+            try {
+              return JSON.parse(jsonLine);
+            } catch (e) {
+              console.error("Failed to parse JSON:", jsonLine);
+              return { output: jsonLine };
+            }
           }
-        } catch (error) {
-          break;
         }
       }
-
+    } finally {
       reader.releaseLock();
-
-      if (chunks.length > 0) {
-        const combined = new Uint8Array(totalBytes);
-        let offset = 0;
-        for (const chunk of chunks) {
-          combined.set(chunk, offset);
-          offset += chunk.length;
-        }
-        return new TextDecoder().decode(combined);
-      }
-
-      return "";
-    } catch (error) {
-      return "";
     }
-  }
 
-  private checkDeath(output: string): boolean {
-    const deathPhrases = [
-      "you are dead",
-      "you have died",
-      "*** you have died ***",
-      "game over",
-    ];
-
-    const lowerOutput = output.toLowerCase();
-    return deathPhrases.some(phrase => lowerOutput.includes(phrase));
-  }
-
-  private checkCompletion(output: string): boolean {
-    const completionPhrases = [
-      "you have won",
-      "congratulations",
-      "you are victorious",
-      "you have completed",
-    ];
-
-    const lowerOutput = output.toLowerCase();
-    return completionPhrases.some(phrase => lowerOutput.includes(phrase));
+    return {};
   }
 
   async stop(): Promise<void> {

@@ -27,17 +27,32 @@ pip install -e ".[dev]"
 
 ## Usage
 
-### Playing a Game
+### Interactive Mode (Human-Friendly)
 
 ```bash
-# Run the interpreter with a ZIL file
-zil path/to/game.zil
+# Auto-detect and select game
+python3 -m zil_interpreter
 
-# Try the included simple game
+# Run specific game file
+python3 -m zil_interpreter tests/fixtures/simple_game.zil
+
+# Legacy zil command (if installed)
 zil tests/fixtures/simple_game.zil
 ```
 
-### Example Commands
+### JSON Mode (Programmatic Interface)
+
+For programmatic interaction (used by Bun UI):
+
+```bash
+# JSON output for machine consumption
+python3 -m zil_interpreter game.zil --json
+
+# Example with piped commands
+echo "look" | python3 -m zil_interpreter game.zil --json
+```
+
+### Example Session
 
 ```
 > look
@@ -73,7 +88,9 @@ The interpreter uses a domain-driven architecture with four core layers:
 
 ### 4. Runtime Layer (`zil_interpreter/runtime/`, `zil_interpreter/cli/`)
 - **OutputBuffer**: Manages game text output
-- **REPL**: Interactive command-line interface
+- **CLI Module**: Dual-mode interface (interactive + JSON)
+  - Interactive REPL for human players
+  - JSON mode for programmatic control (Bun UI integration)
 - **WorldLoader**: Builds game world from AST
 
 ## Operation Categories
@@ -167,6 +184,8 @@ mypy zil_interpreter
 
 ## Documentation
 
+- **CLI Module**: `docs/CLI_MODULE.md` - Complete CLI reference with JSON protocol
+- **CLI Quick Start**: `docs/CLI_QUICKSTART.md` - Quick reference and examples
 - **Operations Catalog**: `docs/OPERATIONS_CATALOG.md` - Complete reference for all 47 operations
 - **Architecture**: `docs/plans/2025-11-23-zil-interpreter-design.md`
 - **Implementation Summary**: `docs/IMPLEMENTATION_SUMMARY.md`
