@@ -51,6 +51,15 @@ from .list_ops import (
     EmptyCheckOperation,
     MemqOperation,
 )
+from .table_ops import (
+    GetOperation,
+    PutOperation,
+    GetbOperation,
+    PutbOperation,
+    LtableOperation,
+    ItableOperation,
+    TableOperation,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -129,6 +138,15 @@ def create_default_registry() -> OperationRegistry:
     registry.register(BackOperation())
     registry.register(EmptyCheckOperation())
     registry.register(MemqOperation())
+
+    # Table Operations
+    registry.register(GetOperation())
+    registry.register(PutOperation())
+    registry.register(GetbOperation())
+    registry.register(PutbOperation())
+    registry.register(LtableOperation())
+    registry.register(ItableOperation())
+    registry.register(TableOperation())
 
     return registry
 
