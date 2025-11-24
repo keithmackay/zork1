@@ -1,0 +1,5 @@
+node_modules/
+saves/*.json
+bun.lock
+*.log
+.DS_Store

@@ -42,3 +42,8 @@ htmlcov/
 
 # Save files
 *.sav
+
+# Zork UI
+zork-ui/node_modules/
+zork-ui/saves/*.json
+zork-ui/bun.lock
