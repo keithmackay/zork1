@@ -2,14 +2,16 @@
 
 from pathlib import Path
 from zil_interpreter.loader.world_loader import WorldLoader
+from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
 def test_simple_game_integration():
     """Test loading and playing a simple game."""
     loader = WorldLoader()
+    output = OutputBuffer()
     test_file = Path(__file__).parent.parent / "fixtures" / "simple_game.zil"
 
-    world, executor = loader.load_world(test_file)
+    world, executor = loader.load_world(test_file, output)
 
     # Verify world loaded
     assert world.get_global("SCORE") == 0
