@@ -27,3 +27,102 @@ class TellOperation(Operation):
                 value = evaluator.evaluate(arg)
                 if value is not None:
                     evaluator.output.write(str(value))
+
+
+class PrintnOperation(Operation):
+    """PRINTN - Print number.
+
+    Usage: <PRINTN number>
+
+    Prints a numeric value to output buffer.
+    Always returns TRUE.
+
+    Example: <PRINTN 42> ; prints "42"
+    """
+
+    @property
+    def name(self) -> str:
+        return "PRINTN"
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Print number to output buffer."""
+        if not args:
+            return True
+
+        value = evaluator.evaluate(args[0])
+
+        # Convert to number if possible
+        if isinstance(value, (int, float)):
+            evaluator.output.write(str(int(value)))
+        elif isinstance(value, str):
+            # Try to parse as number
+            try:
+                num = int(value)
+                evaluator.output.write(str(num))
+            except (ValueError, TypeError):
+                # Not a valid number, print as-is
+                evaluator.output.write(value)
+        else:
+            # Print whatever we got
+            evaluator.output.write(str(value))
+
+        return True
+
+
+class PrintOperation(Operation):
+    """PRINT - Print global string variable.
+
+    Usage: <PRINT variable>
+
+    Prints the value of a global variable (typically a string).
+    Always returns TRUE.
+
+    Example: <PRINT ,MESSAGE> ; prints value of MESSAGE global
+    """
+
+    @property
+    def name(self) -> str:
+        return "PRINT"
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Print global variable value."""
+        if not args:
+            return True
+
+        # Evaluate the argument to get the value
+        value = evaluator.evaluate(args[0])
+
+        if value is not None:
+            evaluator.output.write(str(value))
+
+        return True
+
+
+class PrintiOperation(Operation):
+    """PRINTI - Print immediate string.
+
+    Usage: <PRINTI "text">
+
+    Prints an immediate string literal to output buffer.
+    Similar to PRINT but for string literals rather than variables.
+    Always returns TRUE.
+
+    Example: <PRINTI "Hello, world!"> ; prints "Hello, world!"
+    """
+
+    @property
+    def name(self) -> str:
+        return "PRINTI"
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Print immediate string."""
+        if not args:
+            return True
+
+        # Evaluate the argument (typically a string literal)
+        value = evaluator.evaluate(args[0])
+
+        if value is not None:
+            evaluator.output.write(str(value))
+
+        return True
