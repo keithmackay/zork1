@@ -60,6 +60,7 @@ from .table_ops import (
     ItableOperation,
     TableOperation,
 )
+from .table_access import GetOp, PutOp, GetBOp, PutBOp
 from .control_io import (
     PerformOperation,
     ApplyOperation,
@@ -167,11 +168,12 @@ def create_default_registry() -> OperationRegistry:
     registry.register(EmptyCheckOperation())
     registry.register(MemqOperation())
 
-    # Table Operations
-    registry.register(GetOperation())
-    registry.register(PutOperation())
-    registry.register(GetbOperation())
-    registry.register(PutbOperation())
+    # Table Operations (NEW: using TableData)
+    registry.register(GetOp())
+    registry.register(PutOp())
+    registry.register(GetBOp())
+    registry.register(PutBOp())
+    # Table creation operations (still use old implementation)
     registry.register(LtableOperation())
     registry.register(ItableOperation())
     registry.register(TableOperation())
