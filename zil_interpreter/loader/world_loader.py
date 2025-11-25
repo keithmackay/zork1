@@ -16,11 +16,12 @@ class WorldLoader:
     def __init__(self):
         self.zil_loader = ZILLoader()
 
-    def load_world(self, main_file: Path) -> Tuple[WorldState, RoutineExecutor]:
+    def load_world(self, main_file: Path, output: OutputBuffer) -> Tuple[WorldState, RoutineExecutor]:
         """Load game world from ZIL files.
 
         Args:
             main_file: Path to main .zil file
+            output: OutputBuffer instance to use for all components
 
         Returns:
             Tuple of (WorldState, RoutineExecutor)
@@ -28,10 +29,9 @@ class WorldLoader:
         # Load and parse main file
         ast = self.zil_loader.load_file(main_file)
 
-        # Create world and executor
+        # Create world and executor with provided output buffer
         world = WorldState()
-        output = OutputBuffer()
-        executor = RoutineExecutor(world, output)
+        executor = RoutineExecutor(world, output)  # Use provided buffer, don't create new one
 
         # Process AST nodes
         for node in ast:
