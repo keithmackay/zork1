@@ -602,6 +602,46 @@ class TestComplexIntegration:
         )
         assert third == 30
 
+
+class TestTableOperationsIntegration:
+    """Integration tests for table operations."""
+
+    def test_pick_one_pattern(self):
+        """Test PICK-ONE pattern from Zork I (random table selection)."""
+        from zil_interpreter.world.table_data import TableData
+
+        # Simulates: <GET ,DUMMY <RANDOM <GET ,DUMMY 0>>>
+        world = WorldState()
+        output = OutputBuffer()
+        # DUMMY table: length at 0, then strings
+        table = TableData(name="DUMMY", data=[3, 0, 1, 2])  # 3 items
+        world.register_table("DUMMY", table)
+
+        # Test GET retrieves length
+        assert table.get_word(0) == 3
+
+        # Test GET retrieves items
+        assert table.get_word(1) == 0
+        assert table.get_word(2) == 1
+        assert table.get_word(3) == 2
+
+    def test_parser_lexv_pattern(self):
+        """Test parser LEXV table access pattern."""
+        from zil_interpreter.world.table_data import TableData
+
+        # P-LEXV is byte-addressed table
+        world = WorldState()
+        # Simulated lexer output: word count, then word entries
+        lexv = TableData(name="P-LEXV", data=[0x0200, 0x4E4F])  # 2 words, "NO"
+        world.register_table("P-LEXV", lexv)
+
+        # GETB gets byte 0 (word count high byte)
+        assert lexv.get_byte(0) == 0x02
+
+
+class TestComplexIntegration:
+    """Test complex real-world scenarios."""
+
     def test_flag_manipulation_sequence(self):
         """Test sequence of flag operations."""
         from zil_interpreter.world.game_object import GameObject, ObjectFlag
