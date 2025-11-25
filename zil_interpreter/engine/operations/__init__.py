@@ -11,6 +11,7 @@ from .comparison import (
     GreaterEqualOperation,
     ZeroCheckOperation,
     NumericEqualOperation,
+    DlessOperation,
 )
 from .control import (
     CondOperation,
@@ -74,6 +75,7 @@ from .bit_ops import (
     BandOperation,
     BorOperation,
     BtstOperation,
+    BcomOperation,
     MapretOperation,
 )
 from .advanced import (
@@ -116,6 +118,7 @@ def create_default_registry() -> OperationRegistry:
     registry.register(GreaterEqualOperation())
     registry.register(ZeroCheckOperation())
     registry.register(NumericEqualOperation())
+    registry.register(DlessOperation())
 
     # Control
     registry.register(CondOperation())
@@ -191,6 +194,7 @@ def create_default_registry() -> OperationRegistry:
     registry.register(BandOperation())
     registry.register(BorOperation())
     registry.register(BtstOperation())
+    registry.register(BcomOperation())
     registry.register(MapretOperation())
 
     # Advanced Operations

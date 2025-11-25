@@ -154,6 +154,51 @@ class TestBtstOperation:
         assert result is True
 
 
+class TestBcomOperation:
+    """Tests for BCOM bitwise complement operation."""
+
+    def test_bcom_basic(self):
+        """BCOM performs bitwise complement."""
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        result = evaluator.evaluate(
+            Form(Atom("BCOM"), [Number(0x0000)])
+        )
+        assert result == 0xFFFF
+
+    def test_bcom_inverts_bits(self):
+        """BCOM inverts all bits in 16-bit word."""
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        result = evaluator.evaluate(
+            Form(Atom("BCOM"), [Number(0x00FF)])
+        )
+        assert result == 0xFF00
+
+    def test_bcom_all_ones(self):
+        """BCOM of 0xFFFF returns 0x0000."""
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        result = evaluator.evaluate(
+            Form(Atom("BCOM"), [Number(0xFFFF)])
+        )
+        assert result == 0x0000
+
+    def test_bcom_evaluates_arg(self):
+        """BCOM evaluates its argument."""
+        world = WorldState()
+        world.set_global("MASK", 0x00FF)
+        evaluator = Evaluator(world)
+
+        result = evaluator.evaluate(
+            Form(Atom("BCOM"), [Atom("MASK")])
+        )
+        assert result == 0xFF00
+
+
 class TestMapretOperation:
     """Tests for MAPRET return from MAPF iteration operation."""
 

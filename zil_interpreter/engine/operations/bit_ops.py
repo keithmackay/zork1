@@ -111,6 +111,42 @@ class BtstOperation(Operation):
         return (value & mask) != 0
 
 
+class BcomOperation(Operation):
+    """Bitwise complement (NOT) operation.
+
+    Performs bitwise complement on an integer.
+    Arguments: <BCOM value> → result
+    Returns ~value masked to 16-bit word (ZIL uses 16-bit words)
+
+    Used for flag inversion and bit masking.
+    """
+
+    @property
+    def name(self) -> str:
+        return "BCOM"
+
+    def execute(self, args: list, evaluator) -> int:
+        """Bitwise complement operation.
+
+        Args:
+            args: Value to complement
+            evaluator: Evaluator for argument evaluation
+
+        Returns:
+            Bitwise complement masked to 16-bit word, or 0 if invalid
+        """
+        if len(args) < 1:
+            return 0
+
+        value = evaluator.evaluate(args[0])
+
+        if not isinstance(value, int):
+            return 0
+
+        # ZIL uses 16-bit words, so mask result to 16 bits
+        return (~value) & 0xFFFF
+
+
 class MapretOperation(Operation):
     """Return from MAPF iteration.
 

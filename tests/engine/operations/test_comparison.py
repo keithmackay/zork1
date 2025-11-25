@@ -292,3 +292,55 @@ def test_numeric_equal_insufficient_args():
 
     result = evaluator.evaluate(Form(Atom("=="), [Number(5)]))
     assert result is False
+
+
+# DlessOperation Tests (DLESS?)
+def test_dless_decrements_and_returns_true():
+    """DLESS? decrements global and returns true if result < test value."""
+    world = WorldState()
+    world.set_global("COUNTER", 5)
+    evaluator = Evaluator(world)
+
+    result = evaluator.evaluate(
+        Form(Atom("DLESS?"), [Atom("COUNTER"), Number(5)])
+    )
+    # COUNTER was 5, now 4, and 4 < 5
+    assert result is True
+    assert world.get_global("COUNTER") == 4
+
+
+def test_dless_decrements_and_returns_false():
+    """DLESS? decrements global and returns false if result >= test value."""
+    world = WorldState()
+    world.set_global("COUNTER", 5)
+    evaluator = Evaluator(world)
+
+    result = evaluator.evaluate(
+        Form(Atom("DLESS?"), [Atom("COUNTER"), Number(3)])
+    )
+    # COUNTER was 5, now 4, and 4 is NOT < 3
+    assert result is False
+    assert world.get_global("COUNTER") == 4
+
+
+def test_dless_equal_after_decrement():
+    """DLESS? returns false when decremented value equals test value."""
+    world = WorldState()
+    world.set_global("COUNTER", 6)
+    evaluator = Evaluator(world)
+
+    result = evaluator.evaluate(
+        Form(Atom("DLESS?"), [Atom("COUNTER"), Number(5)])
+    )
+    # COUNTER was 6, now 5, and 5 is NOT < 5
+    assert result is False
+    assert world.get_global("COUNTER") == 5
+
+
+def test_dless_insufficient_args():
+    """DLESS? with insufficient args returns false."""
+    world = WorldState()
+    evaluator = Evaluator(world)
+
+    result = evaluator.evaluate(Form(Atom("DLESS?"), [Atom("COUNTER")]))
+    assert result is False

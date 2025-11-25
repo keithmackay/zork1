@@ -214,3 +214,46 @@ class NumericEqualOperation(Operation):
                 return False
 
         return True
+
+
+class DlessOperation(Operation):
+    """DLESS? - Decrement global variable and test if result is less than value.
+
+    Decrements a global variable by 1, then tests if the new value is less than
+    the comparison value.
+    Arguments: <DLESS? var-name test-value> → TRUE/FALSE
+
+    Used in loops and counters (common in game logic).
+    """
+
+    @property
+    def name(self) -> str:
+        return "DLESS?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Decrement and test less than.
+
+        Args:
+            args: Variable name and comparison value
+            evaluator: Evaluator for argument evaluation
+
+        Returns:
+            True if decremented value < test value, False otherwise
+        """
+        if len(args) < 2:
+            return False
+
+        # Get variable name (might be Atom or string)
+        var_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
+        test_value = evaluator.evaluate(args[1])
+
+        # Get current value, decrement, and store back
+        current_value = evaluator.world.get_global(var_name)
+        if not isinstance(current_value, int):
+            return False
+
+        new_value = current_value - 1
+        evaluator.world.set_global(var_name, new_value)
+
+        # Test if new value < test value
+        return new_value < test_value
