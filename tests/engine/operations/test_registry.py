@@ -37,3 +37,11 @@ def test_table_operations_registered():
     assert registry.get("PUT") is not None
     assert registry.get("GETB") is not None
     assert registry.get("PUTB") is not None
+
+def test_game_logic_operations_registered():
+    """Game logic operations are registered."""
+    from zil_interpreter.engine.operations import create_default_registry
+    registry = create_default_registry()
+    assert registry.get("META-LOC") is not None
+    assert registry.get("LIT?") is not None
+    assert registry.get("ACCESSIBLE?") is not None

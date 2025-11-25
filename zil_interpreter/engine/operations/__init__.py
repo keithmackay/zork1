@@ -87,6 +87,11 @@ from .advanced import (
     ValueOperation,
     AgainException,
 )
+from .game_logic import (
+    MetaLocOp,
+    LitOp,
+    AccessibleOp,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -207,6 +212,11 @@ def create_default_registry() -> OperationRegistry:
     registry.register(AgainOperation())
     registry.register(TypeQuestionOperation())
     registry.register(ValueOperation())
+
+    # Game Logic Operations
+    registry.register(MetaLocOp())
+    registry.register(LitOp())
+    registry.register(AccessibleOp())
 
     return registry
 
