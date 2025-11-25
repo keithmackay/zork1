@@ -1,6 +1,7 @@
 import pytest
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import GameObject
+from zil_interpreter.world.table_data import TableData
 
 
 def test_create_empty_world():
@@ -64,3 +65,28 @@ def test_current_room():
 
     world.set_current_room(room)
     assert world.get_current_room() == room
+
+
+class TestWorldStateTables:
+    """Tests for table management in WorldState."""
+
+    def test_register_table(self):
+        """Can register a table in world state."""
+        world = WorldState()
+        table = TableData(name="DUMMY", data=[1, 2, 3])
+        world.register_table("DUMMY", table)
+        assert world.get_table("DUMMY") is table
+
+    def test_get_unknown_table_raises(self):
+        """Getting unknown table raises KeyError."""
+        world = WorldState()
+        with pytest.raises(KeyError):
+            world.get_table("NONEXISTENT")
+
+    def test_has_table(self):
+        """Can check if table exists."""
+        world = WorldState()
+        table = TableData(name="TEST", data=[])
+        world.register_table("TEST", table)
+        assert world.has_table("TEST") is True
+        assert world.has_table("NOPE") is False

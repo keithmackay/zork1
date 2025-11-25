@@ -2,6 +2,7 @@
 
 from typing import Dict, Any, Optional, List
 from zil_interpreter.world.game_object import GameObject
+from zil_interpreter.world.table_data import TableData
 
 
 class WorldState:
@@ -10,6 +11,7 @@ class WorldState:
     def __init__(self):
         self.objects: Dict[str, GameObject] = {}
         self.globals: Dict[str, Any] = {}
+        self.tables: Dict[str, TableData] = {}
         self._current_room: Optional[GameObject] = None
 
         # Initialize parser state globals
@@ -107,3 +109,39 @@ class WorldState:
             Current room GameObject
         """
         return self._current_room
+
+    def register_table(self, name: str, table: TableData) -> None:
+        """Register a table in the world.
+
+        Args:
+            name: Table name
+            table: TableData instance
+        """
+        self.tables[name] = table
+
+    def get_table(self, name: str) -> TableData:
+        """Get a table by name.
+
+        Args:
+            name: Table name
+
+        Returns:
+            TableData instance
+
+        Raises:
+            KeyError: If table not found
+        """
+        if name not in self.tables:
+            raise KeyError(f"Unknown table: {name}")
+        return self.tables[name]
+
+    def has_table(self, name: str) -> bool:
+        """Check if table exists.
+
+        Args:
+            name: Table name
+
+        Returns:
+            True if table exists, False otherwise
+        """
+        return name in self.tables
