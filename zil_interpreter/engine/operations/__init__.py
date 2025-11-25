@@ -52,10 +52,6 @@ from .list_ops import (
     MemqOperation,
 )
 from .table_ops import (
-    GetOperation,
-    PutOperation,
-    GetbOperation,
-    PutbOperation,
     LtableOperation,
     ItableOperation,
     TableOperation,
