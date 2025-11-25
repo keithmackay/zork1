@@ -33,7 +33,7 @@ export class GameEngine {
 
     // Read initial output
     const response = await this.readJsonResponse();
-    return response.output || "Game loaded.";
+    return response.output || "Game started. Enter commands to play.";
   }
 
   async sendCommand(command: string): Promise<GameEngineResponse> {

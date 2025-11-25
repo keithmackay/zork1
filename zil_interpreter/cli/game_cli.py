@@ -100,25 +100,27 @@ class GameCLI:
         current_room = self.world.get_current_room()
         output = ""
 
-        # Try to execute look command if available
+        # Try to execute look command to get initial game description
+        # Do this even if current_room is None, as the game might have custom initialization
         try:
-            if current_room:
-                self.engine.execute_command("look")
-                output = self.output_buffer.flush()
+            result = self.engine.execute_command("look")
+            output = self.output_buffer.flush()
         except Exception:
-            # If look fails, just use room description if available
+            # If look fails, try using room description if available
             if current_room and hasattr(current_room, 'description'):
                 output = current_room.description
 
         if self.json_mode:
             self._json_output({
                 "type": "init",
-                "output": output or "Game loaded.",
+                "output": output if output else "Welcome! Type 'look' to begin.",
                 "room": current_room.name if current_room and hasattr(current_room, 'name') else "unknown",
             })
         else:
             if output:
                 print(output)
+            else:
+                print("Welcome! Type 'look' to begin.")
             print()
 
     def _process_command(self, command: str) -> None:

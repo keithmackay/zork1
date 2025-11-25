@@ -38,7 +38,7 @@ export class TerminalUI {
   }
 
   printOutput(text: string): void {
-    if (text.trim()) {
+    if (text && text.trim()) {
       console.log(this.COLORS.green + text + this.COLORS.reset);
     }
   }
