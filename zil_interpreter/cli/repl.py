@@ -105,11 +105,14 @@ def main() -> None:
         print(f"Error: File not found: {zil_file}")
         sys.exit(1)
 
-    # Load game world
+    # Create output buffer BEFORE loading world
+    output = OutputBuffer()
+
+    # Load game world with shared output buffer
     loader = WorldLoader()
 
     try:
-        world, executor = loader.load_world(zil_file)
+        world, executor = loader.load_world(zil_file, output)
         print(f"Loaded: {zil_file}")
         print(f"Routines: {len(executor.routines)}")
         print(f"Objects: {len(world.objects)}")
@@ -123,6 +126,8 @@ def main() -> None:
     # Create REPL with loaded world
     repl = REPL(world)
     repl.engine.executor = executor  # Use loaded executor
+    repl.output = output  # Use shared output buffer
+    repl.engine.output = output  # Ensure engine uses same buffer
     repl.run()
 
 
