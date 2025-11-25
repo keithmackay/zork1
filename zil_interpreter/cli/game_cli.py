@@ -35,13 +35,14 @@ class GameCLI:
         """
         try:
             loader = WorldLoader()
-            self.world, executor = loader.load_world(self.game_file)
+            # Pass CLI's output buffer to loader - ensures shared instance
+            self.world, executor = loader.load_world(self.game_file, self.output_buffer)
 
             if not self.world:
                 self._error("Failed to load game world")
                 return False
 
-            # Create game engine
+            # Create game engine with the SAME output buffer
             self.engine = GameEngine(self.world, self.output_buffer)
             self.engine.executor = executor
 
