@@ -5,6 +5,8 @@ export class GameEngine {
   private process: Subprocess | null = null;
   private zorkFile: string;
   private buffer: string = "";
+  private decoder: TextDecoder = new TextDecoder();
+  private reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
 
   constructor(zorkFile: string = "tests/fixtures/simple_game.zil") {
     this.zorkFile = zorkFile;
@@ -23,9 +25,15 @@ export class GameEngine {
       cwd: projectRoot,
     });
 
+    // Create a persistent reader for the lifetime of the process
+    // This avoids the ReadableStream lock issue
+    if (this.process.stdout) {
+      this.reader = this.process.stdout.getReader();
+    }
+
     // Read initial output
     const response = await this.readJsonResponse();
-    return response.output || "";
+    return response.output || "Game loaded.";
   }
 
   async sendCommand(command: string): Promise<GameEngineResponse> {
@@ -48,23 +56,21 @@ export class GameEngine {
   }
 
   private async readJsonResponse(): Promise<any> {
-    if (!this.process || !this.process.stdout) {
+    if (!this.reader) {
       return {};
     }
 
-    const stdout = this.process.stdout;
-    const reader = stdout.getReader();
-
     try {
+      // Read chunks from the persistent reader until we have a complete JSON line
       while (true) {
-        const { value, done } = await reader.read();
+        const { value, done } = await this.reader.read();
 
         if (done) {
           return { output: "", error: "Process ended" };
         }
 
         if (value) {
-          this.buffer += new TextDecoder().decode(value);
+          this.buffer += this.decoder.decode(value, { stream: true });
 
           // Check if we have a complete JSON line
           const newlineIndex = this.buffer.indexOf("\n");
@@ -74,26 +80,35 @@ export class GameEngine {
 
             try {
               const parsed = JSON.parse(jsonLine);
-              reader.releaseLock();
               return parsed;
             } catch (e) {
               console.error("Failed to parse JSON:", jsonLine);
-              reader.releaseLock();
               return { output: jsonLine };
             }
           }
         }
       }
     } catch (error) {
-      reader.releaseLock();
+      console.error("Error reading from process:", error);
       throw error;
     }
   }
 
   async stop(): Promise<void> {
+    // Release the reader before killing the process
+    if (this.reader) {
+      try {
+        this.reader.releaseLock();
+      } catch (e) {
+        // Ignore errors when releasing
+      }
+      this.reader = null;
+    }
+
     if (this.process) {
       this.process.kill();
       this.process = null;
     }
+    this.buffer = "";
   }
 }
