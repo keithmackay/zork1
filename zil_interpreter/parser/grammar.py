@@ -35,12 +35,14 @@ ZIL_GRAMMAR = r"""
     OPERATOR.2: /[=<>+\-*\/]+\?/
     ATOM: /\$?[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=]/
     ESCAPED_STRING: /"([^"\\]|\\.)*"/s
+    STRING_COMMENT: /;"([^"\\]|\\.)*"/s
     COMMENT: /;[^\n]*/
     FORMFEED: /\^L/
 
     %import common.SIGNED_NUMBER
     %import common.WS
     %ignore WS
+    %ignore STRING_COMMENT
     %ignore COMMENT
     %ignore FORMFEED
 """
