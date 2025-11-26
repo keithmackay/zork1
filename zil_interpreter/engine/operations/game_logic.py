@@ -151,3 +151,27 @@ class AccessibleOp(Operation):
             return False
         except (KeyError, AttributeError):
             return False
+
+
+class JigsUpOp(Operation):
+    """JIGS-UP - game over with death message.
+
+    Usage: <JIGS-UP "message">
+    Prints death message, sets DEAD flag, ends game.
+    """
+
+    @property
+    def name(self) -> str:
+        return "JIGS-UP"
+
+    def execute(self, args: List[Any], evaluator: Any) -> Any:
+        message = evaluator.evaluate(args[0]) if args else "You have died."
+
+        # Print death message
+        evaluator.output.write(f"\n{message}\n")
+
+        # Set dead flag
+        evaluator.world.set_global("DEAD", True)
+
+        # For now, just return - game engine should check DEAD flag
+        return True

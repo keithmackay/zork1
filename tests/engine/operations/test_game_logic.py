@@ -2,7 +2,8 @@
 import pytest
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import GameObject
-from zil_interpreter.engine.operations.game_logic import MetaLocOp, LitOp, AccessibleOp
+from zil_interpreter.engine.operations.game_logic import MetaLocOp, LitOp, AccessibleOp, JigsUpOp
+from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
 class TestMetaLocOp:
@@ -311,3 +312,52 @@ class TestAccessibleOp:
 
         evaluator = MockEvaluator(world)
         assert op.execute([Atom("COIN")], evaluator) is False
+
+
+class TestJigsUpOp:
+    """Tests for JIGS-UP game over operation."""
+
+    def test_jigs_up_name(self):
+        """Operation has correct name."""
+        op = JigsUpOp()
+        assert op.name == "JIGS-UP"
+
+    def test_jigs_up_prints_message(self):
+        """JIGS-UP prints death message."""
+        world = WorldState()
+        output = OutputBuffer()
+
+        op = JigsUpOp()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+                self.output = output
+
+            def evaluate(self, arg):
+                return arg
+
+        evaluator = MockEvaluator()
+        op.execute(["You have died."], evaluator)
+
+        assert "died" in output.get_output().lower()
+
+    def test_jigs_up_sets_dead_flag(self):
+        """JIGS-UP sets DEAD global."""
+        world = WorldState()
+        output = OutputBuffer()
+
+        op = JigsUpOp()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+                self.output = output
+
+            def evaluate(self, arg):
+                return arg
+
+        evaluator = MockEvaluator()
+        op.execute(["Game over"], evaluator)
+
+        assert world.get_global("DEAD") is True
