@@ -32,7 +32,7 @@ ZIL_GRAMMAR = r"""
     string: ESCAPED_STRING
     number: SIGNED_NUMBER
 
-    OPERATOR.2: /[=<>+\-*\/]+\?/
+    OPERATOR.2: /N?==\?|<=\?|=\?|>\?|<\?|G=\?|L=\?/
     ATOM: /\$?[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=]/
     ESCAPED_STRING: /"([^"\\]|\\.)*"/s
     STRING_COMMENT: /;"([^"\\]|\\.)*"/s
