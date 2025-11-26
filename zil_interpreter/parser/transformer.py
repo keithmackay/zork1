@@ -3,7 +3,7 @@
 from typing import List, Any, Optional
 from lark import Transformer, Token
 from zil_interpreter.parser.ast_nodes import (
-    Form, Atom, String, Number, ASTNode,
+    Form, Atom, String, Number, ASTNode, InsertFile,
     LocalRef, GlobalRef, QuotedAtom, Splice, PercentEval, HashExpr, CharLiteral
 )
 
@@ -34,8 +34,16 @@ class ZILTransformer(Transformer):
         """Transform list (parenthesized expressions)."""
         return [item for item in items if item is not None]
 
-    def form(self, items: List[Any]) -> Form:
+    def form(self, items: List[Any]) -> Form | InsertFile:
         """Transform form <operator args...>"""
+        # Check for INSERT-FILE directive
+        if items and isinstance(items[0], Atom) and items[0].value.upper() == "INSERT-FILE":
+            # Extract filename from first argument (should be a String)
+            if len(items) > 1 and isinstance(items[1], String):
+                return InsertFile(filename=items[1].value)
+            # Fallback if no filename provided
+            return InsertFile(filename="")
+
         operator = items[0]
         args = items[1:] if len(items) > 1 else []
         return Form(operator=operator, args=args)
