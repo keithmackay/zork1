@@ -88,3 +88,83 @@ class TestGlobalVariableReferences:
         code = '<MAPF ,LIST <FUNCTION () <RTRUE>>>'
         tree = parser.parse(code)
         assert tree is not None
+
+
+class TestFalseLiteral:
+    """Tests for <> false/empty literal."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_empty_form_as_false(self, parser):
+        """Parser handles <> as false literal."""
+        code = '<GLOBAL FALSE-FLAG <>>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_false_in_cond(self, parser):
+        """Parser handles <> in conditional."""
+        code = '<IF <> <RTRUE> <RFALSE>>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+
+class TestQuotedAtoms:
+    """Tests for 'ATOM quoted syntax."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_quoted_atom(self, parser):
+        """Parser handles 'ATOM quoted syntax."""
+        code = "<EQUAL? .X 'ATOM>"
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_quoted_atom_in_list(self, parser):
+        """Parser handles quoted atom in list."""
+        code = "('FOO 'BAR 'BAZ)"
+        tree = parser.parse(code)
+        assert tree is not None
+
+
+class TestSpliceSyntax:
+    """Tests for !<...> splice syntax."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_splice_form(self, parser):
+        """Parser handles !<...> splice syntax."""
+        code = '<FORM PROG () !<MAPF>>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_splice_in_macro(self, parser):
+        """Parser handles splice in macro definition."""
+        code = '<DEFMAC FOO () <FORM BAR !<LIST 1 2 3>>>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+
+class TestPercentBracketEval:
+    """Tests for %<...> compile-time evaluation."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_percent_eval(self, parser):
+        """Parser handles %<...> compile-time eval."""
+        code = '<%<+ 1 2>>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_percent_cond(self, parser):
+        """Parser handles %<COND ...> conditional compilation."""
+        code = '%<IF <GASSIGNED? FOO> <FOO> T>'
+        tree = parser.parse(code)
+        assert tree is not None
