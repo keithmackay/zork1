@@ -3,7 +3,8 @@
 from typing import List, Any, Optional
 from lark import Transformer, Token
 from zil_interpreter.parser.ast_nodes import (
-    Form, Atom, String, Number, ASTNode
+    Form, Atom, String, Number, ASTNode,
+    LocalRef, GlobalRef, QuotedAtom, Splice, PercentEval, HashExpr, CharLiteral
 )
 
 
@@ -46,3 +47,33 @@ class ZILTransformer(Transformer):
     def start(self, items: List[Any]) -> List[ASTNode]:
         """Return list of top-level expressions."""
         return [item for item in items if item is not None]
+
+    def local_ref(self, items: List[Token]) -> LocalRef:
+        """Transform local variable reference (.VAR)."""
+        return LocalRef(str(items[0]).upper())
+
+    def global_ref(self, items: List[Token]) -> GlobalRef:
+        """Transform global variable reference (,VAR)."""
+        return GlobalRef(str(items[0]).upper())
+
+    def quoted_atom(self, items: List[Token]) -> QuotedAtom:
+        """Transform quoted atom ('ATOM)."""
+        return QuotedAtom(str(items[0]).upper())
+
+    def splice(self, items: List[Any]) -> Splice:
+        """Transform splice expression (!<form>)."""
+        return Splice(items[0])
+
+    def percent_eval(self, items: List[Any]) -> PercentEval:
+        """Transform compile-time evaluation (%<form>)."""
+        return PercentEval(items[0])
+
+    def hash_expr(self, items: List[Any]) -> HashExpr:
+        """Transform hash expression (#TYPE values)."""
+        hash_type = str(items[0]).upper()
+        values = list(items[1:]) if len(items) > 1 else []
+        return HashExpr(hash_type, values)
+
+    def char_literal(self, items: List[Token]) -> CharLiteral:
+        """Transform character literal (!\\X)."""
+        return CharLiteral(str(items[0]))

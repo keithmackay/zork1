@@ -61,3 +61,46 @@ class Global(ASTNode):
 class InsertFile(ASTNode):
     """Represents an INSERT-FILE directive."""
     filename: str
+
+
+@dataclass
+class LocalRef(ASTNode):
+    """Reference to local variable (.VAR)."""
+    name: str
+
+
+@dataclass
+class GlobalRef(ASTNode):
+    """Reference to global variable (,VAR)."""
+    name: str
+
+
+@dataclass
+class QuotedAtom(ASTNode):
+    """Quoted atom ('ATOM)."""
+    name: str
+
+
+@dataclass
+class Splice(ASTNode):
+    """Splice expression (!<form>)."""
+    form: Any
+
+
+@dataclass
+class PercentEval(ASTNode):
+    """Compile-time evaluation (%<form>)."""
+    form: Any
+
+
+@dataclass
+class HashExpr(ASTNode):
+    """Hash expression (#TYPE value)."""
+    hash_type: str
+    values: List[Any] = field(default_factory=list)
+
+
+@dataclass
+class CharLiteral(ASTNode):
+    """Character literal (!\\X)."""
+    char: str
