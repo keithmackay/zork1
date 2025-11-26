@@ -249,3 +249,47 @@ class TestHeldOperation:
         assert evaluator.evaluate(Form(Atom("HELD?"), [Atom("SHIELD")])) is True
         # Player does not hold helmet
         assert evaluator.evaluate(Form(Atom("HELD?"), [Atom("HELMET")])) is False
+
+
+class TestMapContentsOperation:
+    """Tests for MAP-CONTENTS operation."""
+
+    def test_map_contents_name(self):
+        """Operation has correct name."""
+        from zil_interpreter.engine.operations.object_ops import MapContentsOperation
+        op = MapContentsOperation()
+        assert op.name == "MAP-CONTENTS"
+
+    def test_map_contents_iterates_children(self):
+        """MAP-CONTENTS iterates over container's children."""
+        from zil_interpreter.engine.operations.object_ops import MapContentsOperation
+        world = WorldState()
+        room = GameObject(name="ROOM")
+        world.add_object(room)
+        lamp = GameObject(name="LAMP")
+        lamp.move_to(room)
+        world.add_object(lamp)
+        sword = GameObject(name="SWORD")
+        sword.move_to(room)
+        world.add_object(sword)
+
+        op = MapContentsOperation()
+        visited = []
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+
+            def evaluate(self, arg):
+                # When we evaluate "body", track what OBJ is set to
+                if arg == "body":
+                    obj_value = self.world.get_global("OBJ")
+                    if obj_value:
+                        visited.append(obj_value)
+                return arg
+
+        evaluator = MockEvaluator()
+        op.execute(["OBJ", "ROOM", "body"], evaluator)
+        assert len(visited) == 2
+        assert "LAMP" in visited
+        assert "SWORD" in visited

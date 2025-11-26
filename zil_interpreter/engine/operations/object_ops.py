@@ -195,3 +195,34 @@ class HeldOperation(Operation):
 
         # Check if object's parent is the player
         return obj.parent == player
+
+
+class MapContentsOperation(Operation):
+    """MAP-CONTENTS - iterate over container's children.
+
+    Usage: <MAP-CONTENTS (var container) body...>
+    Sets var to each child of container and executes body.
+    """
+
+    @property
+    def name(self) -> str:
+        return "MAP-CONTENTS"
+
+    def execute(self, args: list, evaluator) -> None:
+        if len(args) < 2:
+            return None
+
+        var_name = args[0]
+        container_name = evaluator.evaluate(args[1])
+        body = args[2:] if len(args) > 2 else []
+
+        # Get container and its children
+        container = evaluator.world.get_object(container_name)
+        if not container:
+            return None
+
+        # Iterate over children
+        for child in container.children:
+            evaluator.world.set_global(str(var_name), child.name)
+            for expr in body:
+                evaluator.evaluate(expr)
