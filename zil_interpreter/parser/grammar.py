@@ -13,13 +13,13 @@ ZIL_GRAMMAR = r"""
     list: "(" expression* ")"
 
     atom: ATOM
-    string: ESCAPED_STRING
+    string: MULTILINE_STRING
     number: SIGNED_NUMBER
 
     ATOM: /[A-Z0-9][A-Z0-9\-?!]*/i
+    MULTILINE_STRING: /"[^"]*"/s
     COMMENT: /;[^\n]*/
 
-    %import common.ESCAPED_STRING
     %import common.SIGNED_NUMBER
     %import common.WS
     %ignore WS
