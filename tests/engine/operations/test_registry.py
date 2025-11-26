@@ -56,3 +56,16 @@ def test_batch5_operations_registered():
     assert registry.get("JIGS-UP") is not None
     assert registry.get("YES?") is not None
     assert registry.get("QUIT") is not None
+
+def test_batch6_operations_registered():
+    """Batch 6 operations are registered."""
+    from zil_interpreter.engine.operations import create_default_registry
+    registry = create_default_registry()
+    assert registry.get("QUEUE") is not None
+    assert registry.get("ENABLE") is not None
+    assert registry.get("DISABLE") is not None
+    assert registry.get("INT") is not None
+    assert registry.get("DEQUEUE") is not None
+    assert registry.get("READ") is not None
+    assert registry.get("LEX") is not None
+    assert registry.get("WORD?") is not None
