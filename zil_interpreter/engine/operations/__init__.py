@@ -107,6 +107,13 @@ from .system_ops import (
     DirinOp,
     DiroutOp,
 )
+from .zork2_ops import (
+    NextpOp,
+    FixedFontOnOp,
+    FixedFontOffOp,
+    PushOp,
+    RstackOp,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -257,6 +264,13 @@ def create_default_registry() -> OperationRegistry:
     registry.register(PrincOp())
     registry.register(DirinOp())
     registry.register(DiroutOp())
+
+    # Zork II Operations
+    registry.register(NextpOp())
+    registry.register(FixedFontOnOp())
+    registry.register(FixedFontOffOp())
+    registry.register(PushOp())
+    registry.register(RstackOp())
 
     return registry
 
