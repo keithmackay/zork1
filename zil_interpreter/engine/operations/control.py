@@ -138,3 +138,30 @@ class MapfOperation(Operation):
                 continue
 
         return results
+
+
+class ProgOperation(Operation):
+    """PROG - block scope with optional bindings.
+
+    Usage: <PROG (bindings) body...>
+    Executes body expressions in sequence, returns last value.
+    """
+
+    @property
+    def name(self) -> str:
+        return "PROG"
+
+    def execute(self, args: list[Any], evaluator: Any) -> Any:
+        if not args:
+            return None
+
+        # First arg is bindings (may be empty list)
+        bindings = evaluator.evaluate(args[0]) if args else []
+        body = args[1:] if len(args) > 1 else []
+
+        # Execute body expressions
+        result = None
+        for expr in body:
+            result = evaluator.evaluate(expr)
+
+        return result

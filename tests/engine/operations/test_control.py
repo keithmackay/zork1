@@ -4,6 +4,8 @@ import pytest
 from zil_interpreter.engine.evaluator import Evaluator, ReturnValue
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.parser.ast_nodes import Form, Atom, Number
+from zil_interpreter.engine.operations.control import ProgOperation
+from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
 # RETURN Operation Tests
@@ -118,3 +120,47 @@ def test_mapf_non_list():
     )
 
     assert result == []
+
+
+# PROG Operation Tests
+class TestProgOperation:
+    """Tests for PROG operation."""
+
+    def test_prog_name(self):
+        """Operation has correct name."""
+        op = ProgOperation()
+        assert op.name == "PROG"
+
+    def test_prog_executes_body(self):
+        """PROG executes body expressions in sequence."""
+        world = WorldState()
+        output = OutputBuffer()
+
+        op = ProgOperation()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+                self.output = output
+                self.results = []
+
+            def evaluate(self, arg):
+                self.results.append(arg)
+                return arg
+
+        evaluator = MockEvaluator()
+        # PROG with empty bindings and body of [1, 2, 3]
+        result = op.execute([[], 1, 2, 3], evaluator)
+        assert evaluator.results == [[], 1, 2, 3]
+
+    def test_prog_returns_last_value(self):
+        """PROG returns value of last expression."""
+        op = ProgOperation()
+
+        class MockEvaluator:
+            def evaluate(self, arg):
+                return arg * 2 if isinstance(arg, int) else arg
+
+        evaluator = MockEvaluator()
+        result = op.execute([[], 5], evaluator)
+        assert result == 10
