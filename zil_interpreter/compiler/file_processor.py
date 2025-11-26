@@ -4,6 +4,7 @@ from typing import List, Set
 from lark import Lark
 from ..parser.grammar import ZIL_GRAMMAR
 from ..parser.transformer import ZILTransformer
+from ..parser.ast_nodes import InsertFile
 
 
 class FileProcessor:
@@ -33,3 +34,18 @@ class FileProcessor:
         if not isinstance(result, list):
             return [result]
         return result
+
+    def load_all(self, filename: str) -> List:
+        """Load file and recursively process INSERT-FILE directives."""
+        result = []
+        self._load_recursive(filename, result)
+        return result
+
+    def _load_recursive(self, filename: str, result: List):
+        """Recursively load file, expanding INSERT-FILE."""
+        forms = self.load_file(filename)
+        for form in forms:
+            if isinstance(form, InsertFile):
+                self._load_recursive(form.filename, result)
+            else:
+                result.append(form)
