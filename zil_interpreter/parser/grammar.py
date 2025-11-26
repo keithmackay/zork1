@@ -11,6 +11,7 @@ ZIL_GRAMMAR = r"""
               | char_literal
               | local_ref
               | global_ref
+              | quoted_form
               | quoted_atom
               | atom
               | string
@@ -25,11 +26,13 @@ ZIL_GRAMMAR = r"""
 
     local_ref: "." ATOM
     global_ref: "," ATOM
+    quoted_form: "'" form
     quoted_atom: "'" ATOM
-    atom: ATOM
+    atom: OPERATOR | ATOM
     string: MULTILINE_STRING
     number: SIGNED_NUMBER
 
+    OPERATOR.2: /[=<>+\-*\/]+\?/
     ATOM: /[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=]/
     MULTILINE_STRING: /"[^"]*"/s
     COMMENT: /;[^\n]*/
