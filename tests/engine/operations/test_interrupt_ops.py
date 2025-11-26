@@ -1,6 +1,6 @@
 """Tests for interrupt operations."""
 import pytest
-from zil_interpreter.engine.operations.interrupt_ops import QueueOp, EnableOp, DisableOp, DequeueOp
+from zil_interpreter.engine.operations.interrupt_ops import QueueOp, EnableOp, DisableOp, DequeueOp, IntOp
 from zil_interpreter.runtime.interrupt_manager import InterruptManager
 
 
@@ -105,3 +105,28 @@ class TestDequeueOp:
         op.execute(["I-TEST"], evaluator)
 
         assert not manager.has_interrupt("I-TEST")
+
+
+class TestIntOp:
+    """Tests for INT operation."""
+
+    def test_int_name(self):
+        op = IntOp()
+        assert op.name == "INT"
+
+    def test_int_returns_interrupt_ref(self):
+        manager = InterruptManager()
+        manager.queue("I-TEST", "TEST-FCN", 10)
+
+        op = IntOp()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.interrupt_manager = manager
+            def evaluate(self, arg):
+                return arg
+
+        evaluator = MockEvaluator()
+        result = op.execute(["I-TEST"], evaluator)
+
+        assert result == "I-TEST"

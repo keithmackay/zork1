@@ -74,3 +74,21 @@ class DequeueOp(Operation):
         if hasattr(evaluator, 'interrupt_manager'):
             evaluator.interrupt_manager.dequeue(int_name)
         return True
+
+
+class IntOp(Operation):
+    """INT - get interrupt reference.
+
+    Usage: <INT interrupt-name>
+    Returns the interrupt name/reference.
+    """
+
+    @property
+    def name(self) -> str:
+        return "INT"
+
+    def execute(self, args: List[Any], evaluator: Any) -> Any:
+        if not args:
+            return None
+        int_name = evaluator.evaluate(args[0])
+        return int_name
