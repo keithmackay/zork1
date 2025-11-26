@@ -45,3 +45,40 @@ class TestZorkFileParsing:
         header = '\n'.join(lines[:11])  # Lines 1-11: 2 header strings + first OBJECT + blank line
         tree = parser.parse(header)
         assert tree is not None
+
+    @pytest.mark.parametrize("filename", [
+        "zork1.zil",
+        "gmacros.zil",
+        "gsyntax.zil",
+        "gparser.zil",
+        "gverbs.zil",
+        "gglobals.zil",
+        "gmain.zil",
+        "gclock.zil",
+        "1dungeon.zil",
+        "1actions.zil",
+    ])
+    def test_parse_all_zork_files(self, parser, zork_dir, filename):
+        """Attempt to parse all Zork I files completely."""
+        filepath = zork_dir / filename
+        if not filepath.exists():
+            pytest.skip(f"zork1/{filename} not found at {filepath}")
+
+        content = filepath.read_text()
+
+        try:
+            tree = parser.parse(content)
+            assert tree is not None
+            print(f"\n✓ {filename} parsed successfully ({len(content)} bytes)")
+        except Exception as e:
+            # Log detailed error information for debugging
+            error_msg = str(e)
+            print(f"\n✗ {filename} failed to parse:")
+            print(f"  Error: {error_msg[:200]}")
+
+            # Extract line number if available
+            if "line" in error_msg.lower():
+                print(f"  Full error: {error_msg}")
+
+            # Re-raise to mark test as failed
+            pytest.fail(f"{filename} parsing failed: {error_msg[:500]}")

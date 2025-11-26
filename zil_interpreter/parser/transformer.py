@@ -56,9 +56,14 @@ class ZILTransformer(Transformer):
         """Transform global variable reference (,VAR)."""
         return GlobalRef(str(items[0]).upper())
 
-    def quoted_atom(self, items: List[Token]) -> QuotedAtom:
-        """Transform quoted atom ('ATOM)."""
-        return QuotedAtom(str(items[0]).upper())
+    def quoted_expr(self, items: List[Any]) -> Any:
+        """Transform quoted expression ('expr)."""
+        # If the quoted thing is an atom, wrap in QuotedAtom
+        # Otherwise, just return the quoted expression
+        if isinstance(items[0], Atom):
+            return QuotedAtom(items[0].value)
+        # For forms and other expressions, return as-is (will handle in later chunks)
+        return items[0]
 
     def splice(self, items: List[Any]) -> Splice:
         """Transform splice expression (!<form>)."""
@@ -75,5 +80,9 @@ class ZILTransformer(Transformer):
         return HashExpr(hash_type, values)
 
     def char_literal(self, items: List[Token]) -> CharLiteral:
-        """Transform character literal (!\\X)."""
-        return CharLiteral(str(items[0]))
+        """Transform character literal (\\X or !\\X)."""
+        # Extract the character after the backslash
+        # Handles both \X and !\X forms
+        literal = str(items[0])
+        char = literal[-1]  # Last character after backslash
+        return CharLiteral(char)

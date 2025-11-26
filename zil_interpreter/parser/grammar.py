@@ -9,10 +9,9 @@ ZIL_GRAMMAR = r"""
               | splice
               | hash_expr
               | char_literal
+              | quoted_expr
               | local_ref
               | global_ref
-              | quoted_form
-              | quoted_atom
               | atom
               | string
               | number
@@ -21,24 +20,27 @@ ZIL_GRAMMAR = r"""
     percent_eval: "%" form
     list: "(" expression* ")"
     splice: "!" form
+          | "!" local_ref
+          | "!" global_ref
     hash_expr: "#" ATOM expression*
-    char_literal: "!\\" /./
+    char_literal: /[!]?\\./
 
     local_ref: "." ATOM
     global_ref: "," ATOM
-    quoted_form: "'" form
-    quoted_atom: "'" ATOM
+    quoted_expr: "'" expression
     atom: OPERATOR | ATOM
-    string: MULTILINE_STRING
+    string: ESCAPED_STRING
     number: SIGNED_NUMBER
 
     OPERATOR.2: /[=<>+\-*\/]+\?/
-    ATOM: /[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=]/
-    MULTILINE_STRING: /"[^"]*"/s
+    ATOM: /\$?[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=]/
+    ESCAPED_STRING: /"([^"\\]|\\.)*"/s
     COMMENT: /;[^\n]*/
+    FORMFEED: /\^L/
 
     %import common.SIGNED_NUMBER
     %import common.WS
     %ignore WS
     %ignore COMMENT
+    %ignore FORMFEED
 """
