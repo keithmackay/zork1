@@ -297,6 +297,71 @@ class TestPrintiOperation:
         assert evaluator.output.get_output() == "Alice"
 
 
+class TestYesQuestionOp:
+    """Tests for YES? Y/N prompt operation."""
+
+    def test_yes_question_name(self):
+        """Operation has correct name."""
+        from zil_interpreter.engine.operations.io import YesQuestionOp
+        op = YesQuestionOp()
+        assert op.name == "YES?"
+
+    def test_yes_question_returns_true_for_y(self):
+        """YES? returns true for 'y' input."""
+        from zil_interpreter.engine.operations.io import YesQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        # Mock get_input method to return 'y'
+        evaluator.get_input = lambda: "y"
+
+        op = YesQuestionOp()
+        result = op.execute([], evaluator)
+        assert result is True
+
+    def test_yes_question_returns_false_for_n(self):
+        """YES? returns false for 'n' input."""
+        from zil_interpreter.engine.operations.io import YesQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        # Mock get_input method to return 'n'
+        evaluator.get_input = lambda: "n"
+
+        op = YesQuestionOp()
+        result = op.execute([], evaluator)
+        assert result is False
+
+    def test_yes_question_case_insensitive(self):
+        """YES? is case-insensitive."""
+        from zil_interpreter.engine.operations.io import YesQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        # Test uppercase Y
+        evaluator.get_input = lambda: "Y"
+        op = YesQuestionOp()
+        assert op.execute([], evaluator) is True
+
+        # Test uppercase N
+        evaluator.get_input = lambda: "N"
+        assert op.execute([], evaluator) is False
+
+    def test_yes_question_defaults_true_non_interactive(self):
+        """YES? defaults to True when no input available."""
+        from zil_interpreter.engine.operations.io import YesQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        # No get_input method - non-interactive mode
+        op = YesQuestionOp()
+        result = op.execute([], evaluator)
+        assert result is True
+
+        # Verify prompt was written
+        assert "?" in evaluator.output.get_output()
+
+
 class TestMixedPrintOperations:
     """Tests combining different print operations."""
 

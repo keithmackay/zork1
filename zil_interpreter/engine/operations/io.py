@@ -126,3 +126,29 @@ class PrintiOperation(Operation):
             evaluator.output.write(str(value))
 
         return True
+
+
+class YesQuestionOp(Operation):
+    """YES? - prompt for Y/N answer.
+
+    Usage: <YES?>
+
+    Prompts user and returns true for Y, false for N.
+    In non-interactive mode, defaults to True.
+    """
+
+    @property
+    def name(self) -> str:
+        return "YES?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Prompt for yes/no and return boolean."""
+        # In a real implementation, this would read input
+        # For now, check if there's an input method on evaluator
+        if hasattr(evaluator, 'get_input'):
+            response = evaluator.get_input()
+            return response.lower().startswith('y')
+
+        # Default: prompt via output and return True
+        evaluator.output.write("? ")
+        return True  # Default to yes for non-interactive
