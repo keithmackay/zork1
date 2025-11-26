@@ -8,7 +8,7 @@ from .builtin_macros import (
     expand_bset, expand_bclear, expand_bset_question,
     expand_flaming, expand_openable, expand_abs, expand_prob
 )
-from ..parser.ast_nodes import Form, Atom, Routine, Object, Global
+from ..parser.ast_nodes import Form, Atom, Routine, Object, Global, PercentEval, Number
 
 
 class MacroExpander:
@@ -54,6 +54,8 @@ class MacroExpander:
         """
         if isinstance(node, Form):
             return self._expand_form(node)
+        elif isinstance(node, PercentEval):
+            return self._expand_percent_eval(node)
         elif isinstance(node, list):
             return [self.expand(item) for item in node]
         elif isinstance(node, Routine):
@@ -120,3 +122,93 @@ class MacroExpander:
         """
         expanded_body = [self.expand(form) for form in routine.body]
         return Routine(routine.name, routine.args, expanded_body)
+
+    def _expand_percent_eval(self, node: PercentEval) -> Any:
+        """Expand and evaluate a %<...> compile-time form.
+
+        Args:
+            node: PercentEval node containing the form to evaluate
+
+        Returns:
+            Evaluated result (Number for arithmetic) or the expanded form
+        """
+        form = node.form
+
+        # If not a Form, return as-is
+        if not isinstance(form, Form):
+            return form
+
+        # Try to evaluate at compile time
+        result = self._try_compile_time_eval(form)
+        if result is not None:
+            return result
+
+        # Can't evaluate - but still expand macros inside the form
+        return self.expand(form)
+
+    def _try_compile_time_eval(self, form: Form) -> Any:
+        """Try to evaluate a form at compile time.
+
+        Args:
+            form: Form to evaluate
+
+        Returns:
+            Evaluated result or None if not evaluable
+        """
+        if not isinstance(form.operator, Atom):
+            return None
+
+        op = form.operator.value.upper()
+
+        # Evaluate arithmetic operators
+        if op in ("+", "-", "*", "/"):
+            return self._eval_arithmetic(op, form.args)
+
+        return None
+
+    def _eval_arithmetic(self, op: str, args: List) -> Any:
+        """Evaluate arithmetic operation at compile time.
+
+        Args:
+            op: Operator (+, -, *, /)
+            args: Arguments to the operation
+
+        Returns:
+            Number result or None if not all args are numbers
+        """
+        values = []
+        for arg in args:
+            # Recursively evaluate nested forms
+            if isinstance(arg, Form):
+                result = self._try_compile_time_eval(arg)
+                if result is None or not isinstance(result, Number):
+                    return None
+                values.append(result.value)
+            elif isinstance(arg, Number):
+                values.append(arg.value)
+            else:
+                return None  # Can't evaluate non-numeric args
+
+        if not values:
+            return None
+
+        if op == "+":
+            result = sum(values)
+        elif op == "-":
+            result = values[0]
+            for v in values[1:]:
+                result -= v
+        elif op == "*":
+            result = 1
+            for v in values:
+                result *= v
+        elif op == "/":
+            result = values[0]
+            for v in values[1:]:
+                if v == 0:
+                    return None  # Avoid division by zero
+                result //= v  # Integer division
+        else:
+            return None
+
+        return Number(result)

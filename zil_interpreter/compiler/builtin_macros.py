@@ -366,17 +366,23 @@ def expand_prob(args: List[Any]) -> Form:
     """Expand PROB macro.
 
     <PROB n> → <G? n <RANDOM 100>>
+    <PROB n loser> → <ZPROB n>   (when optional LOSER? arg present)
 
     Args:
-        args: List containing the probability threshold
+        args: List containing the probability threshold and optional loser flag
 
     Returns:
-        G? form comparing threshold to random number
+        G? form comparing threshold to random number, or ZPROB form
     """
-    if len(args) != 1:
-        raise ValueError(f"PROB expects 1 argument, got {len(args)}")
+    if len(args) < 1:
+        raise ValueError(f"PROB expects at least 1 argument, got {len(args)}")
 
     threshold = args[0]
+
+    # When optional LOSER? argument is present, use ZPROB routine
+    if len(args) >= 2:
+        return Form(Atom("ZPROB"), [threshold])
+
     return Form(
         Atom("G?"),
         [threshold, Form(Atom("RANDOM"), [Number(100)])]
