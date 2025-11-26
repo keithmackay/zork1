@@ -98,6 +98,15 @@ from .game_logic import (
     AccessibleOp,
     JigsUpOp,
 )
+from .system_ops import (
+    SaveOp,
+    RestoreOp,
+    RestartOp,
+    VerifyOp,
+    PrincOp,
+    DirinOp,
+    DiroutOp,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -239,6 +248,15 @@ def create_default_registry() -> OperationRegistry:
     registry.register(LitOp())
     registry.register(AccessibleOp())
     registry.register(JigsUpOp())
+
+    # System Operations
+    registry.register(SaveOp())
+    registry.register(RestoreOp())
+    registry.register(RestartOp())
+    registry.register(VerifyOp())
+    registry.register(PrincOp())
+    registry.register(DirinOp())
+    registry.register(DiroutOp())
 
     return registry
 

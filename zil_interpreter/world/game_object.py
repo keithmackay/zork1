@@ -85,3 +85,36 @@ class GameObject:
 
     def __repr__(self) -> str:
         return f"GameObject({self.name})"
+
+    def serialize(self) -> Dict[str, Any]:
+        """Serialize object state for saving.
+
+        Returns:
+            Dict containing object's mutable state
+        """
+        return {
+            "parent": self._parent.name if self._parent else None,
+            "properties": self.properties.copy(),
+            "flags": self.flags.value,
+        }
+
+    def deserialize(self, data: Dict[str, Any]) -> None:
+        """Restore object state from saved data.
+
+        Note: Parent relationships must be restored after all objects loaded.
+
+        Args:
+            data: Dict containing saved object state
+        """
+        self.properties = data.get("properties", {})
+        self.flags = ObjectFlag(data.get("flags", 0))
+
+    def reset(self) -> None:
+        """Reset object to initial state.
+
+        Clears mutable state while preserving definition.
+        """
+        # Clear flags to initial state
+        self.flags = ObjectFlag(0)
+        # Properties are typically set during world load
+        self.properties = {}

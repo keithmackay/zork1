@@ -145,3 +145,70 @@ class WorldState:
             True if table exists, False otherwise
         """
         return name in self.tables
+
+    def serialize(self) -> Dict[str, Any]:
+        """Serialize world state for saving.
+
+        Returns:
+            Dict containing all world state for JSON serialization
+        """
+        return {
+            "globals": {k: v for k, v in self.globals.items()
+                        if not callable(v)},  # Skip function values
+            "objects": {
+                name: obj.serialize()
+                for name, obj in self.objects.items()
+            },
+            "tables": {
+                name: {"name": table.name, "data": table.data}
+                for name, table in self.tables.items()
+            },
+            "current_room": self._current_room.name if self._current_room else None
+        }
+
+    def deserialize(self, data: Dict[str, Any]) -> None:
+        """Restore world state from saved data.
+
+        Args:
+            data: Dict containing saved world state
+        """
+        # Restore globals
+        self.globals.update(data.get("globals", {}))
+
+        # Restore objects
+        for name, obj_data in data.get("objects", {}).items():
+            if name in self.objects:
+                self.objects[name].deserialize(obj_data)
+
+        # Restore tables
+        for name, table_data in data.get("tables", {}).items():
+            if name in self.tables:
+                self.tables[name].data = table_data.get("data", [])
+
+        # Restore current room
+        room_name = data.get("current_room")
+        if room_name and room_name in self.objects:
+            self._current_room = self.objects[room_name]
+
+    def reset(self) -> None:
+        """Reset world to initial state.
+
+        This clears all mutable state while preserving object definitions.
+        """
+        # Reset parser state
+        self.globals["PRSA"] = None
+        self.globals["PRSO"] = None
+        self.globals["PRSI"] = None
+
+        # Reset score and moves if they exist
+        if "SCORE" in self.globals:
+            self.globals["SCORE"] = 0
+        if "MOVES" in self.globals:
+            self.globals["MOVES"] = 0
+
+        # Reset objects to initial state
+        for obj in self.objects.values():
+            obj.reset()
+
+        # Clear current room (will be set by GO routine)
+        self._current_room = None
