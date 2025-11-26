@@ -104,3 +104,19 @@ class HashExpr(ASTNode):
 class CharLiteral(ASTNode):
     """Character literal (!\\X)."""
     char: str
+
+
+@dataclass
+class MacroParam:
+    """Macro parameter definition."""
+    name: str
+    type: str = "required"  # "required", "optional", "args", "aux"
+    quoted: bool = False
+
+
+@dataclass
+class MacroDef(ASTNode):
+    """DEFMAC macro definition."""
+    name: str
+    params: List['MacroParam'] = field(default_factory=list)
+    body: Any = None
