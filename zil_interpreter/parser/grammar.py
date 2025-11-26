@@ -5,6 +5,8 @@ ZIL_GRAMMAR = r"""
 
     expression: form
               | list
+              | local_ref
+              | global_ref
               | atom
               | string
               | number
@@ -12,6 +14,8 @@ ZIL_GRAMMAR = r"""
     form: "<" atom? expression* ">"
     list: "(" expression* ")"
 
+    local_ref: "." ATOM
+    global_ref: "," ATOM
     atom: ATOM
     string: MULTILINE_STRING
     number: SIGNED_NUMBER
