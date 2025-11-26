@@ -445,6 +445,62 @@ class TestLexOp:
         assert result == []
 
 
+class TestWordQuestionOp:
+    """Tests for WORD? operation."""
+
+    def test_word_question_name(self):
+        """Operation has correct name."""
+        from zil_interpreter.engine.operations.io import WordQuestionOp
+        op = WordQuestionOp()
+        assert op.name == "WORD?"
+
+    def test_word_question_checks_type(self):
+        """WORD? checks if word has certain property."""
+        from zil_interpreter.engine.operations.io import WordQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = WordQuestionOp()
+        # WORD? checks if word has certain property
+        result = op.execute(["TAKE", "VERB"], evaluator)
+        assert result in [True, False]
+
+    def test_word_question_verb_type(self):
+        """WORD? returns True for known verbs."""
+        from zil_interpreter.engine.operations.io import WordQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = WordQuestionOp()
+        # Test known verbs
+        assert op.execute(["TAKE", "VERB"], evaluator) is True
+        assert op.execute(["GET", "VERB"], evaluator) is True
+        assert op.execute(["LOOK", "VERB"], evaluator) is True
+
+    def test_word_question_non_verb(self):
+        """WORD? returns False for non-verbs."""
+        from zil_interpreter.engine.operations.io import WordQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = WordQuestionOp()
+        # Test non-verb words
+        assert op.execute(["SWORD", "VERB"], evaluator) is False
+        assert op.execute(["LAMP", "VERB"], evaluator) is False
+
+    def test_word_question_case_insensitive(self):
+        """WORD? is case-insensitive."""
+        from zil_interpreter.engine.operations.io import WordQuestionOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = WordQuestionOp()
+        # Test case variations
+        assert op.execute(["take", "VERB"], evaluator) is True
+        assert op.execute(["Take", "VERB"], evaluator) is True
+        assert op.execute(["TAKE", "VERB"], evaluator) is True
+
+
 class TestMixedPrintOperations:
     """Tests combining different print operations."""
 

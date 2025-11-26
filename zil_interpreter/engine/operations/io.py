@@ -197,3 +197,35 @@ class LexOp(Operation):
         if isinstance(input_str, str):
             return input_str.split()
         return []
+
+
+class WordQuestionOp(Operation):
+    """WORD? - check word type/property.
+
+    Usage: <WORD? word type>
+
+    Returns true if word has specified type.
+    In the simplified implementation, checks if the word is in a predefined
+    set of verb words when type is "VERB".
+    """
+
+    @property
+    def name(self) -> str:
+        return "WORD?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Check if word has specified type."""
+        if len(args) < 2:
+            return False
+
+        word = evaluator.evaluate(args[0])
+        word_type = evaluator.evaluate(args[1])
+
+        # Simplified: check if word matches common types
+        # In full implementation, would check vocabulary table
+        verb_words = {"TAKE", "GET", "DROP", "LOOK", "OPEN", "CLOSE", "GO"}
+
+        if word_type == "VERB":
+            return str(word).upper() in verb_words
+
+        return False
