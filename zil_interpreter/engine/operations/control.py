@@ -196,3 +196,19 @@ class DoOperation(Operation):
                 evaluator.evaluate(expr)
 
         return None
+
+
+class QuitOperation(Operation):
+    """QUIT - exit the game.
+
+    Usage: <QUIT>
+    Sets QUIT flag to signal game loop to exit.
+    """
+
+    @property
+    def name(self) -> str:
+        return "QUIT"
+
+    def execute(self, args: list[Any], evaluator: Any) -> Any:
+        evaluator.world.set_global("QUIT", True)
+        return True

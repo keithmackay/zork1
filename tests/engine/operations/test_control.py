@@ -4,7 +4,7 @@ import pytest
 from zil_interpreter.engine.evaluator import Evaluator, ReturnValue
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.parser.ast_nodes import Form, Atom, Number
-from zil_interpreter.engine.operations.control import ProgOperation, DoOperation
+from zil_interpreter.engine.operations.control import ProgOperation, DoOperation, QuitOperation
 from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
@@ -212,3 +212,30 @@ class TestDoOperation:
         evaluator = MockEvaluator()
         result = op.execute(["I", 1, 3, "body"], evaluator)
         assert result is None
+
+
+class TestQuitOperation:
+    """Tests for QUIT operation."""
+
+    def test_quit_name(self):
+        """Operation has correct name."""
+        op = QuitOperation()
+        assert op.name == "QUIT"
+
+    def test_quit_sets_quit_flag(self):
+        """QUIT sets QUIT global flag."""
+        world = WorldState()
+
+        op = QuitOperation()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+
+            def evaluate(self, arg):
+                return arg
+
+        evaluator = MockEvaluator()
+        op.execute([], evaluator)
+
+        assert world.get_global("QUIT") is True
