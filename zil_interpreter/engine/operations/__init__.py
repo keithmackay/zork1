@@ -20,6 +20,9 @@ from .control import (
     ReturnOperation,
     RepeatOperation,
     MapfOperation,
+    ProgOperation,
+    DoOperation,
+    QuitOperation,
 )
 from .arithmetic import (
     AddOperation,
@@ -28,7 +31,7 @@ from .arithmetic import (
     DivideOperation,
     ModOperation,
 )
-from .io import TellOperation, PrintnOperation, PrintOperation, PrintiOperation
+from .io import TellOperation, PrintnOperation, PrintOperation, PrintiOperation, YesQuestionOp
 from .object_ops import (
     MoveOperation,
     FsetOperation,
@@ -38,6 +41,7 @@ from .object_ops import (
     LocOperation,
     RemoveOperation,
     HeldOperation,
+    MapContentsOperation,
 )
 from .variables import SetOperation, SetgOperation
 from .logic import AndOperation, OrOperation, NotOperation
@@ -91,6 +95,7 @@ from .game_logic import (
     MetaLocOp,
     LitOp,
     AccessibleOp,
+    JigsUpOp,
 )
 
 
@@ -132,6 +137,9 @@ def create_default_registry() -> OperationRegistry:
     registry.register(ReturnOperation())
     registry.register(RepeatOperation())
     registry.register(MapfOperation())
+    registry.register(ProgOperation())
+    registry.register(DoOperation())
+    registry.register(QuitOperation())
 
     # Arithmetic
     registry.register(AddOperation())
@@ -145,6 +153,7 @@ def create_default_registry() -> OperationRegistry:
     registry.register(PrintnOperation())
     registry.register(PrintOperation())
     registry.register(PrintiOperation())
+    registry.register(YesQuestionOp())
 
     # Object Operations
     registry.register(MoveOperation())
@@ -155,6 +164,7 @@ def create_default_registry() -> OperationRegistry:
     registry.register(LocOperation())
     registry.register(RemoveOperation())
     registry.register(HeldOperation())
+    registry.register(MapContentsOperation())
 
     # Variables
     registry.register(SetOperation())
@@ -217,6 +227,7 @@ def create_default_registry() -> OperationRegistry:
     registry.register(MetaLocOp())
     registry.register(LitOp())
     registry.register(AccessibleOp())
+    registry.register(JigsUpOp())
 
     return registry
 

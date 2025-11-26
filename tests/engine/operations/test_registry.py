@@ -45,3 +45,14 @@ def test_game_logic_operations_registered():
     assert registry.get("META-LOC") is not None
     assert registry.get("LIT?") is not None
     assert registry.get("ACCESSIBLE?") is not None
+
+def test_batch5_operations_registered():
+    """Batch 5 operations are registered."""
+    from zil_interpreter.engine.operations import create_default_registry
+    registry = create_default_registry()
+    assert registry.get("PROG") is not None
+    assert registry.get("DO") is not None
+    assert registry.get("MAP-CONTENTS") is not None
+    assert registry.get("JIGS-UP") is not None
+    assert registry.get("YES?") is not None
+    assert registry.get("QUIT") is not None
