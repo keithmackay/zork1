@@ -4,7 +4,7 @@ import pytest
 from zil_interpreter.engine.evaluator import Evaluator, ReturnValue
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.parser.ast_nodes import Form, Atom, Number
-from zil_interpreter.engine.operations.control import ProgOperation
+from zil_interpreter.engine.operations.control import ProgOperation, DoOperation
 from zil_interpreter.runtime.output_buffer import OutputBuffer
 
 
@@ -164,3 +164,51 @@ class TestProgOperation:
         evaluator = MockEvaluator()
         result = op.execute([[], 5], evaluator)
         assert result == 10
+
+
+class TestDoOperation:
+    """Tests for DO counted loop operation."""
+
+    def test_do_name(self):
+        """Operation has correct name."""
+        op = DoOperation()
+        assert op.name == "DO"
+
+    def test_do_iterates_count(self):
+        """DO iterates specified number of times."""
+        op = DoOperation()
+        iterations = []
+        world = WorldState()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+
+            def evaluate(self, arg):
+                if isinstance(arg, int):
+                    return arg
+                # Track each iteration
+                iterations.append(1)
+                return None
+
+        evaluator = MockEvaluator()
+        # <DO (I 1 5) body> - iterate I from 1 to 5
+        # Simplified: args = [var, start, end, body...]
+        op.execute(["I", 1, 5, "body"], evaluator)
+        assert len(iterations) == 5
+
+    def test_do_returns_none(self):
+        """DO returns None on completion."""
+        op = DoOperation()
+        world = WorldState()
+
+        class MockEvaluator:
+            def __init__(self):
+                self.world = world
+
+            def evaluate(self, arg):
+                return arg
+
+        evaluator = MockEvaluator()
+        result = op.execute(["I", 1, 3, "body"], evaluator)
+        assert result is None

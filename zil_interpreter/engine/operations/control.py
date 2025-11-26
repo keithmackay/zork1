@@ -165,3 +165,34 @@ class ProgOperation(Operation):
             result = evaluator.evaluate(expr)
 
         return result
+
+
+class DoOperation(Operation):
+    """DO - counted iteration loop.
+
+    Usage: <DO (var start end) body...>
+    Iterates var from start to end (inclusive), executing body each time.
+    """
+
+    @property
+    def name(self) -> str:
+        return "DO"
+
+    def execute(self, args: list[Any], evaluator: Any) -> Any:
+        if len(args) < 3:
+            return None
+
+        var_name = args[0]
+        start = evaluator.evaluate(args[1])
+        end = evaluator.evaluate(args[2])
+        body = args[3:] if len(args) > 3 else []
+
+        # Iterate from start to end inclusive
+        for i in range(start, end + 1):
+            # Set loop variable
+            evaluator.world.set_global(str(var_name), i)
+            # Execute body
+            for expr in body:
+                evaluator.evaluate(expr)
+
+        return None
