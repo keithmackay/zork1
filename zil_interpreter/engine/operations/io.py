@@ -152,3 +152,48 @@ class YesQuestionOp(Operation):
         # Default: prompt via output and return True
         evaluator.output.write("? ")
         return True  # Default to yes for non-interactive
+
+
+class ReadOp(Operation):
+    """READ - read player input.
+
+    Usage: <READ buffer lexv>
+
+    Reads input from evaluator.input_buffer if available.
+    Returns the input string or empty string if none available.
+    """
+
+    @property
+    def name(self) -> str:
+        return "READ"
+
+    def execute(self, args: list, evaluator) -> str:
+        """Read input from evaluator's input buffer."""
+        # Get input from evaluator if available
+        if hasattr(evaluator, 'input_buffer'):
+            return evaluator.input_buffer
+        return ""
+
+
+class LexOp(Operation):
+    """LEX - tokenize input string.
+
+    Usage: <LEX input-buffer lexv-table>
+
+    Tokenizes input string into words by splitting on whitespace.
+    Returns a list of words.
+    """
+
+    @property
+    def name(self) -> str:
+        return "LEX"
+
+    def execute(self, args: list, evaluator) -> list:
+        """Tokenize input string into words."""
+        if not args:
+            return []
+
+        input_str = evaluator.evaluate(args[0])
+        if isinstance(input_str, str):
+            return input_str.split()
+        return []

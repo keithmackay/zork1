@@ -362,6 +362,89 @@ class TestYesQuestionOp:
         assert "?" in evaluator.output.get_output()
 
 
+class TestReadOp:
+    """Tests for READ operation."""
+
+    def test_read_name(self):
+        """Operation has correct name."""
+        from zil_interpreter.engine.operations.io import ReadOp
+        op = ReadOp()
+        assert op.name == "READ"
+
+    def test_read_returns_input(self):
+        """READ returns input from input_buffer."""
+        from zil_interpreter.engine.operations.io import ReadOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        # Set input buffer on evaluator
+        evaluator.input_buffer = "look around"
+
+        op = ReadOp()
+        result = op.execute([], evaluator)
+        assert result == "look around"
+
+    def test_read_returns_empty_when_no_buffer(self):
+        """READ returns empty string when no input_buffer."""
+        from zil_interpreter.engine.operations.io import ReadOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = ReadOp()
+        result = op.execute([], evaluator)
+        assert result == ""
+
+
+class TestLexOp:
+    """Tests for LEX operation."""
+
+    def test_lex_name(self):
+        """Operation has correct name."""
+        from zil_interpreter.engine.operations.io import LexOp
+        op = LexOp()
+        assert op.name == "LEX"
+
+    def test_lex_tokenizes_input(self):
+        """LEX tokenizes input string into words."""
+        from zil_interpreter.engine.operations.io import LexOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = LexOp()
+        result = op.execute(["look around"], evaluator)
+        assert result == ["look", "around"]
+
+    def test_lex_handles_multiple_spaces(self):
+        """LEX handles multiple spaces between words."""
+        from zil_interpreter.engine.operations.io import LexOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = LexOp()
+        result = op.execute(["take  the   sword"], evaluator)
+        assert result == ["take", "the", "sword"]
+
+    def test_lex_empty_string(self):
+        """LEX returns empty list for empty string."""
+        from zil_interpreter.engine.operations.io import LexOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = LexOp()
+        result = op.execute([""], evaluator)
+        assert result == []
+
+    def test_lex_no_args(self):
+        """LEX returns empty list when no args provided."""
+        from zil_interpreter.engine.operations.io import LexOp
+        world = WorldState()
+        evaluator = Evaluator(world)
+
+        op = LexOp()
+        result = op.execute([], evaluator)
+        assert result == []
+
+
 class TestMixedPrintOperations:
     """Tests combining different print operations."""
 

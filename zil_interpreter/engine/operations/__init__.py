@@ -31,7 +31,7 @@ from .arithmetic import (
     DivideOperation,
     ModOperation,
 )
-from .io import TellOperation, PrintnOperation, PrintOperation, PrintiOperation, YesQuestionOp
+from .io import TellOperation, PrintnOperation, PrintOperation, PrintiOperation, YesQuestionOp, ReadOp, LexOp
 from .object_ops import (
     MoveOperation,
     FsetOperation,
@@ -154,6 +154,8 @@ def create_default_registry() -> OperationRegistry:
     registry.register(PrintOperation())
     registry.register(PrintiOperation())
     registry.register(YesQuestionOp())
+    registry.register(ReadOp())
+    registry.register(LexOp())
 
     # Object Operations
     registry.register(MoveOperation())
