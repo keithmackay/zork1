@@ -5,7 +5,7 @@ from lark import Transformer, Token
 from zil_interpreter.parser.ast_nodes import (
     Form, Atom, String, Number, ASTNode, InsertFile,
     LocalRef, GlobalRef, QuotedAtom, Splice, PercentEval, HashExpr, CharLiteral,
-    Routine, Object, Global
+    Routine, Object, Global, MacroDef, MacroParam
 )
 
 
@@ -35,7 +35,7 @@ class ZILTransformer(Transformer):
         """Transform list (parenthesized expressions)."""
         return [item for item in items if item is not None]
 
-    def form(self, items: List[Any]) -> Form | InsertFile | Routine | Object | Global:
+    def form(self, items: List[Any]) -> Form | InsertFile | Routine | Object | Global | MacroDef:
         """Transform form <operator args...>"""
         # Handle empty form <> (represents false/nil in ZIL)
         if not items:
@@ -89,6 +89,25 @@ class ZILTransformer(Transformer):
                     value = items[2] if len(items) > 2 else None
                     return Global(name=name, value=value)
 
+            # DEFMAC definition: <DEFMAC name (params...) body...>
+            if op_name == "DEFMAC":
+                if len(items) >= 2 and isinstance(items[1], Atom):
+                    name = items[1].value
+                    params = []
+                    body = None
+
+                    if len(items) >= 3:
+                        # Parse parameter list
+                        if isinstance(items[2], list):
+                            params = self._parse_macro_params(items[2])
+                            # Body is everything after the parameter list
+                            body = items[3] if len(items) > 3 else None
+                        else:
+                            # No parameter list, body starts immediately
+                            body = items[2]
+
+                    return MacroDef(name=name, params=params, body=body)
+
         # Default: generic form
         operator = items[0]
         args = items[1:] if len(items) > 1 else []
@@ -140,3 +159,56 @@ class ZILTransformer(Transformer):
         literal = str(items[0])
         char = literal[-1]  # Last character after backslash
         return CharLiteral(char)
+
+    def _parse_macro_params(self, param_list: List[Any]) -> List[MacroParam]:
+        """Parse macro parameter list.
+
+        Handles:
+        - 'PARAM - quoted parameter
+        - PARAM - unquoted parameter
+        - "ARGS" - captures remaining args
+        - "OPTIONAL" - marks following params as optional
+        - "AUX" - marks following params as aux variables
+        """
+        params = []
+        current_type = "required"
+
+        for item in param_list:
+            # Check for special string markers
+            if isinstance(item, String):
+                marker = item.value.upper()
+                if marker == "ARGS":
+                    # "ARGS" is typically followed by the param name
+                    # We'll mark the next param as args type
+                    current_type = "args"
+                elif marker == "OPTIONAL":
+                    current_type = "optional"
+                elif marker == "AUX":
+                    current_type = "aux"
+                continue
+
+            # Handle quoted atoms ('PARAM)
+            if isinstance(item, QuotedAtom):
+                params.append(MacroParam(
+                    name=item.name,
+                    type=current_type,
+                    quoted=True
+                ))
+                # Reset type if it was "args" (single param)
+                if current_type == "args":
+                    current_type = "required"
+                continue
+
+            # Handle regular atoms (PARAM)
+            if isinstance(item, Atom):
+                params.append(MacroParam(
+                    name=item.value,
+                    type=current_type,
+                    quoted=False
+                ))
+                # Reset type if it was "args" (single param)
+                if current_type == "args":
+                    current_type = "required"
+                continue
+
+        return params
