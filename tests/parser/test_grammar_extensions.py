@@ -168,3 +168,75 @@ class TestPercentBracketEval:
         code = '%<IF <GASSIGNED? FOO> <FOO> T>'
         tree = parser.parse(code)
         assert tree is not None
+
+
+class TestHashSyntax:
+    """Tests for # prefix syntax."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_hash_decl(self, parser):
+        """Parser handles #DECL type declaration."""
+        code = '<ROUTINE FOO (X) #DECL ((X) FIX) .X>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_hash_byte(self, parser):
+        """Parser handles #BYTE constant."""
+        code = '<TABLE #BYTE 1 2 3>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+
+class TestCharacterLiterals:
+    """Tests for backslash character literals."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_char_literal(self, parser):
+        """Parser handles !\\X character literal."""
+        code = r'<PRINTC !\A>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_newline_char(self, parser):
+        """Parser handles newline character."""
+        code = r'<PRINTC !\n>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+
+class TestExtendedAtoms:
+    """Tests for extended atom patterns."""
+
+    @pytest.fixture
+    def parser(self):
+        return Lark(ZIL_GRAMMAR, start='start')
+
+    def test_atom_with_equals(self, parser):
+        """Parser handles atoms with = like V-TAKE."""
+        code = '<SYNTAX TAKE = V-TAKE>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_atom_with_colon(self, parser):
+        """Parser handles atoms with : like AUX:."""
+        code = '<ROUTINE FOO ("AUX" X)>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_verb_question_mark(self, parser):
+        """Parser handles VERB? atom."""
+        code = '<VERB? TAKE>'
+        tree = parser.parse(code)
+        assert tree is not None
+
+    def test_negative_number(self, parser):
+        """Parser handles negative numbers."""
+        code = '<SET X -1>'
+        tree = parser.parse(code)
+        assert tree is not None

@@ -7,6 +7,8 @@ ZIL_GRAMMAR = r"""
               | percent_eval
               | list
               | splice
+              | hash_expr
+              | char_literal
               | local_ref
               | global_ref
               | quoted_atom
@@ -18,6 +20,8 @@ ZIL_GRAMMAR = r"""
     percent_eval: "%" form
     list: "(" expression* ")"
     splice: "!" form
+    hash_expr: "#" ATOM expression*
+    char_literal: "!\\" /./
 
     local_ref: "." ATOM
     global_ref: "," ATOM
@@ -26,7 +30,7 @@ ZIL_GRAMMAR = r"""
     string: MULTILINE_STRING
     number: SIGNED_NUMBER
 
-    ATOM: /[A-Z0-9][A-Z0-9\-?!+*\/=]*/i | /[+\-*\/]/
+    ATOM: /[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=]/
     MULTILINE_STRING: /"[^"]*"/s
     COMMENT: /;[^\n]*/
 
