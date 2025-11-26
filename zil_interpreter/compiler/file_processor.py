@@ -21,14 +21,50 @@ class FileProcessor:
         self.transformer = ZILTransformer()
         self.loaded_files: Set[str] = set()
 
+    def _resolve_path(self, filename: str) -> Path:
+        """Resolve filename to actual path.
+
+        Attempts multiple resolution strategies:
+        1. Exact match (including extension if provided)
+        2. With .zil extension added
+        3. With lowercase .zil extension
+        4. Case-insensitive search through directory
+
+        Args:
+            filename: Filename to resolve (with or without extension)
+
+        Returns:
+            Path object pointing to the resolved file
+
+        Raises:
+            FileNotFoundError: If file cannot be found
+        """
+        # Try exact match
+        path = self.base_path / filename
+        if path.exists():
+            return path
+
+        # Try with .zil extension
+        path = self.base_path / f"{filename}.zil"
+        if path.exists():
+            return path
+
+        # Try lowercase
+        path = self.base_path / f"{filename.lower()}.zil"
+        if path.exists():
+            return path
+
+        # Case-insensitive search
+        normalized_target = self._normalize_filename(filename)
+        for p in self.base_path.iterdir():
+            if p.is_file() and p.name.upper() == normalized_target:
+                return p
+
+        raise FileNotFoundError(f"ZIL file not found: {filename}")
+
     def load_file(self, filename: str) -> List:
         """Load and parse a single ZIL file."""
-        filepath = self.base_path / filename
-        if not filepath.exists():
-            # Try with .zil extension
-            filepath = self.base_path / f"{filename.lower()}.zil"
-        if not filepath.exists():
-            raise FileNotFoundError(f"ZIL file not found: {filename}")
+        filepath = self._resolve_path(filename)
 
         content = filepath.read_text()
         tree = self.parser.parse(content)
