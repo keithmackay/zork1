@@ -2,6 +2,12 @@
 from typing import Any, List
 from .macro_registry import MacroRegistry
 from .tell_macro import expand_tell
+from .builtin_macros import (
+    expand_enable, expand_disable, expand_rfatal,
+    expand_verb, expand_prso, expand_prsi, expand_room,
+    expand_bset, expand_bclear, expand_bset_question,
+    expand_flaming, expand_openable, expand_abs, expand_prob
+)
 from ..parser.ast_nodes import Form, Atom, Routine, Object, Global
 
 
@@ -17,6 +23,24 @@ class MacroExpander:
         self.registry = registry
         self._builtin_expanders = {
             "TELL": expand_tell,
+            # Task 3.7: Simple macros
+            "ENABLE": expand_enable,
+            "DISABLE": expand_disable,
+            "RFATAL": expand_rfatal,
+            # Task 3.8: Parser macros
+            "VERB?": expand_verb,
+            "PRSO?": expand_prso,
+            "PRSI?": expand_prsi,
+            "ROOM?": expand_room,
+            # Task 3.9: Flag macros
+            "BSET": expand_bset,
+            "BCLEAR": expand_bclear,
+            "BSET?": expand_bset_question,
+            # Task 3.10: Conditional macros
+            "FLAMING?": expand_flaming,
+            "OPENABLE?": expand_openable,
+            "ABS": expand_abs,
+            "PROB": expand_prob,
         }
 
     def expand(self, node: Any) -> Any:
