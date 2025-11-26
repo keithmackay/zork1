@@ -2,7 +2,7 @@
 import pytest
 from pathlib import Path
 from zil_interpreter.compiler.file_processor import FileProcessor
-from zil_interpreter.parser.ast_nodes import Form, Atom
+from zil_interpreter.parser.ast_nodes import Form, Atom, Global
 
 
 class TestRecursiveLoading:
@@ -13,7 +13,11 @@ class TestRecursiveLoading:
         return FileProcessor(base_path=tmp_path)
 
     def _get_global_name(self, node) -> str:
-        """Extract GLOBAL name from Form node."""
+        """Extract GLOBAL name from Form or Global node."""
+        # Handle new Global AST node
+        if isinstance(node, Global):
+            return node.name
+        # Handle old-style Form node (for backward compatibility)
         if isinstance(node, Form) and isinstance(node.operator, Atom):
             if node.operator.value == 'GLOBAL' and node.args and isinstance(node.args[0], Atom):
                 return node.args[0].value

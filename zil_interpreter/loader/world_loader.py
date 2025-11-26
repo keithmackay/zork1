@@ -64,15 +64,28 @@ class WorldLoader:
         # Set properties from AST
         for prop_name, prop_value in obj_node.properties.items():
             if prop_name == "DESC":
-                game_obj.description = self._eval_value(prop_value)
+                # DESC property value is a list, extract first element
+                if isinstance(prop_value, list) and len(prop_value) > 0:
+                    game_obj.description = self._eval_value(prop_value[0])
+                else:
+                    game_obj.description = self._eval_value(prop_value)
             elif prop_name == "SYNONYM":
-                # Handle synonym list
+                # Handle synonym list - prop_value is already a list from transformer
                 if isinstance(prop_value, list):
                     game_obj.synonyms = [self._eval_value(v) for v in prop_value]
                 else:
-                    # Single synonym
+                    # Single synonym (shouldn't happen with new transformer)
                     game_obj.synonyms = [self._eval_value(prop_value)]
             else:
-                game_obj.set_property(prop_name, self._eval_value(prop_value))
+                # For other properties, handle both list and single values
+                if isinstance(prop_value, list) and len(prop_value) > 0:
+                    # If it's a single-element list, unwrap it
+                    if len(prop_value) == 1:
+                        game_obj.set_property(prop_name, self._eval_value(prop_value[0]))
+                    else:
+                        # Multiple values, keep as list
+                        game_obj.set_property(prop_name, [self._eval_value(v) for v in prop_value])
+                else:
+                    game_obj.set_property(prop_name, self._eval_value(prop_value))
 
         world.add_object(game_obj)

@@ -4,7 +4,8 @@ from typing import List, Any, Optional
 from lark import Transformer, Token
 from zil_interpreter.parser.ast_nodes import (
     Form, Atom, String, Number, ASTNode, InsertFile,
-    LocalRef, GlobalRef, QuotedAtom, Splice, PercentEval, HashExpr, CharLiteral
+    LocalRef, GlobalRef, QuotedAtom, Splice, PercentEval, HashExpr, CharLiteral,
+    Routine, Object, Global
 )
 
 
@@ -34,16 +35,61 @@ class ZILTransformer(Transformer):
         """Transform list (parenthesized expressions)."""
         return [item for item in items if item is not None]
 
-    def form(self, items: List[Any]) -> Form | InsertFile:
+    def form(self, items: List[Any]) -> Form | InsertFile | Routine | Object | Global:
         """Transform form <operator args...>"""
-        # Check for INSERT-FILE directive
-        if items and isinstance(items[0], Atom) and items[0].value.upper() == "INSERT-FILE":
-            # Extract filename from first argument (should be a String)
-            if len(items) > 1 and isinstance(items[1], String):
-                return InsertFile(filename=items[1].value)
-            # Fallback if no filename provided
-            return InsertFile(filename="")
+        # Handle empty form <> (represents false/nil in ZIL)
+        if not items:
+            return Form(operator=Atom("FALSE"), args=[])
 
+        # Check for special forms that have dedicated AST nodes
+        if isinstance(items[0], Atom):
+            op_name = items[0].value.upper()
+
+            # INSERT-FILE directive
+            if op_name == "INSERT-FILE":
+                if len(items) > 1 and isinstance(items[1], String):
+                    return InsertFile(filename=items[1].value)
+                return InsertFile(filename="")
+
+            # ROUTINE definition: <ROUTINE name (args...) body...>
+            if op_name == "ROUTINE":
+                if len(items) >= 2 and isinstance(items[1], Atom):
+                    name = items[1].value
+                    # Args are in a list (second element), body is everything after
+                    args = []
+                    body = []
+                    if len(items) >= 3:
+                        # Check if second arg is a list (parameters)
+                        if isinstance(items[2], list):
+                            args = [a.value if isinstance(a, Atom) else str(a) for a in items[2]]
+                            body = items[3:] if len(items) > 3 else []
+                        else:
+                            # No parameters, all remaining items are body
+                            body = items[2:]
+                    return Routine(name=name, args=args, body=body)
+
+            # OBJECT definition: <OBJECT name (properties...)>
+            if op_name == "OBJECT":
+                if len(items) >= 2 and isinstance(items[1], Atom):
+                    name = items[1].value
+                    # Properties are in remaining elements
+                    properties = {}
+                    # Parse property lists - typically (PROPERTY-NAME value...)
+                    for i in range(2, len(items)):
+                        if isinstance(items[i], list) and len(items[i]) > 0:
+                            prop_name = items[i][0].value if isinstance(items[i][0], Atom) else str(items[i][0])
+                            prop_values = items[i][1:]
+                            properties[prop_name] = prop_values
+                    return Object(name=name, properties=properties)
+
+            # GLOBAL definition: <GLOBAL name value>
+            if op_name == "GLOBAL":
+                if len(items) >= 2 and isinstance(items[1], Atom):
+                    name = items[1].value
+                    value = items[2] if len(items) > 2 else None
+                    return Global(name=name, value=value)
+
+        # Default: generic form
         operator = items[0]
         args = items[1:] if len(items) > 1 else []
         return Form(operator=operator, args=args)
