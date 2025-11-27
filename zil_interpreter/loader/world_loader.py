@@ -2,8 +2,8 @@
 
 from pathlib import Path
 from typing import List, Tuple
-from zil_interpreter.parser.loader import ZILLoader
-from zil_interpreter.parser.ast_nodes import Global, Routine, Object as ObjectNode, Number, String, Atom
+from zil_interpreter.compiler.file_processor import FileProcessor
+from zil_interpreter.parser.ast_nodes import Global, Routine, Object as ObjectNode, Number, String, Atom, Form
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import GameObject
 from zil_interpreter.engine.routine_executor import RoutineExecutor
@@ -14,7 +14,7 @@ class WorldLoader:
     """Loads ZIL files and builds game world."""
 
     def __init__(self):
-        self.zil_loader = ZILLoader()
+        pass
 
     def load_world(self, main_file: Path, output: OutputBuffer) -> Tuple[WorldState, RoutineExecutor]:
         """Load game world from ZIL files.
@@ -26,8 +26,12 @@ class WorldLoader:
         Returns:
             Tuple of (WorldState, RoutineExecutor)
         """
-        # Load and parse main file
-        ast = self.zil_loader.load_file(main_file)
+        # Use FileProcessor to load with INSERT-FILE expansion
+        processor = FileProcessor(base_path=main_file.parent)
+        ast = processor.load_all(main_file.name)
+
+        # Process raw AST into semantic nodes
+        ast = self._process_top_level(ast)
 
         # Create world and executor with provided output buffer
         world = WorldState()
@@ -89,3 +93,79 @@ class WorldLoader:
                     game_obj.set_property(prop_name, self._eval_value(prop_value))
 
         world.add_object(game_obj)
+
+    def _process_top_level(self, nodes: List) -> List:
+        """Process top-level forms into semantic nodes.
+
+        Args:
+            nodes: Raw AST nodes from FileProcessor
+
+        Returns:
+            Processed nodes with ROUTINE, GLOBAL, OBJECT recognized
+        """
+        processed = []
+
+        for node in nodes:
+            if isinstance(node, Form):
+                # Check if operator exists and is an Atom
+                if not hasattr(node, 'operator') or node.operator is None:
+                    continue
+
+                op = node.operator.value.upper() if hasattr(node.operator, 'value') else str(node.operator).upper()
+
+                if op == "GLOBAL" and len(node.args) >= 1:
+                    name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
+                    value = node.args[1] if len(node.args) > 1 else None
+                    processed.append(Global(name=name, value=value))
+
+                elif op == "ROUTINE" and len(node.args) >= 2:
+                    name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
+                    raw_args = node.args[1] if isinstance(node.args[1], list) else []
+                    args = [arg.value if isinstance(arg, Atom) else str(arg) for arg in raw_args]
+                    body = node.args[2:] if len(node.args) > 2 else []
+                    processed.append(Routine(name=name, args=args, body=body))
+
+                elif op == "OBJECT" and len(node.args) >= 1:
+                    name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
+                    properties = {}
+
+                    # Parse property list from remaining args
+                    for arg in node.args[1:]:
+                        if isinstance(arg, list) and len(arg) > 0:
+                            prop_name = arg[0].value.upper() if isinstance(arg[0], Atom) else str(arg[0])
+                            prop_value = arg[1] if len(arg) == 2 else arg[1:]
+                            properties[prop_name] = prop_value
+                        elif isinstance(arg, Form):
+                            prop_name = arg.operator.value.upper()
+                            prop_value = arg.args[0] if len(arg.args) == 1 else arg.args
+                            properties[prop_name] = prop_value
+
+                    processed.append(ObjectNode(name=name, properties=properties))
+
+                elif op == "ROOM" and len(node.args) >= 1:
+                    # ROOM is similar to OBJECT but for rooms
+                    name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
+                    properties = {"IS-ROOM": True}
+
+                    for arg in node.args[1:]:
+                        if isinstance(arg, list) and len(arg) > 0:
+                            prop_name = arg[0].value.upper() if isinstance(arg[0], Atom) else str(arg[0])
+                            prop_value = arg[1] if len(arg) == 2 else arg[1:]
+                            properties[prop_name] = prop_value
+                        elif isinstance(arg, Form):
+                            prop_name = arg.operator.value.upper()
+                            prop_value = arg.args[0] if len(arg.args) == 1 else arg.args
+                            properties[prop_name] = prop_value
+
+                    processed.append(ObjectNode(name=name, properties=properties))
+
+                else:
+                    # Keep as generic form (might be needed for evaluation)
+                    processed.append(node)
+            elif isinstance(node, (Global, Routine, ObjectNode)):
+                # Already processed
+                processed.append(node)
+            elif node is not None:
+                processed.append(node)
+
+        return processed
