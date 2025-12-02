@@ -15,14 +15,22 @@ class CondOperation(Operation):
         return "COND"
 
     def execute(self, args: list, evaluator) -> Any:
-        """Evaluate clauses until one succeeds."""
+        """Evaluate clauses until one succeeds.
+
+        In ZIL, when a clause's condition is true, ALL expressions
+        in that clause are evaluated in sequence, and the value of
+        the LAST expression is returned.
+        """
         for clause in args:
-            if isinstance(clause, list) and len(clause) >= 2:
+            if isinstance(clause, list) and len(clause) >= 1:
                 condition = clause[0]
-                result_expr = clause[1]
 
                 if evaluator.evaluate(condition):
-                    return evaluator.evaluate(result_expr)
+                    # Evaluate ALL remaining expressions in the clause
+                    result = None
+                    for expr in clause[1:]:
+                        result = evaluator.evaluate(expr)
+                    return result
 
         return None
 
@@ -50,6 +58,20 @@ class RfalseOperation(Operation):
     def execute(self, args: list, evaluator) -> None:
         # Import here to avoid circular dependency
         from zil_interpreter.engine.evaluator import ReturnValue
+        raise ReturnValue(False)
+
+
+class RfatalOperation(Operation):
+    """RFATAL - Return false after a fatal error (used after error messages)."""
+
+    @property
+    def name(self) -> str:
+        return "RFATAL"
+
+    def execute(self, args: list, evaluator) -> None:
+        # Import here to avoid circular dependency
+        from zil_interpreter.engine.evaluator import ReturnValue
+        # RFATAL is like RFALSE but indicates a fatal error occurred
         raise ReturnValue(False)
 
 

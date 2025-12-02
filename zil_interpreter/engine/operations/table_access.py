@@ -13,9 +13,26 @@ class GetOp(Operation):
     def execute(self, args: List[Any], evaluator: Any) -> Any:
         if len(args) < 2:
             raise ValueError("GET requires table and index")
-        table_name = evaluator.evaluate(args[0])
+        table_ref = evaluator.evaluate(args[0])
         index = evaluator.evaluate(args[1])
-        table = evaluator.world.get_table(table_name)
+
+        # Handle property reference tuples from GETPT
+        if isinstance(table_ref, tuple) and len(table_ref) == 2:
+            obj, prop_name = table_ref
+            if hasattr(obj, 'get_property'):
+                prop_value = obj.get_property(prop_name)
+                # If prop_value is a string (simple UEXIT room name), return it at index 0
+                if isinstance(prop_value, str):
+                    if index == 0:
+                        return prop_value
+                    return None
+                # Index into the property value list
+                if isinstance(prop_value, list) and 0 <= index < len(prop_value):
+                    return prop_value[index]
+                return None
+
+        # Regular table access
+        table = evaluator.world.get_table(table_ref)
         return table.get_word(index)
 
 
@@ -47,9 +64,26 @@ class GetBOp(Operation):
     def execute(self, args: List[Any], evaluator: Any) -> Any:
         if len(args) < 2:
             raise ValueError("GETB requires table and byte index")
-        table_name = evaluator.evaluate(args[0])
+        table_ref = evaluator.evaluate(args[0])
         byte_index = evaluator.evaluate(args[1])
-        table = evaluator.world.get_table(table_name)
+
+        # Handle property reference tuples from GETPT
+        if isinstance(table_ref, tuple) and len(table_ref) == 2:
+            obj, prop_name = table_ref
+            if hasattr(obj, 'get_property'):
+                prop_value = obj.get_property(prop_name)
+                # If prop_value is a string (simple UEXIT room name), return it at index 0
+                if isinstance(prop_value, str):
+                    if byte_index == 0:
+                        return prop_value
+                    return None
+                # Index into the property value list
+                if isinstance(prop_value, list) and 0 <= byte_index < len(prop_value):
+                    return prop_value[byte_index]
+                return None
+
+        # Regular table access
+        table = evaluator.world.get_table(table_ref)
         return table.get_byte(byte_index)
 
 

@@ -216,6 +216,40 @@ class NumericEqualOperation(Operation):
         return True
 
 
+class AssignOrEqualOperation(Operation):
+    """= - Assignment or equality depending on context.
+
+    In ZIL, = can be used for:
+    - Assignment: <SET var val>
+    - Equality test: <= val1 val2>
+
+    This implements the equality test semantics.
+    """
+
+    @property
+    def name(self) -> str:
+        return "="
+
+    def execute(self, args: list, evaluator) -> bool:
+        """Test equality between values."""
+        if len(args) < 2:
+            return False
+
+        # Handle special =? compile-time macro
+        first_arg = args[0]
+        if isinstance(first_arg, Atom) and first_arg.value == "=?":
+            # Skip the =? marker and compare remaining args
+            if len(args) < 3:
+                return False
+            val1 = evaluator.evaluate(args[1])
+            val2 = evaluator.evaluate(args[2])
+        else:
+            val1 = evaluator.evaluate(args[0])
+            val2 = evaluator.evaluate(args[1])
+
+        return val1 == val2
+
+
 class DlessOperation(Operation):
     """DLESS? - Decrement global variable and test if result is less than value.
 

@@ -81,7 +81,8 @@ class GameObject:
     def matches_word(self, word: str) -> bool:
         """Check if word matches this object's synonyms."""
         word_upper = word.upper()
-        return word_upper in [s.upper() for s in self.synonyms]
+        # Handle non-string synonyms by converting to string first
+        return word_upper in [str(s).upper() for s in self.synonyms]
 
     def __repr__(self) -> str:
         return f"GameObject({self.name})"

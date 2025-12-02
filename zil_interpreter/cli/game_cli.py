@@ -52,11 +52,65 @@ class GameCLI:
                 print(f"Routines: {len(executor.routines)}")
                 print()
 
+            # Initialize game state
+            self._initialize_game()
+
             return True
 
         except Exception as e:
             self._error(f"Failed to load game: {e}")
             return False
+
+    def _initialize_game(self) -> None:
+        """Initialize game state.
+
+        Attempts to call the GO routine for proper initialization.
+        Falls back to manual initialization if GO fails.
+        """
+        if not self.world or not self.engine:
+            return
+
+        # Try to call GO routine for proper initialization
+        try:
+            if self.engine.executor and "GO" in self.engine.executor.routines:
+                # Call GO but catch any errors - it tries to run MAIN-LOOP
+                # which we don't want since we have our own command loop
+                try:
+                    self.engine.executor.call_routine("GO", [])
+                except Exception:
+                    # GO may fail due to MAIN-LOOP or other issues
+                    # Fall through to manual initialization
+                    pass
+        except Exception:
+            pass
+
+        # If HERE is still not set, do manual initialization
+        here = self.world.get_global("HERE")
+        if here is None or here == 0:
+            self._manual_initialization()
+
+    def _manual_initialization(self) -> None:
+        """Manually initialize essential game state.
+
+        Sets up minimum state needed for commands to work.
+        """
+        if not self.world:
+            return
+
+        # Set starting room - WEST-OF-HOUSE for Zork I
+        starting_room = self.world.get_object("WEST-OF-HOUSE")
+        if starting_room:
+            self.world.set_current_room(starting_room)
+            self.world.set_global("HERE", "WEST-OF-HOUSE")
+
+        # Set LIT to true (player can see)
+        self.world.set_global("LIT", True)
+
+        # Set up player references
+        adventurer = self.world.get_object("ADVENTURER")
+        if adventurer:
+            self.world.set_global("WINNER", "ADVENTURER")
+            self.world.set_global("PLAYER", "ADVENTURER")
 
     def run(self) -> None:
         """Run the CLI loop."""

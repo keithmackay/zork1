@@ -102,6 +102,12 @@ class GetbOperation(Operation):
         if not isinstance(offset, int):
             return None
 
+        # Handle property reference tuples from GETPT
+        if isinstance(table, tuple) and len(table) == 2:
+            obj, prop_name = table
+            if hasattr(obj, 'get_property'):
+                table = obj.get_property(prop_name)
+
         # For lists of integers, treat as byte array
         if isinstance(table, list):
             try:

@@ -2,7 +2,7 @@
 
 from typing import Any
 from zil_interpreter.engine.operations.base import Operation
-from zil_interpreter.parser.ast_nodes import Atom
+from zil_interpreter.parser.ast_nodes import Atom, GlobalRef
 from zil_interpreter.world.game_object import ObjectFlag
 
 
@@ -97,7 +97,21 @@ class GetpOperation(Operation):
             return None
 
         obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        prop_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+
+        # Handle property name - could be Atom, GlobalRef (P?XXX), or string
+        prop_arg = args[1]
+        if isinstance(prop_arg, Atom):
+            prop_name = prop_arg.value
+        elif isinstance(prop_arg, GlobalRef):
+            # In ZIL, ,P?ACTION means property slot "ACTION"
+            # Extract property name from P?XXX format
+            ref_name = prop_arg.name.upper()
+            if ref_name.startswith("P?"):
+                prop_name = ref_name[2:]  # Remove "P?" prefix
+            else:
+                prop_name = ref_name
+        else:
+            prop_name = str(evaluator.evaluate(prop_arg))
 
         obj = evaluator.world.get_object(obj_name)
         if not obj:

@@ -12,11 +12,13 @@ from .comparison import (
     ZeroCheckOperation,
     NumericEqualOperation,
     DlessOperation,
+    AssignOrEqualOperation,
 )
 from .control import (
     CondOperation,
     RtrueOperation,
     RfalseOperation,
+    RfatalOperation,
     ReturnOperation,
     RepeatOperation,
     MapfOperation,
@@ -146,11 +148,13 @@ def create_default_registry() -> OperationRegistry:
     registry.register(ZeroCheckOperation())
     registry.register(NumericEqualOperation())
     registry.register(DlessOperation())
+    registry.register(AssignOrEqualOperation())
 
     # Control
     registry.register(CondOperation())
     registry.register(RtrueOperation())
     registry.register(RfalseOperation())
+    registry.register(RfatalOperation())
     registry.register(ReturnOperation())
     registry.register(RepeatOperation())
     registry.register(MapfOperation())

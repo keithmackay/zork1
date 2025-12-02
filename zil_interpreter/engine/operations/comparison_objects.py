@@ -85,7 +85,7 @@ class PtsizeOperation(Operation):
         return "PTSIZE"
 
     def execute(self, args: list, evaluator) -> int:
-        """Get property table size."""
+        """Get property table size (returns exit type constant for direction properties)."""
         if not args:
             return 0
 
@@ -100,15 +100,26 @@ class PtsizeOperation(Operation):
             obj, prop_name = prop_ref
             value = obj.get_property(prop_name)
 
-            # Return size based on value type
+            # Return exit type based on value structure
+            # UEXIT=1, NEXIT=2, FEXIT=3, CEXIT=4, DEXIT=5
             if value is None:
                 return 0
-            elif isinstance(value, list):
-                # Table: size is number of elements * 2 (16-bit words)
-                return len(value) * 2
             elif isinstance(value, str):
-                # String: size is length
-                return len(value)
+                # Check if it's a room name (UEXIT) or a message (NEXIT)
+                # Room names are typically uppercase identifiers
+                # Messages are descriptive text (longer, may have spaces/punctuation)
+                if value.isupper() and ' ' not in value and len(value) < 30:
+                    return 1  # UEXIT - simple room name
+                else:
+                    return 2  # NEXIT - no exit message
+            elif isinstance(value, list):
+                # Check list structure for exit type
+                if len(value) >= 2:
+                    # Look for 'IF' pattern = CEXIT
+                    if 'IF' in [str(v).upper() for v in value]:
+                        return 4  # CEXIT (conditional exit)
+                # Default for other lists
+                return len(value) * 2
             elif isinstance(value, int):
                 # Integer: size is 2 bytes (16-bit word)
                 return 2

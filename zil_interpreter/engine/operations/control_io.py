@@ -151,8 +151,10 @@ class GotoOperation(Operation):
         if not room_obj:
             return None
 
-        # Set HERE global
-        evaluator.world.set_global("HERE", room_obj)
+        # Set HERE global (as room name string for consistency)
+        evaluator.world.set_global("HERE", room_obj.name)
+        # Also update current room
+        evaluator.world.set_current_room(room_obj)
 
         # Trigger room description (PERFORM ,V?LOOK)
         # This would call the PERFORM operation
