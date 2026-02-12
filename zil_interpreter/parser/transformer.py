@@ -20,8 +20,13 @@ class ZILTransformer(Transformer):
         """Transform string literal."""
         # Remove quotes
         value = str(items[0])[1:-1]
-        # Handle escape sequences
-        value = value.replace('\\n', '\n').replace('\\t', '\t')
+        # Handle escape sequences (order matters)
+        value = value.replace('\\\\', '\x00')   # Preserve escaped backslash
+        value = value.replace('\\"', '"')        # Escaped quote → literal quote
+        value = value.replace('\\n', '\n')       # Backslash-n → newline
+        value = value.replace('\\t', '\t')       # Backslash-t → tab
+        value = value.replace('|', '\n')         # Pipe → newline (ZIL convention)
+        value = value.replace('\x00', '\\')      # Restore escaped backslash
         return String(value)
 
     def number(self, items: List[Token]) -> Number:
@@ -61,7 +66,7 @@ class ZILTransformer(Transformer):
                     if len(items) >= 3:
                         # Check if second arg is a list (parameters)
                         if isinstance(items[2], list):
-                            args = [a.value if isinstance(a, Atom) else str(a) for a in items[2]]
+                            args = list(items[2])  # Preserve AST nodes for proper default handling
                             body = items[3:] if len(items) > 3 else []
                         else:
                             # No parameters, all remaining items are body

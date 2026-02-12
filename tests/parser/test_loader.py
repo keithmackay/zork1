@@ -67,11 +67,10 @@ def test_routine_with_arguments():
     assert isinstance(routine, Routine)
     assert routine.name == "FOO"
 
-    # Key assertion: args should be extracted as strings, not Atom objects
+    # Key assertion: args should be preserved as AST nodes for proper default handling
     assert isinstance(routine.args, list)
     assert len(routine.args) == 2
-    assert routine.args[0] == "X"
-    assert routine.args[1] == "Y"
-    # Verify they are strings, not Atom objects
-    assert isinstance(routine.args[0], str)
-    assert isinstance(routine.args[1], str)
+    assert isinstance(routine.args[0], Atom)
+    assert isinstance(routine.args[1], Atom)
+    assert routine.args[0].value == "X"
+    assert routine.args[1].value == "Y"

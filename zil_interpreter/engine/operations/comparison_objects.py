@@ -46,6 +46,10 @@ class NextQuestionOperation(Operation):
 class GetptOperation(Operation):
     """GETPT - Get property table entry (returns property reference or FALSE)."""
 
+    # Direction index to name mapping (from DIRECTIONS directive order)
+    DIRECTION_NAMES = ['NORTH', 'EAST', 'WEST', 'SOUTH', 'NE', 'NW',
+                       'SE', 'SW', 'UP', 'DOWN', 'IN', 'OUT', 'LAND']
+
     @property
     def name(self) -> str:
         return "GETPT"
@@ -57,8 +61,18 @@ class GetptOperation(Operation):
 
         # Get object - evaluate to handle GlobalRef/LocalRef
         obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
-        # Get property name
-        prop_arg = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
+        # Get property name - evaluate argument
+        raw_prop = args[1].value if isinstance(args[1], Atom) else evaluator.evaluate(args[1])
+
+        # If property is a numeric direction index, convert to direction name
+        if isinstance(raw_prop, (int, float)):
+            idx = int(raw_prop)
+            if 0 <= idx < len(self.DIRECTION_NAMES):
+                prop_arg = self.DIRECTION_NAMES[idx]
+            else:
+                return False
+        else:
+            prop_arg = str(raw_prop)
 
         # Get object
         obj = evaluator.world.get_object(obj_val)
@@ -87,7 +101,7 @@ class PtsizeOperation(Operation):
     # Direction property names
     DIRECTIONS = {'NORTH', 'SOUTH', 'EAST', 'WEST', 'UP', 'DOWN',
                   'NE', 'NW', 'SE', 'SW', 'IN', 'OUT', 'LAND',
-                  'IN-DIR'}
+                  'IN'}
 
     def execute(self, args: list, evaluator) -> int:
         """Get property table size.
@@ -131,21 +145,24 @@ class PtsizeOperation(Operation):
         return 0
 
     def _exit_type(self, value) -> int:
-        """Determine exit type from property value."""
+        """Determine exit type from property value.
+
+        ZIL exit types:
+        UEXIT (1): Simple room reference - value is an uppercase room name
+        NEXIT (2): No-exit message - value is a descriptive string
+        FEXIT (3): Function exit - value is callable
+        CEXIT (4): Conditional exit - value is a list with IF condition
+        DEXIT (5): Door exit - value is a list with door object
+        """
+        import re
         if isinstance(value, str):
-            # If it looks like a room name (uppercase, no spaces), UEXIT
-            if value.isupper() or (value.replace('-', '').replace(' ', '').isalnum()):
-                # Could be room name or message
-                # Room names: NORTH-OF-HOUSE, LIVING-ROOM, etc.
-                # Messages: "The door is boarded..." (mixed case, spaces)
-                if any(c.islower() for c in value) or len(value) > 40:
-                    return 2  # NEXIT - no-exit message
+            # Room names are ALL UPPERCASE with optional hyphens/digits
+            # e.g., "WEST-OF-HOUSE", "FOREST-1", "PATH", "KITCHEN"
+            if re.match(r'^[A-Z][A-Z0-9\-]*$', value):
                 return 1  # UEXIT - simple room reference
-            return 2  # NEXIT - message
+            return 2  # NEXIT - no-exit message
         elif isinstance(value, list):
-            # List could be CEXIT, DEXIT, or FEXIT
             if len(value) >= 2:
-                # Check for conditional patterns
                 str_values = [str(v).upper() for v in value]
                 if 'IF' in str_values:
                     return 4  # CEXIT - conditional

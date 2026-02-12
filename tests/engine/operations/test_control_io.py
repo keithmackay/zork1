@@ -145,23 +145,25 @@ class TestGotoOperation:
 
         assert result is None
 
-    def test_goto_triggers_look(self):
-        """GOTO triggers PERFORM LOOK."""
+    def test_goto_sets_room(self):
+        """GOTO sets HERE and current room."""
         world = WorldState()
-        room = GameObject("TESTROOM")
-        world.add_object(room)
+        room1 = GameObject("ROOM1")
+        room2 = GameObject("ROOM2")
+        world.add_object(room1)
+        world.add_object(room2)
+        world.set_current_room(room1)
+        world.set_global("HERE", room1)
 
         evaluator = Evaluator(world)
 
-        # Before GOTO, PRSA should not be LOOK
-        world.set_global("PRSA", None)
-
         evaluator.evaluate(
-            Form(Atom("GOTO"), [Atom("TESTROOM")])
+            Form(Atom("GOTO"), [Atom("ROOM2")])
         )
 
-        # After GOTO, PRSA should be set to LOOK
-        assert world.get_global("PRSA") == "LOOK"
+        # After GOTO, HERE and current room should be ROOM2
+        assert world.get_global("HERE") == room2
+        assert world.get_current_room() == room2
 
 
 class TestRandomOperation:

@@ -133,34 +133,37 @@ class GotoOperation(Operation):
         if not args:
             return None
 
-        # Get room argument - if Atom, use value directly
+        # Evaluate room argument
         room_arg = args[0]
-        if hasattr(room_arg, 'value'):
-            room_name = room_arg.value.upper() if hasattr(room_arg.value, 'upper') else room_arg.value
-        else:
-            room = evaluator.evaluate(room_arg)
-            if isinstance(room, str):
-                room_name = room
-            elif hasattr(room, 'name'):
-                room_name = room.name
-            else:
-                room_name = str(room)
-
-        # Get room object from world
-        room_obj = evaluator.world.get_object(room_name)
+        room_val = room_arg.value if isinstance(room_arg, Atom) else evaluator.evaluate(room_arg)
+        room_obj = evaluator.world.get_object(room_val)
         if not room_obj:
             return None
 
         # Set HERE global to room object
         evaluator.world.set_global("HERE", room_obj)
-        # Also update current room
         evaluator.world.set_current_room(room_obj)
 
-        # Trigger room description (PERFORM ,V?LOOK)
-        # This would call the PERFORM operation
-        perform_op = evaluator.registry.get("PERFORM")
-        if perform_op:
-            perform_op.execute([Atom("LOOK")], evaluator)
+        # Move player to room (matches ZIL: <MOVE ,PLAYER ,HERE>)
+        player = evaluator.world.get_global("PLAYER")
+        if player:
+            from zil_interpreter.world.game_object import GameObject
+            if isinstance(player, GameObject):
+                player.move_to(room_obj)
+
+        # Display room description via V-LOOK
+        if hasattr(evaluator, 'routine_executor'):
+            executor = evaluator.routine_executor
+            if "V-LOOK" in executor.routines:
+                try:
+                    executor.call_routine("V-LOOK", [])
+                except Exception:
+                    # Fallback: print room description directly
+                    desc = room_obj.description or room_obj.name
+                    evaluator.output.write(f"{desc}\n")
+                    ldesc = room_obj.get_property("LDESC")
+                    if ldesc:
+                        evaluator.output.write(f"{ldesc}\n")
 
         return True
 

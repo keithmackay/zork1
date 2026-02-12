@@ -246,6 +246,12 @@ class WorldLoader:
                     value = node.args[1] if len(node.args) > 1 else None
                     processed.append(Global(name=name, value=value))
 
+                elif op == "DIRECTIONS":
+                    # Generate P?xxx direction constants
+                    for i, arg in enumerate(node.args):
+                        dir_name = arg.value if isinstance(arg, Atom) else str(arg)
+                        processed.append(Global(name=f"P?{dir_name}", value=Number(i)))
+
                 elif op == "CONSTANT" and len(node.args) >= 1:
                     # CONSTANT is like GLOBAL but for compile-time constants
                     name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
@@ -298,7 +304,7 @@ class WorldLoader:
                                         parent_set = True
                                 else:
                                     # Navigation direction like (IN TO ...)
-                                    properties["IN-DIR"] = self._normalize_exit(prop_value)
+                                    properties["IN"] = self._normalize_exit(prop_value)
                             elif prop_name in self.DIRECTIONS:
                                 # Direction property - normalize exit format
                                 properties[prop_name] = self._normalize_exit(prop_value)
@@ -315,7 +321,7 @@ class WorldLoader:
                                         properties["PARENT"] = arg.args[0].value
                                         parent_set = True
                                 else:
-                                    properties["IN-DIR"] = self._normalize_exit(prop_value)
+                                    properties["IN"] = self._normalize_exit(prop_value)
                             elif prop_name in self.DIRECTIONS:
                                 # Direction property - normalize exit format
                                 properties[prop_name] = self._normalize_exit(prop_value)

@@ -27,6 +27,7 @@ class GameEngine:
         'U': 'UP', 'D': 'DOWN',
         'NORTHEAST': 'NE', 'NORTHWEST': 'NW',
         'SOUTHEAST': 'SE', 'SOUTHWEST': 'SW',
+        'ENTER': 'IN', 'EXIT': 'OUT', 'LEAVE': 'OUT',
     }
 
     def execute_command(self, command: str) -> bool:
@@ -53,6 +54,11 @@ class GameEngine:
             direct_obj = verb  # Direction becomes PRSO
             verb = 'WALK'
             # Set P-WALK-DIR to indicate this is a direction-based walk
+            self.world.set_global('P-WALK-DIR', True)
+        elif verb in self.DIRECTION_ALIASES:
+            # ENTER→IN, EXIT→OUT, etc.
+            direct_obj = self.DIRECTION_ALIASES[verb]
+            verb = 'WALK'
             self.world.set_global('P-WALK-DIR', True)
         elif verb == 'GO':
             # Handle "go <direction>" - look for direction in command
