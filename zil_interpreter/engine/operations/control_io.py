@@ -151,8 +151,8 @@ class GotoOperation(Operation):
         if not room_obj:
             return None
 
-        # Set HERE global (as room name string for consistency)
-        evaluator.world.set_global("HERE", room_obj.name)
+        # Set HERE global to room object
+        evaluator.world.set_global("HERE", room_obj)
         # Also update current room
         evaluator.world.set_current_room(room_obj)
 
@@ -214,26 +214,15 @@ class PrintdOperation(Operation):
         if not args:
             return True
 
-        # Get object argument - if Atom, use value directly
+        # Get object - evaluate the argument and look up via get_object
         obj_arg = args[0]
-        if hasattr(obj_arg, 'value'):
-            obj_name = obj_arg.value.upper() if hasattr(obj_arg.value, 'upper') else obj_arg.value
-        else:
-            obj_val = evaluator.evaluate(obj_arg)
-            if isinstance(obj_val, str):
-                obj_name = obj_val
-            elif hasattr(obj_val, 'name'):
-                obj_name = obj_val.name
-            else:
-                return True
-
-        # Get object
-        obj = evaluator.world.get_object(obj_name)
+        obj_val = obj_arg.value if isinstance(obj_arg, Atom) else evaluator.evaluate(obj_arg)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return True
 
-        # Get DESC property
-        desc = obj.get_property("DESC")
+        # Get description: try DESC property first, then object description
+        desc = obj.get_property("DESC") or obj.description
         if desc:
             evaluator.output.write(str(desc))
 

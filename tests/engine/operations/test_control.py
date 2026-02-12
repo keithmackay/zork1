@@ -151,7 +151,8 @@ class TestProgOperation:
         evaluator = MockEvaluator()
         # PROG with empty bindings and body of [1, 2, 3]
         result = op.execute([[], 1, 2, 3], evaluator)
-        assert evaluator.results == [[], 1, 2, 3]
+        # Empty bindings list is not evaluated; only body expressions are
+        assert evaluator.results == [1, 2, 3]
 
     def test_prog_returns_last_value(self):
         """PROG returns value of last expression."""

@@ -28,7 +28,7 @@ def test_parse_verb_object():
 
     assert result is not None
     assert result['verb'] == 'TAKE'
-    assert result['direct_object'] == 'LAMP'
+    assert result['direct_object'] == lamp
     assert result['indirect_object'] is None
 
 
@@ -45,5 +45,5 @@ def test_parse_verb_two_objects():
 
     assert result is not None
     assert result['verb'] == 'PUT'
-    assert result['direct_object'] == 'LAMP'
-    assert result['indirect_object'] == 'BOX'
+    assert result['direct_object'] == lamp
+    assert result['indirect_object'] == box

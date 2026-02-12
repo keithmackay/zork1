@@ -17,11 +17,11 @@ class NextQuestionOperation(Operation):
         if not args:
             return False
 
-        # Get object name directly from Atom or evaluate
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
+        # Get object - evaluate to handle GlobalRef/LocalRef
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
 
         # Get object
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return False
 
@@ -55,13 +55,13 @@ class GetptOperation(Operation):
         if len(args) < 2:
             return False
 
-        # Get object name directly from Atom or evaluate
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        # Get property name directly from Atom or evaluate
+        # Get object - evaluate to handle GlobalRef/LocalRef
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        # Get property name
         prop_arg = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
 
         # Get object
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return False
 
@@ -84,15 +84,26 @@ class PtsizeOperation(Operation):
     def name(self) -> str:
         return "PTSIZE"
 
+    # Direction property names
+    DIRECTIONS = {'NORTH', 'SOUTH', 'EAST', 'WEST', 'UP', 'DOWN',
+                  'NE', 'NW', 'SE', 'SW', 'IN', 'OUT', 'LAND',
+                  'IN-DIR'}
+
     def execute(self, args: list, evaluator) -> int:
-        """Get property table size (returns exit type constant for direction properties)."""
+        """Get property table size.
+
+        For direction properties, returns exit type constants:
+        UEXIT=1 (simple room), NEXIT=2 (no-exit message),
+        FEXIT=3 (function exit), CEXIT=4 (conditional), DEXIT=5 (door).
+        For non-direction properties, returns byte size.
+        """
         if not args:
             return 0
 
         prop_ref = evaluator.evaluate(args[0])
 
         # If prop_ref is FALSE, return 0
-        if prop_ref is False or prop_ref == 0:
+        if prop_ref is False or prop_ref == 0 or prop_ref is None:
             return 0
 
         # If prop_ref is a tuple (obj, prop_name) from GETPT
@@ -100,31 +111,47 @@ class PtsizeOperation(Operation):
             obj, prop_name = prop_ref
             value = obj.get_property(prop_name)
 
-            # Return exit type based on value structure
-            # UEXIT=1, NEXIT=2, FEXIT=3, CEXIT=4, DEXIT=5
             if value is None:
                 return 0
-            elif isinstance(value, str):
-                # Check if it's a room name (UEXIT) or a message (NEXIT)
-                # Room names are typically uppercase identifiers
-                # Messages are descriptive text (longer, may have spaces/punctuation)
-                if value.isupper() and ' ' not in value and len(value) < 30:
-                    return 1  # UEXIT - simple room name
-                else:
-                    return 2  # NEXIT - no exit message
+
+            # Check if this is a direction property
+            if prop_name.upper() in self.DIRECTIONS:
+                return self._exit_type(value)
+
+            # Non-direction property: return byte size
+            if isinstance(value, str):
+                return len(value)
             elif isinstance(value, list):
-                # Check list structure for exit type
-                if len(value) >= 2:
-                    # Look for 'IF' pattern = CEXIT
-                    if 'IF' in [str(v).upper() for v in value]:
-                        return 4  # CEXIT (conditional exit)
-                # Default for other lists
                 return len(value) * 2
             elif isinstance(value, int):
-                # Integer: size is 2 bytes (16-bit word)
                 return 2
             else:
-                # Default size
                 return 2
 
         return 0
+
+    def _exit_type(self, value) -> int:
+        """Determine exit type from property value."""
+        if isinstance(value, str):
+            # If it looks like a room name (uppercase, no spaces), UEXIT
+            if value.isupper() or (value.replace('-', '').replace(' ', '').isalnum()):
+                # Could be room name or message
+                # Room names: NORTH-OF-HOUSE, LIVING-ROOM, etc.
+                # Messages: "The door is boarded..." (mixed case, spaces)
+                if any(c.islower() for c in value) or len(value) > 40:
+                    return 2  # NEXIT - no-exit message
+                return 1  # UEXIT - simple room reference
+            return 2  # NEXIT - message
+        elif isinstance(value, list):
+            # List could be CEXIT, DEXIT, or FEXIT
+            if len(value) >= 2:
+                # Check for conditional patterns
+                str_values = [str(v).upper() for v in value]
+                if 'IF' in str_values:
+                    return 4  # CEXIT - conditional
+                if any(v.upper().endswith('BIT') for v in str_values if isinstance(v, str)):
+                    return 5  # DEXIT - door
+            return 3  # FEXIT - function
+        elif callable(value):
+            return 3  # FEXIT - function
+        return 1  # Default UEXIT

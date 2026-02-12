@@ -101,7 +101,7 @@ class GameCLI:
         starting_room = self.world.get_object("WEST-OF-HOUSE")
         if starting_room:
             self.world.set_current_room(starting_room)
-            self.world.set_global("HERE", "WEST-OF-HOUSE")
+            self.world.set_global("HERE", starting_room)
 
         # Set LIT to true (player can see)
         self.world.set_global("LIT", True)
@@ -109,8 +109,8 @@ class GameCLI:
         # Set up player references
         adventurer = self.world.get_object("ADVENTURER")
         if adventurer:
-            self.world.set_global("WINNER", "ADVENTURER")
-            self.world.set_global("PLAYER", "ADVENTURER")
+            self.world.set_global("WINNER", adventurer)
+            self.world.set_global("PLAYER", adventurer)
 
     def run(self) -> None:
         """Run the CLI loop."""

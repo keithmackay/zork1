@@ -2,7 +2,7 @@
 
 from typing import Any
 from zil_interpreter.engine.operations.base import Operation
-from zil_interpreter.parser.ast_nodes import Atom
+from zil_interpreter.parser.ast_nodes import Atom, GlobalRef
 from zil_interpreter.world.game_object import ObjectFlag
 
 
@@ -17,23 +17,24 @@ class EqualOperation(Operation):
         if len(args) < 2:
             return False
         val1 = evaluator.evaluate(args[0])
-        val2 = evaluator.evaluate(args[1])
-        return val1 == val2
+        # EQUAL? can take multiple comparison values
+        from zil_interpreter.world.game_object import GameObject
+        for arg in args[1:]:
+            val2 = evaluator.evaluate(arg)
+            if val1 == val2:
+                return True
+            # Handle GameObject comparison by name
+            if isinstance(val1, GameObject) and isinstance(val2, str):
+                if val1.name == val2.upper():
+                    return True
+            elif isinstance(val2, GameObject) and isinstance(val1, str):
+                if val2.name == val1.upper():
+                    return True
+        return False
 
 
 class FsetCheckOperation(Operation):
     """FSET? - Check if object has flag set."""
-
-    # Map ZIL flag names to ObjectFlag enum
-    FLAG_MAP = {
-        "OPENBIT": ObjectFlag.OPEN,
-        "CONTAINERBIT": ObjectFlag.CONTAINER,
-        "TAKEABLEBIT": ObjectFlag.TAKEABLE,
-        "LOCKEDBIT": ObjectFlag.LOCKED,
-        "NDESCBIT": ObjectFlag.NDESCBIT,
-        "LIGHTBIT": ObjectFlag.LIGHTBIT,
-        "ONBIT": ObjectFlag.ONBIT,
-    }
 
     @property
     def name(self) -> str:
@@ -43,20 +44,22 @@ class FsetCheckOperation(Operation):
         if len(args) < 2:
             return False
 
-        # Get object name - if it's an Atom, use its value directly
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        # Get flag name - same pattern
-        flag_name = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
+        # Get object - evaluate to handle GlobalRef/LocalRef
+        obj_val = evaluator.evaluate(args[0]) if not isinstance(args[0], Atom) else args[0].value
+        # Get flag name - GlobalRef to a flag should use the name directly
+        if isinstance(args[1], Atom):
+            flag_name = args[1].value
+        elif isinstance(args[1], GlobalRef):
+            # Flag references like ,CONTBIT - use the name directly
+            flag_name = args[1].name
+        else:
+            flag_name = str(evaluator.evaluate(args[1]))
 
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return False
 
-        flag = self.FLAG_MAP.get(flag_name.upper())
-        if not flag:
-            return False
-
-        return obj.has_flag(flag)
+        return obj.has_flag(flag_name.upper())
 
 
 class VerbCheckOperation(Operation):
@@ -70,9 +73,17 @@ class VerbCheckOperation(Operation):
         if not args:
             return False
 
-        verb_name = args[0].value if isinstance(args[0], Atom) else str(args[0])
         current_verb = evaluator.world.get_global("PRSA")
-        return current_verb == verb_name.upper()
+        if current_verb is None:
+            return False
+
+        # VERB? can take multiple verbs to check against
+        for arg in args:
+            verb_name = arg.value if isinstance(arg, Atom) else str(evaluator.evaluate(arg))
+            verb_upper = verb_name.upper()
+            if current_verb == verb_upper or current_verb == f"V-{verb_upper}":
+                return True
+        return False
 
 
 class InCheckOperation(Operation):
@@ -86,11 +97,11 @@ class InCheckOperation(Operation):
         if len(args) < 2:
             return False
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        container_name = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        container_val = args[1].value if isinstance(args[1], Atom) else evaluator.evaluate(args[1])
 
-        obj = evaluator.world.get_object(obj_name)
-        container = evaluator.world.get_object(container_name)
+        obj = evaluator.world.get_object(obj_val)
+        container = evaluator.world.get_object(container_val)
 
         if not obj or not container:
             return False
@@ -109,14 +120,14 @@ class FirstCheckOperation(Operation):
         if not args:
             return None
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        obj = evaluator.world.get_object(obj_name)
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        obj = evaluator.world.get_object(obj_val)
 
         if not obj or not obj.children:
             return None
 
-        # Return first child's name
-        return next(iter(obj.children)).name
+        # Return first child object
+        return obj.children[0]
 
 
 class LessThanOperation(Operation):
@@ -131,6 +142,10 @@ class LessThanOperation(Operation):
             return False
         val1 = evaluator.evaluate(args[0])
         val2 = evaluator.evaluate(args[1])
+        if val1 is None:
+            val1 = 0
+        if val2 is None:
+            val2 = 0
         return val1 < val2
 
 
@@ -146,6 +161,10 @@ class GreaterThanOperation(Operation):
             return False
         val1 = evaluator.evaluate(args[0])
         val2 = evaluator.evaluate(args[1])
+        if val1 is None:
+            val1 = 0
+        if val2 is None:
+            val2 = 0
         return val1 > val2
 
 
@@ -161,6 +180,10 @@ class LessEqualOperation(Operation):
             return False
         val1 = evaluator.evaluate(args[0])
         val2 = evaluator.evaluate(args[1])
+        if val1 is None:
+            val1 = 0
+        if val2 is None:
+            val2 = 0
         return val1 <= val2
 
 
@@ -176,6 +199,10 @@ class GreaterEqualOperation(Operation):
             return False
         val1 = evaluator.evaluate(args[0])
         val2 = evaluator.evaluate(args[1])
+        if val1 is None:
+            val1 = 0
+        if val2 is None:
+            val2 = 0
         return val1 >= val2
 
 

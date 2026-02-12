@@ -46,7 +46,7 @@ class Evaluator:
             # In ZIL, objects are also accessible via ,OBJNAME
             obj = self.world.get_object(name_upper)
             if obj is not None:
-                return obj.name  # Return object name for use in other operations
+                return obj
             return None
 
         elif isinstance(expr, LocalRef):
@@ -99,7 +99,25 @@ class Evaluator:
         Returns:
             Result of form evaluation
         """
-        op = form.operator.value.upper()
+        # Handle operator - may be Atom, GlobalRef, LocalRef, or Form
+        if isinstance(form.operator, Atom):
+            op = form.operator.value.upper()
+        elif isinstance(form.operator, (GlobalRef, LocalRef)):
+            # Evaluate to get the routine name
+            val = self.evaluate(form.operator)
+            if isinstance(val, str):
+                op = val.upper()
+            else:
+                op = str(val).upper() if val else ""
+        elif isinstance(form.operator, Form):
+            # Nested form evaluation (e.g., <<GETP .OBJ ACTION> ...>)
+            val = self.evaluate(form.operator)
+            if isinstance(val, str):
+                op = val.upper()
+            else:
+                op = str(val).upper() if val else ""
+        else:
+            op = str(form.operator).upper()
 
         # Check registry first
         operation = self.registry.get(op)
@@ -114,4 +132,6 @@ class Evaluator:
                 args = [self.evaluate(arg) for arg in form.args]
                 return executor.call_routine(op, args)
 
-        raise NotImplementedError(f"Form not implemented: {op}")
+        # Graceful fallback for unimplemented operations
+        # Return None instead of crashing - allows game to continue
+        return None

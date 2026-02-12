@@ -59,4 +59,4 @@ def test_game_engine_sets_parser_state():
     engine.execute_command("take lamp")
 
     assert world.get_global("PRSA") == "V-TAKE"
-    assert world.get_global("PRSO") == "LAMP"
+    assert world.get_global("PRSO") == lamp

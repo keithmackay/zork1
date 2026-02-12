@@ -32,8 +32,11 @@ class GetOp(Operation):
                 return None
 
         # Regular table access
-        table = evaluator.world.get_table(table_ref)
-        return table.get_word(index)
+        try:
+            table = evaluator.world.get_table(table_ref)
+            return table.get_word(index)
+        except (KeyError, TypeError):
+            return None
 
 
 class PutOp(Operation):

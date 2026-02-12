@@ -2,7 +2,7 @@
 
 from typing import Any
 from zil_interpreter.engine.operations.base import Operation
-from zil_interpreter.parser.ast_nodes import Atom, GlobalRef
+from zil_interpreter.parser.ast_nodes import Atom, GlobalRef, LocalRef
 from zil_interpreter.world.game_object import ObjectFlag
 
 
@@ -17,11 +17,11 @@ class MoveOperation(Operation):
         if len(args) < 2:
             return
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        dest_name = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        dest_val = args[1].value if isinstance(args[1], Atom) else evaluator.evaluate(args[1])
 
-        obj = evaluator.world.get_object(obj_name)
-        dest = evaluator.world.get_object(dest_name)
+        obj = evaluator.world.get_object(obj_val)
+        dest = evaluator.world.get_object(dest_val)
 
         if obj and dest:
             obj.move_to(dest)
@@ -29,16 +29,6 @@ class MoveOperation(Operation):
 
 class FsetOperation(Operation):
     """FSET - Set flag on object."""
-
-    FLAG_MAP = {
-        "OPENBIT": ObjectFlag.OPEN,
-        "CONTAINERBIT": ObjectFlag.CONTAINER,
-        "TAKEABLEBIT": ObjectFlag.TAKEABLE,
-        "LOCKEDBIT": ObjectFlag.LOCKED,
-        "NDESCBIT": ObjectFlag.NDESCBIT,
-        "LIGHTBIT": ObjectFlag.LIGHTBIT,
-        "ONBIT": ObjectFlag.ONBIT,
-    }
 
     @property
     def name(self) -> str:
@@ -48,22 +38,23 @@ class FsetOperation(Operation):
         if len(args) < 2:
             return
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        flag_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+        obj_val = evaluator.evaluate(args[0]) if not isinstance(args[0], Atom) else args[0].value
+        if isinstance(args[1], Atom):
+            flag_name = args[1].value
+        elif isinstance(args[1], GlobalRef):
+            flag_name = args[1].name
+        else:
+            flag_name = str(evaluator.evaluate(args[1]))
 
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return
 
-        flag = self.FLAG_MAP.get(flag_name.upper())
-        if flag:
-            obj.set_flag(flag)
+        obj.set_flag(flag_name.upper())
 
 
 class FclearOperation(Operation):
     """FCLEAR - Clear flag on object."""
-
-    FLAG_MAP = FsetOperation.FLAG_MAP
 
     @property
     def name(self) -> str:
@@ -73,16 +64,19 @@ class FclearOperation(Operation):
         if len(args) < 2:
             return
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        flag_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+        obj_val = evaluator.evaluate(args[0]) if not isinstance(args[0], Atom) else args[0].value
+        if isinstance(args[1], Atom):
+            flag_name = args[1].value
+        elif isinstance(args[1], GlobalRef):
+            flag_name = args[1].name
+        else:
+            flag_name = str(evaluator.evaluate(args[1]))
 
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return
 
-        flag = self.FLAG_MAP.get(flag_name.upper())
-        if flag:
-            obj.clear_flag(flag)
+        obj.clear_flag(flag_name.upper())
 
 
 class GetpOperation(Operation):
@@ -96,7 +90,7 @@ class GetpOperation(Operation):
         if len(args) < 2:
             return None
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
 
         # Handle property name - could be Atom, GlobalRef (P?XXX), or string
         prop_arg = args[1]
@@ -113,7 +107,7 @@ class GetpOperation(Operation):
         else:
             prop_name = str(evaluator.evaluate(prop_arg))
 
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if not obj:
             return None
 
@@ -131,11 +125,11 @@ class PutpOperation(Operation):
         if len(args) < 3:
             return
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        prop_name = args[1].value if isinstance(args[1], Atom) else str(args[1])
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        prop_name = args[1].value if isinstance(args[1], Atom) else str(evaluator.evaluate(args[1]))
         value = evaluator.evaluate(args[2])
 
-        obj = evaluator.world.get_object(obj_name)
+        obj = evaluator.world.get_object(obj_val)
         if obj:
             obj.set_property(prop_name.upper(), value)
 
@@ -151,8 +145,8 @@ class LocOperation(Operation):
         if not args:
             return None
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        obj = evaluator.world.get_object(obj_name)
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        obj = evaluator.world.get_object(obj_val)
 
         if not obj:
             return None
@@ -171,8 +165,8 @@ class RemoveOperation(Operation):
         if not args:
             return
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        obj = evaluator.world.get_object(obj_name)
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        obj = evaluator.world.get_object(obj_val)
 
         if not obj:
             return
@@ -192,18 +186,22 @@ class HeldOperation(Operation):
         if not args:
             return False
 
-        obj_name = args[0].value if isinstance(args[0], Atom) else str(evaluator.evaluate(args[0]))
-        obj = evaluator.world.get_object(obj_name)
+        obj_val = args[0].value if isinstance(args[0], Atom) else evaluator.evaluate(args[0])
+        obj = evaluator.world.get_object(obj_val)
 
         if not obj:
             return False
 
         # Get player object from global PLAYER variable
-        player_name = evaluator.world.get_global("PLAYER")
-        if not player_name:
+        player_val = evaluator.world.get_global("PLAYER")
+        if not player_val:
             return False
 
-        player = evaluator.world.get_object(player_name)
+        from zil_interpreter.world.game_object import GameObject
+        if isinstance(player_val, GameObject):
+            player = player_val
+        else:
+            player = evaluator.world.get_object(player_val)
         if not player:
             return False
 

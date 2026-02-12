@@ -101,24 +101,46 @@ class RepeatOperation(Operation):
         return "REPEAT"
 
     def execute(self, args: list, evaluator) -> Any:
-        """Loop construct - executes body repeatedly.
+        """Loop construct - executes body repeatedly until RETURN/RTRUE/RFALSE.
 
-        Note: In ZIL, REPEAT loops are typically broken by RETURN/RTRUE/RFALSE
-        within COND statements. For now, we implement basic iteration semantics.
-        A complete implementation would require more sophisticated control flow.
+        In ZIL, REPEAT takes an optional binding list as first arg,
+        then body expressions. It loops forever until broken by
+        RETURN, RTRUE, or RFALSE.
         """
+        from zil_interpreter.engine.evaluator import ReturnValue
+
         if not args:
             return None
 
-        # First arg is loop specification (variables/conditions)
-        loop_spec = args[0] if args else []
+        # First arg is bindings list (may be empty)
+        bindings = args[0] if args else []
         body = args[1:] if len(args) > 1 else []
 
-        # For basic implementation: execute body once
-        # Full implementation would need break conditions
+        # Set up bindings if any
+        if isinstance(bindings, list):
+            for binding in bindings:
+                if isinstance(binding, list) and len(binding) >= 2:
+                    from zil_interpreter.parser.ast_nodes import Atom
+                    var_name = binding[0].value if isinstance(binding[0], Atom) else str(binding[0])
+                    value = evaluator.evaluate(binding[1])
+                    if hasattr(evaluator, 'local_scope'):
+                        evaluator.local_scope[var_name.upper()] = value
+                    else:
+                        evaluator.world.set_global(var_name.upper(), value)
+
+        # Execute body repeatedly until RETURN breaks out
+        from zil_interpreter.engine.operations.advanced import AgainException
+        max_iterations = 10000  # Safety limit
         result = None
-        for expr in body:
-            result = evaluator.evaluate(expr)
+        for _ in range(max_iterations):
+            try:
+                for expr in body:
+                    result = evaluator.evaluate(expr)
+            except ReturnValue:
+                raise  # Let ReturnValue propagate up
+            except AgainException:
+                continue  # Restart loop
+            # If no RETURN was hit, loop again
 
         return result
 
@@ -173,13 +195,32 @@ class ProgOperation(Operation):
     def name(self) -> str:
         return "PROG"
 
-    def execute(self, args: list[Any], evaluator: Any) -> Any:
+    def execute(self, args: list, evaluator: Any) -> Any:
         if not args:
             return None
 
-        # First arg is bindings (may be empty list)
-        bindings = evaluator.evaluate(args[0]) if args else []
+        # First arg is bindings list
+        bindings = args[0] if args else []
         body = args[1:] if len(args) > 1 else []
+
+        # Set up bindings if any
+        if isinstance(bindings, list):
+            for binding in bindings:
+                if isinstance(binding, list) and len(binding) >= 2:
+                    from zil_interpreter.parser.ast_nodes import Atom
+                    var_name = binding[0].value if isinstance(binding[0], Atom) else str(binding[0])
+                    value = evaluator.evaluate(binding[1])
+                    if hasattr(evaluator, 'local_scope'):
+                        evaluator.local_scope[var_name.upper()] = value
+                    else:
+                        evaluator.world.set_global(var_name.upper(), value)
+                elif isinstance(binding, (Atom,)):
+                    from zil_interpreter.parser.ast_nodes import Atom
+                    var_name = binding.value
+                    if hasattr(evaluator, 'local_scope'):
+                        evaluator.local_scope[var_name.upper()] = None
+                    else:
+                        evaluator.world.set_global(var_name.upper(), None)
 
         # Execute body expressions
         result = None

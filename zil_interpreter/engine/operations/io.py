@@ -5,6 +5,31 @@ from zil_interpreter.engine.operations.base import Operation
 from zil_interpreter.parser.ast_nodes import Atom
 
 
+def _printable(value: Any) -> str:
+    """Convert a value to a printable string, handling GameObjects."""
+    from zil_interpreter.world.game_object import GameObject
+    if isinstance(value, GameObject):
+        # Print the object's DESC property (short description)
+        return value.description or value.name
+    if value is None:
+        return ""
+    return str(value)
+
+
+def _printable_desc(value: Any) -> str:
+    """Print object's DESC property (used by TELL D indicator)."""
+    from zil_interpreter.world.game_object import GameObject
+    if isinstance(value, GameObject):
+        desc = value.get_property("DESC")
+        if desc:
+            return str(desc)
+        return value.description or value.name
+    if value is None:
+        return ""
+    # If value is a string name, just return it (can't look up object here)
+    return str(value)
+
+
 class TellOperation(Operation):
     """TELL - Output text to player."""
 
@@ -14,19 +39,34 @@ class TellOperation(Operation):
 
     def execute(self, args: list, evaluator) -> None:
         """Output strings and atoms to output buffer."""
+        print_desc = False
         for arg in args:
             if isinstance(arg, Atom):
-                if arg.value.upper() in ("CR", "CRLF"):
+                atom_upper = arg.value.upper()
+                if atom_upper in ("CR", "CRLF"):
                     evaluator.output.write("\n")
+                    print_desc = False
+                elif atom_upper == "D":
+                    # D indicator: next arg is an object, print its DESC
+                    print_desc = True
+                    continue
                 else:
                     # Variable lookup
                     value = evaluator.evaluate(arg)
                     if value is not None:
-                        evaluator.output.write(str(value))
+                        if print_desc:
+                            evaluator.output.write(_printable_desc(value))
+                        else:
+                            evaluator.output.write(_printable(value))
+                    print_desc = False
             else:
                 value = evaluator.evaluate(arg)
                 if value is not None:
-                    evaluator.output.write(str(value))
+                    if print_desc:
+                        evaluator.output.write(_printable_desc(value))
+                    else:
+                        evaluator.output.write(_printable(value))
+                print_desc = False
 
 
 class PrintnOperation(Operation):
@@ -89,26 +129,15 @@ class PrintOperation(Operation):
         if not args:
             return True
 
-        # Evaluate the argument to get the value
         value = evaluator.evaluate(args[0])
-
         if value is not None:
-            evaluator.output.write(str(value))
+            evaluator.output.write(_printable(value))
 
         return True
 
 
 class PrintiOperation(Operation):
-    """PRINTI - Print immediate string.
-
-    Usage: <PRINTI "text">
-
-    Prints an immediate string literal to output buffer.
-    Similar to PRINT but for string literals rather than variables.
-    Always returns TRUE.
-
-    Example: <PRINTI "Hello, world!"> ; prints "Hello, world!"
-    """
+    """PRINTI - Print immediate string."""
 
     @property
     def name(self) -> str:
@@ -119,11 +148,9 @@ class PrintiOperation(Operation):
         if not args:
             return True
 
-        # Evaluate the argument (typically a string literal)
         value = evaluator.evaluate(args[0])
-
         if value is not None:
-            evaluator.output.write(str(value))
+            evaluator.output.write(_printable(value))
 
         return True
 

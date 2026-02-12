@@ -375,8 +375,8 @@ class TestZorkICompatibility:
             Form(Atom("FIRST?"), [Atom("PLAYER")])
         )
 
-        # FIRST? returns first child's name as string
-        assert first_item in ["LAMP", "SWORD"]
+        # FIRST? returns first child as GameObject
+        assert first_item in [lamp, sword]
 
     def test_zork_equal_comparison_pattern(self):
         """Test Zork EQUAL? pattern from 1actions.zil."""

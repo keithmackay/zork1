@@ -116,6 +116,30 @@ from .zork2_ops import (
     PushOp,
     RstackOp,
 )
+from .missing_ops import (
+    ProbOperation,
+    ThisIsItOperation,
+    ThisItOperation,
+    GlobalInOperation,
+    WeightOperation,
+    SeeInsideOperation,
+    AssignedOperation,
+    GassignedOperation,
+    NumberCheckOperation,
+    MinOperation,
+    MaxOperation,
+    AbsOperation,
+    SearchListOperation,
+    FindInOperation,
+    ZmemqOperation,
+    ZmemqbOperation,
+    LengthCheckOperation,
+    PutrestOperation,
+    MapstopOperation,
+    ChtypeOperation,
+    SpnameOperation,
+    StuffOperation,
+)
 
 
 def create_default_registry() -> OperationRegistry:
@@ -275,6 +299,30 @@ def create_default_registry() -> OperationRegistry:
     registry.register(FixedFontOffOp())
     registry.register(PushOp())
     registry.register(RstackOp())
+
+    # Missing Operations (needed by Zork I)
+    registry.register(ProbOperation())
+    registry.register(ThisIsItOperation())
+    registry.register(ThisItOperation())
+    registry.register(GlobalInOperation())
+    registry.register(WeightOperation())
+    registry.register(SeeInsideOperation())
+    registry.register(AssignedOperation())
+    registry.register(GassignedOperation())
+    registry.register(NumberCheckOperation())
+    registry.register(MinOperation())
+    registry.register(MaxOperation())
+    registry.register(AbsOperation())
+    registry.register(SearchListOperation())
+    registry.register(FindInOperation())
+    registry.register(ZmemqOperation())
+    registry.register(ZmemqbOperation())
+    registry.register(LengthCheckOperation())
+    registry.register(PutrestOperation())
+    registry.register(MapstopOperation())
+    registry.register(ChtypeOperation())
+    registry.register(SpnameOperation())
+    registry.register(StuffOperation())
 
     return registry
 

@@ -1,7 +1,16 @@
 """Game logic operations: META-LOC, LIT?, ACCESSIBLE?."""
 from typing import Any, List
 from zil_interpreter.engine.operations.base import Operation
-from zil_interpreter.world.game_object import ObjectFlag
+from zil_interpreter.world.game_object import GameObject, ObjectFlag
+
+
+def _obj_name(val: Any) -> str:
+    """Extract object name from a value that may be a string or GameObject."""
+    if isinstance(val, GameObject):
+        return val.name
+    if isinstance(val, str):
+        return val
+    return str(val) if val is not None else ""
 
 
 class MetaLocOp(Operation):
@@ -122,12 +131,11 @@ class AccessibleOp(Operation):
             if not obj:
                 return False
 
-            # Get HERE and PLAYER as object names (strings)
-            here_name = evaluator.world.get_global("HERE")
-            player_name = evaluator.world.get_global("PLAYER")
+            # Get HERE and PLAYER names (may be strings or GameObjects)
+            here_name = _obj_name(evaluator.world.get_global("HERE"))
+            player_name = _obj_name(evaluator.world.get_global("PLAYER"))
 
             # Directly in room or held by player
-            # parent is a GameObject, so compare names
             if obj.parent:
                 if obj.parent.name == here_name or obj.parent.name == player_name:
                     return True

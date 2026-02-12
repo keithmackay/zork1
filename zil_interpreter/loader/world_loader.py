@@ -94,11 +94,16 @@ class WorldLoader:
     def _setup_parent_relationships(self, world: WorldState):
         """Set up parent-child relationships after all objects created."""
         for obj in world.objects.values():
+            # Check PARENT property first (set by ROOM handler)
             parent_name = obj.properties.get("PARENT")
+            # Fall back to IN property (used by OBJECT definitions)
+            if not parent_name:
+                parent_name = obj.properties.get("IN")
             if parent_name:
-                parent_obj = world.get_object(parent_name)
-                if parent_obj:
-                    obj.move_to(parent_obj)
+                if isinstance(parent_name, str):
+                    parent_obj = world.get_object(parent_name)
+                    if parent_obj:
+                        obj.move_to(parent_obj)
 
     def _parse_routine_args(self, raw_args: list) -> list:
         """Parse routine argument list, handling OPTIONAL and AUX markers.
@@ -165,20 +170,52 @@ class WorldLoader:
                 else:
                     game_obj.description = self._eval_value(prop_value)
             elif prop_name == "SYNONYM":
-                # Handle synonym list - prop_value is already a list from transformer
+                # Handle synonym list
                 if isinstance(prop_value, list):
                     game_obj.synonyms = [self._eval_value(v) for v in prop_value]
                 else:
-                    # Single synonym (shouldn't happen with new transformer)
                     game_obj.synonyms = [self._eval_value(prop_value)]
+            elif prop_name == "ADJECTIVE":
+                # Handle adjective list
+                if isinstance(prop_value, list):
+                    game_obj.adjectives = [self._eval_value(v) for v in prop_value]
+                else:
+                    game_obj.adjectives = [self._eval_value(prop_value)]
+            elif prop_name == "FLAGS":
+                # Set object flags from FLAGS property
+                if isinstance(prop_value, list):
+                    for flag in prop_value:
+                        flag_name = self._eval_value(flag)
+                        if isinstance(flag_name, str):
+                            game_obj.set_flag(flag_name)
+                elif isinstance(prop_value, (Atom, str)):
+                    flag_name = self._eval_value(prop_value)
+                    if isinstance(flag_name, str):
+                        game_obj.set_flag(flag_name)
+                # Also store as property for reference
+                if isinstance(prop_value, list):
+                    game_obj.set_property(prop_name, [self._eval_value(v) for v in prop_value])
+                else:
+                    game_obj.set_property(prop_name, self._eval_value(prop_value))
+            elif prop_name == "ACTION":
+                # Store action routine name
+                if isinstance(prop_value, list) and len(prop_value) > 0:
+                    game_obj.action_routine = self._eval_value(prop_value[0])
+                else:
+                    game_obj.action_routine = self._eval_value(prop_value)
+                game_obj.set_property(prop_name, game_obj.action_routine)
+            elif prop_name == "IN":
+                # Store IN for parent relationship setup
+                if isinstance(prop_value, list) and len(prop_value) > 0:
+                    game_obj.set_property(prop_name, self._eval_value(prop_value[0]))
+                else:
+                    game_obj.set_property(prop_name, self._eval_value(prop_value))
             else:
                 # For other properties, handle both list and single values
                 if isinstance(prop_value, list) and len(prop_value) > 0:
-                    # If it's a single-element list, unwrap it
                     if len(prop_value) == 1:
                         game_obj.set_property(prop_name, self._eval_value(prop_value[0]))
                     else:
-                        # Multiple values, keep as list
                         game_obj.set_property(prop_name, [self._eval_value(v) for v in prop_value])
                 else:
                     game_obj.set_property(prop_name, self._eval_value(prop_value))

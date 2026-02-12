@@ -238,5 +238,5 @@ def test_evaluate_first_predicate():
     form = Form(operator=Atom("FIRST?"), args=[Atom("ROOM")])
     result = evaluator.evaluate(form)
 
-    # Should return one of the children
-    assert result in ["LAMP", "SWORD"]
+    # Should return one of the children (as GameObject)
+    assert result in [lamp, sword]

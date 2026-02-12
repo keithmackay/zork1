@@ -115,7 +115,10 @@ class CommandParser:
                 return canonical
         return None
 
-    def _find_object(self, text: str) -> Optional[str]:
-        """Find object matching text."""
-        obj = self.world.find_object_by_word(text)
-        return obj.name if obj else None
+    def _find_object(self, text: str):
+        """Find object matching text.
+
+        Returns:
+            GameObject if found, None otherwise.
+        """
+        return self.world.find_object_by_word(text)

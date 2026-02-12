@@ -27,16 +27,20 @@ class WorldState:
         """
         self.objects[obj.name] = obj
 
-    def get_object(self, name: str) -> Optional[GameObject]:
-        """Get an object by name.
+    def get_object(self, name) -> Optional[GameObject]:
+        """Get an object by name or return the object if already a GameObject.
 
         Args:
-            name: Object name
+            name: Object name (str) or GameObject
 
         Returns:
             GameObject if found, None otherwise
         """
-        return self.objects.get(name.upper())
+        if isinstance(name, GameObject):
+            return name
+        if name is None:
+            return None
+        return self.objects.get(str(name).upper())
 
     def find_object_by_word(self, word: str) -> Optional[GameObject]:
         """Find an object that matches the given word.
@@ -75,23 +79,23 @@ class WorldState:
 
     def set_parser_state(
         self,
-        verb: Optional[str] = None,
-        direct_obj: Optional[str] = None,
-        indirect_obj: Optional[str] = None
+        verb=None,
+        direct_obj=None,
+        indirect_obj=None
     ) -> None:
         """Set parser state variables.
 
         Args:
             verb: Current verb (PRSA)
-            direct_obj: Direct object (PRSO)
-            indirect_obj: Indirect object (PRSI)
+            direct_obj: Direct object (PRSO) - string or GameObject
+            indirect_obj: Indirect object (PRSI) - string or GameObject
         """
         if verb is not None:
-            self.globals["PRSA"] = verb.upper()
+            self.globals["PRSA"] = verb.upper() if isinstance(verb, str) else verb
         if direct_obj is not None:
-            self.globals["PRSO"] = direct_obj.upper()
+            self.globals["PRSO"] = direct_obj
         if indirect_obj is not None:
-            self.globals["PRSI"] = indirect_obj.upper() if indirect_obj else None
+            self.globals["PRSI"] = indirect_obj
 
     def set_current_room(self, room: GameObject) -> None:
         """Set the current room.
@@ -100,7 +104,7 @@ class WorldState:
             room: Room object
         """
         self._current_room = room
-        self.globals["HERE"] = room.name
+        self.globals["HERE"] = room
 
     def get_current_room(self) -> Optional[GameObject]:
         """Get the current room.
@@ -152,8 +156,13 @@ class WorldState:
         Returns:
             Dict containing all world state for JSON serialization
         """
+        def _serialize_val(v):
+            if isinstance(v, GameObject):
+                return v.name
+            return v
+
         return {
-            "globals": {k: v for k, v in self.globals.items()
+            "globals": {k: _serialize_val(v) for k, v in self.globals.items()
                         if not callable(v)},  # Skip function values
             "objects": {
                 name: obj.serialize()

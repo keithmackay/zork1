@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Set
 
 
 class ObjectFlag(Flag):
-    """Standard ZIL object flags."""
+    """Standard ZIL object flags (legacy enum for backward compatibility)."""
     OPEN = auto()
     CONTAINER = auto()
     SURFACE = auto()
@@ -16,6 +16,22 @@ class ObjectFlag(Flag):
     LIGHTBIT = auto()
     ONBIT = auto()  # Light is on
     INVISIBLE = auto()
+
+
+# Map between ZIL flag names and ObjectFlag enum values
+ZIL_FLAG_MAP = {
+    "OPENBIT": ObjectFlag.OPEN,
+    "CONTBIT": ObjectFlag.CONTAINER,
+    "CONTAINERBIT": ObjectFlag.CONTAINER,
+    "SURFACEBIT": ObjectFlag.SURFACE,
+    "TAKEBIT": ObjectFlag.TAKEABLE,
+    "TAKEABLEBIT": ObjectFlag.TAKEABLE,
+    "LOCKEDBIT": ObjectFlag.LOCKED,
+    "NDESCBIT": ObjectFlag.NDESCBIT,
+    "TOUCHBIT": ObjectFlag.TOUCHBIT,
+    "LIGHTBIT": ObjectFlag.LIGHTBIT,
+    "ONBIT": ObjectFlag.ONBIT,
+}
 
 
 class GameObject:
@@ -34,9 +50,10 @@ class GameObject:
         self.synonyms = synonyms or []
         self.adjectives = adjectives or []
         self._parent: Optional['GameObject'] = None
-        self.children: Set['GameObject'] = set()
+        self.children: List['GameObject'] = []
         self.properties: Dict[str, Any] = {}
         self.flags: ObjectFlag = ObjectFlag(0)
+        self._zil_flags: Set[str] = set()  # String-based flags for full ZIL support
         self.action_routine: Optional[str] = None
 
         if parent:
@@ -51,12 +68,15 @@ class GameObject:
         """Move object to a new parent/location."""
         # Remove from old parent
         if self._parent:
-            self._parent.children.discard(self)
+            try:
+                self._parent.children.remove(self)
+            except ValueError:
+                pass
 
         # Add to new parent
         self._parent = new_parent
-        if new_parent:
-            new_parent.children.add(self)
+        if new_parent and self not in new_parent.children:
+            new_parent.children.append(self)
 
     def set_property(self, prop_name: str, value: Any) -> None:
         """Set an object property."""
@@ -66,17 +86,42 @@ class GameObject:
         """Get an object property."""
         return self.properties.get(prop_name, default)
 
-    def set_flag(self, flag: ObjectFlag) -> None:
-        """Set an object flag."""
-        self.flags |= flag
+    def set_flag(self, flag) -> None:
+        """Set an object flag (ObjectFlag enum or string)."""
+        if isinstance(flag, str):
+            self._zil_flags.add(flag.upper())
+            # Also set enum flag if it maps
+            enum_flag = ZIL_FLAG_MAP.get(flag.upper())
+            if enum_flag:
+                self.flags |= enum_flag
+        elif isinstance(flag, ObjectFlag):
+            self.flags |= flag
 
-    def clear_flag(self, flag: ObjectFlag) -> None:
-        """Clear an object flag."""
-        self.flags &= ~flag
+    def clear_flag(self, flag) -> None:
+        """Clear an object flag (ObjectFlag enum or string)."""
+        if isinstance(flag, str):
+            self._zil_flags.discard(flag.upper())
+            enum_flag = ZIL_FLAG_MAP.get(flag.upper())
+            if enum_flag:
+                self.flags &= ~enum_flag
+        elif isinstance(flag, ObjectFlag):
+            self.flags &= ~flag
 
-    def has_flag(self, flag: ObjectFlag) -> bool:
-        """Check if object has a flag set."""
-        return bool(self.flags & flag)
+    def has_flag(self, flag) -> bool:
+        """Check if object has a flag set (ObjectFlag enum or string)."""
+        if isinstance(flag, str):
+            flag_upper = flag.upper()
+            # Check string flags first
+            if flag_upper in self._zil_flags:
+                return True
+            # Fall back to enum check
+            enum_flag = ZIL_FLAG_MAP.get(flag_upper)
+            if enum_flag:
+                return bool(self.flags & enum_flag)
+            return False
+        elif isinstance(flag, ObjectFlag):
+            return bool(self.flags & flag)
+        return False
 
     def matches_word(self, word: str) -> bool:
         """Check if word matches this object's synonyms."""
@@ -97,6 +142,7 @@ class GameObject:
             "parent": self._parent.name if self._parent else None,
             "properties": self.properties.copy(),
             "flags": self.flags.value,
+            "zil_flags": list(self._zil_flags),
         }
 
     def deserialize(self, data: Dict[str, Any]) -> None:
@@ -109,6 +155,7 @@ class GameObject:
         """
         self.properties = data.get("properties", {})
         self.flags = ObjectFlag(data.get("flags", 0))
+        self._zil_flags = set(data.get("zil_flags", []))
 
     def reset(self) -> None:
         """Reset object to initial state.
@@ -117,5 +164,6 @@ class GameObject:
         """
         # Clear flags to initial state
         self.flags = ObjectFlag(0)
+        self._zil_flags = set()
         # Properties are typically set during world load
         self.properties = {}
