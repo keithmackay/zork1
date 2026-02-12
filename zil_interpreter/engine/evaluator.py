@@ -57,9 +57,14 @@ class Evaluator:
             return None
 
         elif isinstance(expr, PercentEval):
-            # Compile-time evaluation - evaluate the inner form at runtime
-            # In an interpreter, %<form> is equivalent to <form>
-            return self.evaluate(expr.form)
+            # Compile-time evaluation - evaluate the inner form, then if the
+            # result is an AST node (e.g. from a quoted form), evaluate it
+            # again. This simulates compile-time macro expansion where the
+            # result is inserted as code to be run at runtime.
+            result = self.evaluate(expr.form)
+            if isinstance(result, (Form, PercentEval)):
+                return self.evaluate(result)
+            return result
 
         elif isinstance(expr, Atom):
             atom_value = expr.value.upper()

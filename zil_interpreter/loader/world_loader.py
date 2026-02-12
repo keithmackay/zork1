@@ -281,7 +281,13 @@ class WorldLoader:
 
                 op = node.operator.value.upper() if hasattr(node.operator, 'value') else str(node.operator).upper()
 
-                if op == "GLOBAL" and len(node.args) >= 1:
+                if op == "SETG" and len(node.args) >= 2:
+                    # Top-level SETG - treat like GLOBAL
+                    name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
+                    value = node.args[1] if len(node.args) > 1 else None
+                    processed.append(Global(name=name, value=value))
+
+                elif op == "GLOBAL" and len(node.args) >= 1:
                     name = node.args[0].value if isinstance(node.args[0], Atom) else str(node.args[0])
                     value = node.args[1] if len(node.args) > 1 else None
                     processed.append(Global(name=name, value=value))

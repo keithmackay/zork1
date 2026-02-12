@@ -140,12 +140,17 @@ class RoutineExecutor:
 
         try:
             # Execute routine body
+            from zil_interpreter.engine.operations.advanced import AgainException
             result = None
             for expr in routine.body:
                 result = self.evaluator.evaluate(expr)
             return result
         except ReturnValue as rv:
             return rv.value
+        except AgainException:
+            # AGAIN at routine level - routine acts as implicit PROG
+            # In our architecture, the game loop is external, so just return
+            return None
         finally:
             # Restore previous scope
             if old_scope is not None:

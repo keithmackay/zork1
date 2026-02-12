@@ -222,10 +222,20 @@ class ProgOperation(Operation):
                     else:
                         evaluator.world.set_global(var_name.upper(), None)
 
-        # Execute body expressions
+        # Execute body expressions (AGAIN restarts the body)
+        from zil_interpreter.engine.operations.advanced import AgainException
+        from zil_interpreter.engine.evaluator import ReturnValue
+        max_iterations = 10000  # Safety limit
         result = None
-        for expr in body:
-            result = evaluator.evaluate(expr)
+        for _ in range(max_iterations):
+            try:
+                for expr in body:
+                    result = evaluator.evaluate(expr)
+                return result  # Normal completion - no loop
+            except ReturnValue:
+                raise  # Let RETURN propagate
+            except AgainException:
+                continue  # Restart body
 
         return result
 

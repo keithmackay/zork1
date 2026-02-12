@@ -36,6 +36,8 @@ class CommandParser:
         'THROW': ['throw', 'toss', 'hurl'],
         'MOVE': ['move', 'push', 'pull', 'drag'],
         'TURN': ['turn', 'rotate', 'twist', 'spin'],
+        'LAMP-ON': ['turn on', 'switch on', 'activate'],
+        'LAMP-OFF': ['turn off', 'switch off', 'deactivate'],
         'TIE': ['tie', 'fasten', 'attach'],
         'UNTIE': ['untie', 'unfasten', 'detach'],
         'FILL': ['fill'],
@@ -108,17 +110,12 @@ class CommandParser:
         if not verb:
             return None
 
-        # Remove verb from tokens
-        verb_token = self._get_verb_token(tokens[0])
-        if verb_token:
-            tokens = tokens[1:]
-        else:
-            # Multi-word verb like "pick up"
-            for i in range(len(tokens)):
-                test_phrase = ' '.join(tokens[:i+1])
-                if self._get_verb_token(test_phrase):
-                    tokens = tokens[i+1:]
-                    break
+        # Remove verb tokens (longest match first)
+        for i in range(min(3, len(tokens)), 0, -1):
+            test_phrase = ' '.join(tokens[:i])
+            if self._get_verb_token(test_phrase):
+                tokens = tokens[i:]
+                break
 
         # Remove prepositions and find objects
         cleaned_tokens = []
@@ -148,15 +145,10 @@ class CommandParser:
         }
 
     def _find_verb(self, tokens: List[str]) -> Optional[str]:
-        """Find verb in tokens."""
-        # Try first token
-        verb = self._get_verb_token(tokens[0])
-        if verb:
-            return verb
-
-        # Try multi-word verbs
-        for i in range(min(3, len(tokens))):
-            phrase = ' '.join(tokens[:i+1])
+        """Find verb in tokens (longest match first)."""
+        # Try multi-word verbs first (longest to shortest)
+        for i in range(min(3, len(tokens)), 0, -1):
+            phrase = ' '.join(tokens[:i])
             verb = self._get_verb_token(phrase)
             if verb:
                 return verb

@@ -32,11 +32,14 @@ class SubtractOperation(Operation):
             return 0
         if len(args) == 1:
             # Unary negation
-            return -evaluator.evaluate(args[0])
+            val = evaluator.evaluate(args[0])
+            return -(val if isinstance(val, (int, float)) else 0)
         # Binary subtraction (multiple args)
-        result = evaluator.evaluate(args[0])
+        first = evaluator.evaluate(args[0])
+        result = first if isinstance(first, (int, float)) else 0
         for arg in args[1:]:
-            result -= evaluator.evaluate(arg)
+            val = evaluator.evaluate(arg)
+            result -= val if isinstance(val, (int, float)) else 0
         return result
 
 
@@ -52,7 +55,8 @@ class MultiplyOperation(Operation):
             return 1  # Identity element for multiplication
         result = 1
         for arg in args:
-            result *= evaluator.evaluate(arg)
+            val = evaluator.evaluate(arg)
+            result *= val if isinstance(val, (int, float)) else 0
         return result
 
 
@@ -69,10 +73,11 @@ class DivideOperation(Operation):
         if len(args) == 1:
             return evaluator.evaluate(args[0])
         # Integer division (successive division)
-        result = evaluator.evaluate(args[0])
+        first = evaluator.evaluate(args[0])
+        result = first if isinstance(first, (int, float)) else 0
         for arg in args[1:]:
             divisor = evaluator.evaluate(arg)
-            if divisor != 0:
+            if isinstance(divisor, (int, float)) and divisor != 0:
                 result = int(result / divisor)  # Integer division
         return result
 
@@ -90,8 +95,10 @@ class ModOperation(Operation):
         if len(args) == 1:
             return evaluator.evaluate(args[0])
         # Modulo operation
-        dividend = evaluator.evaluate(args[0])
-        divisor = evaluator.evaluate(args[1])
+        raw_dividend = evaluator.evaluate(args[0])
+        raw_divisor = evaluator.evaluate(args[1])
+        dividend = raw_dividend if isinstance(raw_dividend, (int, float)) else 0
+        divisor = raw_divisor if isinstance(raw_divisor, (int, float)) else 0
         if divisor == 0:
             return dividend
         return dividend % divisor

@@ -524,3 +524,27 @@ class StuffOperation(Operation):
         dest = evaluator.evaluate(args[1])
         # Just return the source value
         return src
+
+
+class OpenableOperation(Operation):
+    """OPENABLE? - Check if object can be opened.
+
+    Macro expansion of: <OR <FSET? OBJ DOORBIT> <FSET? OBJ CONTBIT>>
+    """
+
+    @property
+    def name(self) -> str:
+        return "OPENABLE?"
+
+    def execute(self, args: list, evaluator) -> bool:
+        if not args:
+            return False
+        obj_val = evaluator.evaluate(args[0])
+        from zil_interpreter.world.game_object import GameObject
+        if isinstance(obj_val, GameObject):
+            obj = obj_val
+        else:
+            obj = evaluator.world.get_object(obj_val)
+        if not obj:
+            return False
+        return obj.has_flag("DOORBIT") or obj.has_flag("CONTBIT")

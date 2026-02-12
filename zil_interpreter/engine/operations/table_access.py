@@ -31,13 +31,29 @@ class GetOp(Operation):
             return None
 
     @staticmethod
-    def _index_prop_value(prop_value, index):
-        """Index into a property value, handling typed exit tuples."""
+    def _index_prop_value(prop_value, index, word_access=True):
+        """Index into a property value, handling typed exit tuples.
+
+        Args:
+            prop_value: The property value to index into
+            index: The index to access
+            word_access: If True, use word addressing (GET); if False, byte (GETB).
+                For typed exit tuples (CEXIT/DEXIT), word 1 = byte 2 (data[2]),
+                while byte 1 = data[1]. This matters because DEXITOBJ/CEXITFLAG
+                are at byte 1, but DEXITSTR/CEXITSTR are at word 1.
+        """
         # Typed exit tuple: (exit_type, data_list)
         if isinstance(prop_value, tuple) and len(prop_value) == 2 and isinstance(prop_value[0], int):
             data = prop_value[1]
-            if isinstance(data, list) and 0 <= index < len(data):
-                return data[index]
+            if word_access and index > 0:
+                # Word addressing: word N maps to byte 2*N in Z-machine.
+                # data layout: [room(byte0), flag/door(byte1), message(bytes2-3)]
+                # GET index 1 → data[2] (the message), not data[1]
+                actual_index = index * 2
+            else:
+                actual_index = index
+            if isinstance(data, list) and 0 <= actual_index < len(data):
+                return data[actual_index]
             return None
         # Simple string (UEXIT room name or NEXIT message)
         if isinstance(prop_value, str):
@@ -61,8 +77,11 @@ class PutOp(Operation):
         table_name = evaluator.evaluate(args[0])
         index = evaluator.evaluate(args[1])
         value = evaluator.evaluate(args[2])
-        table = evaluator.world.get_table(table_name)
-        table.put_word(index, value)
+        try:
+            table = evaluator.world.get_table(table_name)
+            table.put_word(index, value)
+        except (KeyError, TypeError):
+            pass
         return value
 
 
@@ -84,11 +103,14 @@ class GetBOp(Operation):
             obj, prop_name = table_ref
             if hasattr(obj, 'get_property'):
                 prop_value = obj.get_property(prop_name)
-                return GetOp._index_prop_value(prop_value, byte_index)
+                return GetOp._index_prop_value(prop_value, byte_index, word_access=False)
 
         # Regular table access
-        table = evaluator.world.get_table(table_ref)
-        return table.get_byte(byte_index)
+        try:
+            table = evaluator.world.get_table(table_ref)
+            return table.get_byte(byte_index)
+        except (KeyError, TypeError):
+            return None
 
 
 class PutBOp(Operation):
@@ -104,6 +126,9 @@ class PutBOp(Operation):
         table_name = evaluator.evaluate(args[0])
         byte_index = evaluator.evaluate(args[1])
         value = evaluator.evaluate(args[2])
-        table = evaluator.world.get_table(table_name)
-        table.put_byte(byte_index, value)
+        try:
+            table = evaluator.world.get_table(table_name)
+            table.put_byte(byte_index, value)
+        except (KeyError, TypeError):
+            pass
         return value

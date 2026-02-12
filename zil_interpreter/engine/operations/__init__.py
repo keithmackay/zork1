@@ -139,6 +139,7 @@ from .missing_ops import (
     ChtypeOperation,
     SpnameOperation,
     StuffOperation,
+    OpenableOperation,
 )
 
 
@@ -152,7 +153,9 @@ def create_default_registry() -> OperationRegistry:
     registry.register(NotOperation())
 
     # Comparison
-    registry.register(EqualOperation())
+    equal_op = EqualOperation()
+    registry.register(equal_op)
+    registry._operations["==?"] = equal_op  # Compile-time equality alias
     registry.register(FsetCheckOperation())
     registry.register(VerbCheckOperation())
     registry.register(InCheckOperation())
@@ -323,6 +326,7 @@ def create_default_registry() -> OperationRegistry:
     registry.register(ChtypeOperation())
     registry.register(SpnameOperation())
     registry.register(StuffOperation())
+    registry.register(OpenableOperation())
 
     return registry
 
