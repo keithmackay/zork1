@@ -21,15 +21,7 @@ class GetOp(Operation):
             obj, prop_name = table_ref
             if hasattr(obj, 'get_property'):
                 prop_value = obj.get_property(prop_name)
-                # If prop_value is a string (simple UEXIT room name), return it at index 0
-                if isinstance(prop_value, str):
-                    if index == 0:
-                        return prop_value
-                    return None
-                # Index into the property value list
-                if isinstance(prop_value, list) and 0 <= index < len(prop_value):
-                    return prop_value[index]
-                return None
+                return self._index_prop_value(prop_value, index)
 
         # Regular table access
         try:
@@ -37,6 +29,23 @@ class GetOp(Operation):
             return table.get_word(index)
         except (KeyError, TypeError):
             return None
+
+    @staticmethod
+    def _index_prop_value(prop_value, index):
+        """Index into a property value, handling typed exit tuples."""
+        # Typed exit tuple: (exit_type, data_list)
+        if isinstance(prop_value, tuple) and len(prop_value) == 2 and isinstance(prop_value[0], int):
+            data = prop_value[1]
+            if isinstance(data, list) and 0 <= index < len(data):
+                return data[index]
+            return None
+        # Simple string (UEXIT room name or NEXIT message)
+        if isinstance(prop_value, str):
+            return prop_value if index == 0 else None
+        # List
+        if isinstance(prop_value, list) and 0 <= index < len(prop_value):
+            return prop_value[index]
+        return None
 
 
 class PutOp(Operation):
@@ -75,15 +84,7 @@ class GetBOp(Operation):
             obj, prop_name = table_ref
             if hasattr(obj, 'get_property'):
                 prop_value = obj.get_property(prop_name)
-                # If prop_value is a string (simple UEXIT room name), return it at index 0
-                if isinstance(prop_value, str):
-                    if byte_index == 0:
-                        return prop_value
-                    return None
-                # Index into the property value list
-                if isinstance(prop_value, list) and 0 <= byte_index < len(prop_value):
-                    return prop_value[byte_index]
-                return None
+                return GetOp._index_prop_value(prop_value, byte_index)
 
         # Regular table access
         table = evaluator.world.get_table(table_ref)

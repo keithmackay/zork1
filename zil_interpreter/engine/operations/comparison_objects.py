@@ -147,28 +147,24 @@ class PtsizeOperation(Operation):
     def _exit_type(self, value) -> int:
         """Determine exit type from property value.
 
-        ZIL exit types:
-        UEXIT (1): Simple room reference - value is an uppercase room name
-        NEXIT (2): No-exit message - value is a descriptive string
-        FEXIT (3): Function exit - value is callable
-        CEXIT (4): Conditional exit - value is a list with IF condition
-        DEXIT (5): Door exit - value is a list with door object
+        Handles both:
+        - Typed tuples: (exit_type, data_list) from _normalize_exit
+        - Simple strings: "ROOM" (UEXIT) or "message" (NEXIT)
         """
         import re
+        # Typed exit tuple from world loader
+        if isinstance(value, tuple) and len(value) == 2 and isinstance(value[0], int):
+            return value[0]
+
+        # Simple string
         if isinstance(value, str):
-            # Room names are ALL UPPERCASE with optional hyphens/digits
-            # e.g., "WEST-OF-HOUSE", "FOREST-1", "PATH", "KITCHEN"
             if re.match(r'^[A-Z][A-Z0-9\-]*$', value):
                 return 1  # UEXIT - simple room reference
             return 2  # NEXIT - no-exit message
-        elif isinstance(value, list):
-            if len(value) >= 2:
-                str_values = [str(v).upper() for v in value]
-                if 'IF' in str_values:
-                    return 4  # CEXIT - conditional
-                if any(v.upper().endswith('BIT') for v in str_values if isinstance(v, str)):
-                    return 5  # DEXIT - door
-            return 3  # FEXIT - function
-        elif callable(value):
-            return 3  # FEXIT - function
+
+        # List or callable fallbacks
+        if isinstance(value, list):
+            return 3  # FEXIT
+        if callable(value):
+            return 3  # FEXIT
         return 1  # Default UEXIT

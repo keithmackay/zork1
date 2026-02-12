@@ -124,10 +124,30 @@ class GameObject:
         return False
 
     def matches_word(self, word: str) -> bool:
-        """Check if word matches this object's synonyms."""
+        """Check if word or phrase matches this object's synonyms/adjectives.
+
+        Handles single words ("door") and multi-word phrases ("trap door")
+        by matching the last word as a noun against synonyms and preceding
+        words as adjectives.
+        """
         word_upper = word.upper()
-        # Handle non-string synonyms by converting to string first
-        return word_upper in [str(s).upper() for s in self.synonyms]
+        synonym_list = [str(s).upper() for s in self.synonyms]
+
+        # Single word - check synonyms directly
+        if ' ' not in word_upper:
+            return word_upper in synonym_list
+
+        # Multi-word phrase: last word is noun, preceding words are adjectives
+        words = word_upper.split()
+        noun = words[-1]
+        adj_words = words[:-1]
+
+        if noun not in synonym_list:
+            return False
+
+        # Check that all adjective words match object's adjectives
+        obj_adjs = [str(a).upper() for a in self.adjectives]
+        return all(adj in obj_adjs for adj in adj_words)
 
     def __repr__(self) -> str:
         return f"GameObject({self.name})"

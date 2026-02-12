@@ -20,37 +20,77 @@ class WorldLoader:
     def __init__(self):
         pass
 
+    # Exit type constants (matching ZIL: UEXIT=1, NEXIT=2, FEXIT=3, CEXIT=4, DEXIT=5)
+    UEXIT, NEXIT, FEXIT, CEXIT, DEXIT = 1, 2, 3, 4, 5
+
     def _normalize_exit(self, prop_value):
-        """Normalize exit property value for proper V-WALK interpretation.
+        """Normalize exit property value for V-WALK's GET/GETB operations.
 
-        ZIL exit formats:
-        - (DIR TO ROOM) → UEXIT: just store ROOM at index 0
-        - (DIR "message") → NEXIT: store message
-        - (DIR TO ROOM IF FLAG) → CEXIT: store [ROOM, FLAG]
-        - (DIR TO ROOM IF DOOR IS OPEN) → DEXIT: store [ROOM, DOOR]
+        Returns (exit_type, data_list) tuple where data_list is indexed by:
+        - REXIT=0: room name
+        - FEXITFCN=0: function name (FEXIT)
+        - NEXITSTR=0: message (NEXIT)
+        - CEXITFLAG=1 / DEXITOBJ=1: flag or door object
+        - CEXITSTR=1 / DEXITSTR=1: fallback message
 
-        Returns normalized value for storage.
+        ZIL source formats:
+        - (DIR TO ROOM) → UEXIT
+        - (DIR "message") → NEXIT
+        - (DIR PER ROUTINE) → FEXIT
+        - (DIR TO ROOM IF FLAG [ELSE "msg"]) → CEXIT
+        - (DIR TO ROOM IF OBJ IS OPEN [ELSE "msg"]) → DEXIT
         """
         if isinstance(prop_value, str):
-            # Already a string (NEXIT message)
             return prop_value
 
         if isinstance(prop_value, list) and len(prop_value) >= 1:
-            # Check if first element is 'TO'
             first = self._eval_value(prop_value[0])
+
+            if isinstance(first, str) and first.upper() == 'PER':
+                # FEXIT: (DIR PER ROUTINE) → (3, [ROUTINE])
+                func = self._eval_value(prop_value[1]) if len(prop_value) >= 2 else first
+                return (self.FEXIT, [func])
+
             if isinstance(first, str) and first.upper() == 'TO':
                 if len(prop_value) == 2:
-                    # Simple exit: (DIR TO ROOM) → just the room name
+                    # UEXIT: (DIR TO ROOM) → just the room name string
                     return self._eval_value(prop_value[1])
-                elif len(prop_value) >= 4:
-                    # Conditional: (DIR TO ROOM IF FLAG ...)
-                    # Keep as list but put room first for REXIT indexing
-                    room = self._eval_value(prop_value[1])
-                    rest = [self._eval_value(v) for v in prop_value[2:]]
-                    return [room] + rest
-            else:
-                # Not starting with TO - return as is
-                return [self._eval_value(v) for v in prop_value]
+
+                # Parse conditional: (DIR TO ROOM IF FLAG/OBJ ...)
+                room = self._eval_value(prop_value[1])
+                rest_vals = [self._eval_value(v) for v in prop_value[2:]]
+
+                # Find IF keyword
+                if_idx = next((i for i, v in enumerate(rest_vals)
+                               if isinstance(v, str) and v.upper() == 'IF'), None)
+
+                if if_idx is not None and if_idx + 1 < len(rest_vals):
+                    flag_or_obj = rest_vals[if_idx + 1]
+                    remaining = rest_vals[if_idx + 2:]
+
+                    # Check for DEXIT pattern: IS OPEN
+                    has_is_open = (len(remaining) >= 2 and
+                                   isinstance(remaining[0], str) and
+                                   remaining[0].upper() == 'IS')
+
+                    # Find ELSE message
+                    else_msg = None
+                    for i, v in enumerate(remaining):
+                        if isinstance(v, str) and v.upper() == 'ELSE' and i + 1 < len(remaining):
+                            else_msg = remaining[i + 1]
+                            break
+
+                    exit_type = self.DEXIT if has_is_open else self.CEXIT
+                    data = [room, flag_or_obj]
+                    if else_msg:
+                        data.append(else_msg)
+                    return (exit_type, data)
+
+                # No IF, just room + rest
+                return (self.UEXIT, [room] + rest_vals)
+
+            # Not TO or PER - return as evaluated list
+            return [self._eval_value(v) for v in prop_value]
 
         return prop_value
 

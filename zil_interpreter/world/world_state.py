@@ -45,12 +45,43 @@ class WorldState:
     def find_object_by_word(self, word: str) -> Optional[GameObject]:
         """Find an object that matches the given word.
 
+        Searches in priority order: inventory, current room contents,
+        room globals, then all objects as fallback.
+
         Args:
-            word: Word to match against object synonyms
+            word: Word to match against object synonyms/adjectives
 
         Returns:
             First matching GameObject, or None
         """
+        # Priority 1: Objects in player's inventory
+        player = self.get_global("PLAYER") or self.get_global("ADVENTURER")
+        if isinstance(player, GameObject):
+            for child in player.children:
+                if child.matches_word(word):
+                    return child
+
+        # Priority 2: Objects in current room (including nested)
+        here = self.get_global("HERE")
+        if isinstance(here, GameObject):
+            for child in here.children:
+                if child.matches_word(word):
+                    return child
+                # Check inside open containers in room
+                if child.has_flag("OPENBIT"):
+                    for grandchild in child.children:
+                        if grandchild.matches_word(word):
+                            return grandchild
+
+            # Priority 3: Room's GLOBAL objects (visible from room)
+            globals_prop = here.get_property("GLOBAL")
+            if isinstance(globals_prop, list):
+                for gname in globals_prop:
+                    gobj = self.objects.get(str(gname).upper())
+                    if gobj and gobj.matches_word(word):
+                        return gobj
+
+        # Priority 4: Fallback - search all objects
         for obj in self.objects.values():
             if obj.matches_word(word):
                 return obj
