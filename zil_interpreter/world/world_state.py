@@ -81,10 +81,13 @@ class WorldState:
                     if gobj and gobj.matches_word(word):
                         return gobj
 
-        # Priority 4: Fallback - search all objects
-        for obj in self.objects.values():
-            if obj.matches_word(word):
-                return obj
+        # Priority 4: LOCAL-GLOBALS - items accessible from all rooms
+        local_globals = self.objects.get("LOCAL-GLOBALS")
+        if local_globals:
+            for child in local_globals.children:
+                if child.matches_word(word):
+                    return child
+
         return None
 
     def set_global(self, name: str, value: Any) -> None:

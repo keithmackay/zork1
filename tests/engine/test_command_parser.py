@@ -18,10 +18,14 @@ def test_parse_simple_command():
 
 
 def test_parse_verb_object():
-    """Test parsing verb with direct object."""
+    """Test parsing verb with direct object in current room."""
     world = WorldState()
+    room = GameObject(name="ROOM")
     lamp = GameObject(name="LAMP", synonyms=["LAMP", "LANTERN"])
+    world.add_object(room)
     world.add_object(lamp)
+    lamp.move_to(room)
+    world.set_current_room(room)
 
     parser = CommandParser(world)
     result = parser.parse("take lamp")
@@ -33,12 +37,17 @@ def test_parse_verb_object():
 
 
 def test_parse_verb_two_objects():
-    """Test parsing verb with direct and indirect objects."""
+    """Test parsing verb with direct and indirect objects in current room."""
     world = WorldState()
+    room = GameObject(name="ROOM")
     lamp = GameObject(name="LAMP", synonyms=["LAMP", "LANTERN"])
     box = GameObject(name="BOX", synonyms=["BOX", "CONTAINER"])
+    world.add_object(room)
     world.add_object(lamp)
     world.add_object(box)
+    lamp.move_to(room)
+    box.move_to(room)
+    world.set_current_room(room)
 
     parser = CommandParser(world)
     result = parser.parse("put lamp in box")

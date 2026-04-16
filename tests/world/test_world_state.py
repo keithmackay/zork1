@@ -25,10 +25,14 @@ def test_add_object_to_world():
 
 
 def test_find_object_by_synonym():
-    """Test finding object by synonym."""
+    """Test finding object by synonym when it's in the current room."""
     world = WorldState()
+    room = GameObject(name="ROOM")
     lamp = GameObject(name="LAMP", synonyms=["LAMP", "LANTERN"])
+    world.add_object(room)
     world.add_object(lamp)
+    lamp.move_to(room)
+    world.set_current_room(room)
 
     result = world.find_object_by_word("LANTERN")
     assert result == lamp

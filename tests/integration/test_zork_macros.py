@@ -7,6 +7,8 @@ from zil_interpreter.compiler.macro_registry import MacroRegistry
 from zil_interpreter.parser.ast_nodes import Routine, Form, Atom
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkMacroExpansion:
     """Integration tests for complete Zork I macro expansion."""
 

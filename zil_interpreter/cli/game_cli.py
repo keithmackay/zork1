@@ -26,6 +26,7 @@ class GameCLI:
         self.engine: Optional[GameEngine] = None
         self.output_buffer = OutputBuffer()
         self.is_running = False
+        self._init_output: str = ""  # output captured from GO routine init
 
     def load_game(self) -> bool:
         """Load the game file.
@@ -84,10 +85,21 @@ class GameCLI:
         except Exception:
             pass
 
+        # Capture GO output — _display_initial_state will use it instead of running look
+        self._init_output = self.output_buffer.flush()
+
         # If HERE is still not set, do manual initialization
         here = self.world.get_global("HERE")
         if here is None or here == 0:
             self._manual_initialization()
+        else:
+            # Sync _current_room from HERE global so get_current_room() works
+            if hasattr(here, 'name'):
+                self.world.set_current_room(here)
+            elif isinstance(here, str):
+                room = self.world.get_object(here)
+                if room:
+                    self.world.set_current_room(room)
 
     def _manual_initialization(self) -> None:
         """Manually initialize essential game state.
@@ -129,7 +141,10 @@ class GameCLI:
                 if not self.json_mode:
                     command = input("> ").strip()
                 else:
-                    command = sys.stdin.readline().strip()
+                    line = sys.stdin.readline()
+                    if not line:  # EOF
+                        break
+                    command = line.strip()
 
                 if not command:
                     continue
@@ -151,25 +166,26 @@ class GameCLI:
         if not self.world:
             return
 
-        # Get initial room description
         current_room = self.world.get_current_room()
-        output = ""
 
-        # Try to execute look command to get initial game description
-        # Do this even if current_room is None, as the game might have custom initialization
-        try:
-            result = self.engine.execute_command("look")
-            output = self.output_buffer.flush()
-        except Exception:
-            # If look fails, try using room description if available
-            if current_room and hasattr(current_room, 'description'):
-                output = current_room.description
+        # Prefer output captured from GO routine — avoids double room description.
+        # Fall back to running look if GO produced nothing.
+        output = self._init_output
+        if not output:
+            try:
+                self.engine.execute_command("look")
+                output = self.output_buffer.flush()
+            except Exception:
+                if current_room and hasattr(current_room, 'description'):
+                    output = current_room.description
+
+        room_name = current_room.name if current_room else "unknown"
 
         if self.json_mode:
             self._json_output({
                 "type": "init",
                 "output": output if output else "Welcome! Type 'look' to begin.",
-                "room": current_room.name if current_room and hasattr(current_room, 'name') else "unknown",
+                "room": room_name,
             })
         else:
             if output:

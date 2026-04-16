@@ -5,6 +5,8 @@ from zil_interpreter.compiler.file_processor import FileProcessor, CircularDepen
 from zil_interpreter.parser.ast_nodes import Routine, Object
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkLoading:
     """Integration tests for loading all Zork I files."""
 

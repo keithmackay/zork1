@@ -39,6 +39,10 @@ class GameEngine:
         Returns:
             True if command was recognized and executed
         """
+        # Reset parser state from previous command
+        self.world.set_global('PRSO', None)
+        self.world.set_global('PRSI', None)
+
         # Parse command
         parsed = self.parser.parse(command)
         if not parsed:

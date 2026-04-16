@@ -67,7 +67,10 @@ class CommandParser:
         'SAY': ['say', 'speak', 'talk', 'tell', 'shout', 'yell'],
         'RING': ['ring'],
         'WIND': ['wind'],
-        'CLIMB': ['climb'],
+        'CLIMB-UP': ['climb up'],
+        'CLIMB-DOWN': ['climb down'],
+        'CLIMB-ON': ['climb on', 'sit on'],
+        'CLIMB-FOO': ['climb'],
         'JUMP': ['jump', 'leap'],
         'WAIT': ['wait', 'z'],
         # Status

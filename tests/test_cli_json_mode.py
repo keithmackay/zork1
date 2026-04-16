@@ -2,6 +2,7 @@
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -12,7 +13,7 @@ def test_cli_json_mode():
 
     # Start CLI in JSON mode
     proc = subprocess.Popen(
-        ["python3", "-m", "zil_interpreter", str(game_file), "--json"],
+        [sys.executable, "-m", "zil_interpreter", str(game_file), "--json"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

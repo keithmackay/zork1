@@ -44,8 +44,12 @@ def test_game_engine_sets_parser_state():
     output = OutputBuffer()
     engine = GameEngine(world, output)
 
+    room = GameObject(name="ROOM")
     lamp = GameObject(name="LAMP", synonyms=["LAMP"])
+    world.add_object(room)
     world.add_object(lamp)
+    lamp.move_to(room)
+    world.set_current_room(room)
 
     # Register TAKE routine
     take_routine = Routine(

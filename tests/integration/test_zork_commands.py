@@ -12,6 +12,8 @@ from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.world.game_object import GameObject, ObjectFlag
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkCommandLexer:
     """Tests for command lexer with Zork I vocabulary."""
 
@@ -86,6 +88,8 @@ class TestZorkCommandLexer:
         assert "CASE" in words or "CASE" not in words  # Object may not have CASE synonym
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkCommandParser:
     """Tests for command parser with Zork I vocabulary."""
 
@@ -162,6 +166,8 @@ class TestZorkCommandParser:
         assert cmd.preposition == "IN"
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkSyntaxMatching:
     """Tests for syntax matching with Zork I SYNTAX table."""
 
@@ -216,6 +222,8 @@ class TestZorkSyntaxMatching:
         assert entry is not None
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkCommandProcessorIntegration:
     """End-to-end tests with Zork I vocabulary and test objects."""
 

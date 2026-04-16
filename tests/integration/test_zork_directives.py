@@ -8,6 +8,8 @@ from zil_interpreter.compiler.directive_processor import DirectiveProcessor
 from zil_interpreter.parser.ast_nodes import Form, Atom
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkDirectiveProcessing:
     """Integration tests for processing all Zork I directives."""
 
@@ -92,6 +94,8 @@ class TestZorkDirectiveProcessing:
         assert processed_directives.get_canonical("THRU") == "WITH"
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestZorkDirectiveContent:
     """Tests for specific Zork I directive content."""
 
@@ -171,6 +175,8 @@ class TestZorkDirectiveContent:
             assert idx == i, f"Direction {direction} should be at index {i}, got {idx}"
 
 
+@pytest.mark.slow
+@pytest.mark.timeout(30)
 class TestDirectiveProcessingRobustness:
     """Tests for directive processing error handling."""
 
