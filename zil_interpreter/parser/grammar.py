@@ -6,6 +6,7 @@ ZIL_GRAMMAR = r"""
     expression: form
               | percent_eval
               | list
+              | bracket_list
               | splice
               | hash_expr
               | char_literal
@@ -20,6 +21,7 @@ ZIL_GRAMMAR = r"""
     form: _LANGLE atom? expression* _RANGLE
     percent_eval: "%" form
     list: "(" expression* ")"
+    bracket_list: "[" expression* "]"
     splice: "!" form
           | "!" local_ref
           | "!" global_ref
@@ -39,11 +41,11 @@ ZIL_GRAMMAR = r"""
     _RANGLE.3: ">"
     SEMICOLON: ";"
     OPERATOR.2: /N?==\?|[LG]=\?|[LG01]\?|<=\?|>=\?|=\?|>\?|<\?/
-    ATOM: /\$?[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=](?!\?)/
+    ATOM: /\$?[A-Z][A-Z0-9\-?!+*\/=:&]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=](?!\?)/
     ESCAPED_STRING: /"([^"\\]|\\.)*"/s
     STRING_COMMENT: /;"([^"\\]|\\.)*"/s
     LINE_COMMENT: /;[^\n<\(\.,'][^\n]*/
-    FORMFEED: /\^L/
+    FORMFEED: /(\^\/L|\^L|\/\^L)/
 
     %import common.SIGNED_NUMBER
     %import common.WS
