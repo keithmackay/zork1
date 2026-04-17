@@ -145,3 +145,93 @@ class TestStackOperations:
         result = op.execute([], mock_evaluator)
 
         assert result is None
+
+    def test_rstack_no_stack_attr_returns_none(self):
+        """RSTACK when evaluator has no stack attribute returns None."""
+        from zil_interpreter.engine.operations.zork2_ops import RstackOp
+        op = RstackOp()
+
+        mock_evaluator = Mock(spec=[])  # no 'stack' attribute
+
+        result = op.execute([], mock_evaluator)
+
+        assert result is None
+
+    def test_push_creates_stack_if_missing(self):
+        """PUSH creates a stack on the evaluator if none exists."""
+        from zil_interpreter.engine.operations.zork2_ops import PushOp
+        op = PushOp()
+
+        mock_evaluator = Mock(spec=['evaluate'])
+        mock_evaluator.evaluate = Mock(return_value=99)
+
+        result = op.execute([99], mock_evaluator)
+
+        assert result == 99
+        assert hasattr(mock_evaluator, 'stack')
+        assert 99 in mock_evaluator.stack
+
+    def test_push_rstack_roundtrip(self):
+        """PUSH followed by RSTACK returns the pushed value."""
+        from zil_interpreter.engine.operations.zork2_ops import PushOp, RstackOp
+        push_op = PushOp()
+        rstack_op = RstackOp()
+
+        mock_evaluator = Mock()
+        mock_evaluator.evaluate = Mock(return_value=7)
+        mock_evaluator.stack = []
+
+        push_op.execute([7], mock_evaluator)
+        result = rstack_op.execute([], mock_evaluator)
+
+        assert result == 7
+        assert mock_evaluator.stack == []
+
+
+class TestNextpEdgeCases:
+    """Additional edge case tests for NEXTP."""
+
+    def test_nextp_returns_false_when_no_properties(self):
+        """NEXTP returns 0 when object has no properties."""
+        from zil_interpreter.engine.operations.zork2_ops import NextpOp
+        op = NextpOp()
+
+        mock_obj = Mock()
+        mock_obj.properties = {}
+
+        mock_evaluator = Mock()
+        mock_evaluator.evaluate = Mock(side_effect=lambda x: mock_obj if x == "OBJ" else 0)
+
+        result = op.execute(["OBJ", 0], mock_evaluator)
+
+        assert result == 0
+
+    def test_nextp_returns_0_after_last_property(self):
+        """NEXTP returns 0 when asked for the property after the last one."""
+        from zil_interpreter.engine.operations.zork2_ops import NextpOp
+        op = NextpOp()
+
+        mock_obj = Mock()
+        mock_obj.properties = {"ONLY": 1}
+
+        mock_evaluator = Mock()
+        mock_evaluator.evaluate = Mock(side_effect=lambda x: mock_obj if x == "OBJ" else "ONLY")
+
+        result = op.execute(["OBJ", "ONLY"], mock_evaluator)
+
+        assert result == 0
+
+    def test_nextp_returns_0_for_unknown_property(self):
+        """NEXTP returns 0 when given property not in object."""
+        from zil_interpreter.engine.operations.zork2_ops import NextpOp
+        op = NextpOp()
+
+        mock_obj = Mock()
+        mock_obj.properties = {"A": 1, "B": 2}
+
+        mock_evaluator = Mock()
+        mock_evaluator.evaluate = Mock(side_effect=lambda x: mock_obj if x == "OBJ" else "UNKNOWN")
+
+        result = op.execute(["OBJ", "UNKNOWN"], mock_evaluator)
+
+        assert result == 0
