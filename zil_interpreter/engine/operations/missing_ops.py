@@ -358,17 +358,7 @@ class ZmemqOperation(Operation):
         return "ZMEMQ"
 
     def execute(self, args: list, evaluator) -> Any:
-        if len(args) < 2:
-            return False
-        target = evaluator.evaluate(args[0])
-        table = evaluator.evaluate(args[1])
-
-        if isinstance(table, list):
-            for i, val in enumerate(table):
-                if val == target:
-                    return i * 2  # Word offset
-            return False
-        return False
+        raise NotImplementedError(f"ZIL operation '{self.name}' is not yet implemented")
 
 
 class ZmemqbOperation(Operation):
@@ -383,17 +373,7 @@ class ZmemqbOperation(Operation):
         return "ZMEMQB"
 
     def execute(self, args: list, evaluator) -> Any:
-        if len(args) < 2:
-            return False
-        target = evaluator.evaluate(args[0])
-        table = evaluator.evaluate(args[1])
-
-        if isinstance(table, list):
-            for i, val in enumerate(table):
-                if val == target:
-                    return i  # Byte offset
-            return False
-        return False
+        raise NotImplementedError(f"ZIL operation '{self.name}' is not yet implemented")
 
 
 class LengthCheckOperation(Operation):
@@ -473,11 +453,7 @@ class ChtypeOperation(Operation):
         return "CHTYPE"
 
     def execute(self, args: list, evaluator) -> Any:
-        if not args:
-            return None
-        val = evaluator.evaluate(args[0])
-        # In our interpreter, type coercion is mostly implicit
-        return val
+        raise NotImplementedError(f"ZIL operation '{self.name}' is not yet implemented")
 
 
 class SpnameOperation(Operation):
@@ -492,16 +468,7 @@ class SpnameOperation(Operation):
         return "SPNAME"
 
     def execute(self, args: list, evaluator) -> str:
-        if not args:
-            return ""
-        val = args[0]
-        if isinstance(val, Atom):
-            return val.value
-        val = evaluator.evaluate(val)
-        from zil_interpreter.world.game_object import GameObject
-        if isinstance(val, GameObject):
-            return val.name
-        return str(val)
+        raise NotImplementedError(f"ZIL operation '{self.name}' is not yet implemented")
 
 
 class StuffOperation(Operation):
@@ -517,13 +484,7 @@ class StuffOperation(Operation):
         return "STUFF"
 
     def execute(self, args: list, evaluator) -> Any:
-        # In our interpreter, buffer management is simplified
-        if len(args) < 2:
-            return None
-        src = evaluator.evaluate(args[0])
-        dest = evaluator.evaluate(args[1])
-        # Just return the source value
-        return src
+        raise NotImplementedError(f"ZIL operation '{self.name}' is not yet implemented")
 
 
 class OpenableOperation(Operation):
