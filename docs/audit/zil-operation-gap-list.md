@@ -6,434 +6,399 @@ Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered 
 
 | Operation | Game(s) | Status | Notes |
 |-----------|---------|--------|-------|
-| ABS | Zork I, Zork III | ok | |
-| ACCESSIBLE? | Zork I, Zork II, Zork III | ok | |
-| ACLAUSE-WIN | Zork I, Zork II, Zork III | missing | |
-| AGAIN> | Zork I, Zork II, Zork III | missing | |
-| AGAIN>> | Zork I, Zork II, Zork III | missing | |
-| AND | Zork I, Zork II, Zork III | ok | |
-| APPLY | Zork I, Zork II, Zork III | ok | |
-| ASSIGNED? | Zork I, Zork II, Zork III | ok | |
-| AWAKEN | Zork I, Zork II, Zork III | missing | |
-| BACK | Zork I, Zork II, Zork III | ok | |
-| BAD-EGG> | Zork I | missing | |
-| BALLOON-BURN> | Zork I, Zork II, Zork III | missing | |
-| BAND | Zork I, Zork II, Zork III | ok | |
-| BCONTENTS> | Zork II | missing | |
-| BEAM-STOPPED?> | Zork III | missing | |
-| BEAM-STOPPED?>> | Zork III | missing | |
-| BEAM-STOPPED?>>> | Zork III | missing | |
-| BKLEAVEE | Zork II | missing | |
-| BOMB? | Zork II | missing | |
-| BOR | Zork I, Zork II, Zork III | ok | |
-| BTST | Zork I, Zork II, Zork III | ok | |
-| BUFFER-PRINT | Zork I, Zork II, Zork III | missing | |
-| BUT-MERGE | Zork I, Zork II, Zork III | missing | |
-| BUZZ | Zork I, Zork II, Zork III | missing | |
-| CAKE-CRUMBLE> | Zork II | missing | |
-| CANT-ORPHAN> | Zork I, Zork II, Zork III | missing | |
-| CANT-USE | Zork I, Zork II, Zork III | missing | |
-| CASE-WORTH>>> | Zork II | missing | |
-| CC-CRACK-PSEUDO> | Zork II | missing | |
-| CCOUNT | Zork I, Zork II, Zork III | missing | |
-| CELL-MOVE> | Zork III | missing | |
-| CHTYPE | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| CLAUSE | Zork I, Zork II, Zork III | missing | |
-| CLAUSE-ADD | Zork I, Zork II, Zork III | missing | |
-| CLAUSE-COPY | Zork I, Zork II, Zork III | missing | |
-| CLAUSE-PRINT | Zork III | missing | |
-| CLOCKER> | Zork I, Zork II, Zork III | missing | |
-| CLOCKER>> | Zork I, Zork II, Zork III | missing | |
-| COND | Zork I, Zork II, Zork III | ok | |
-| CONSTANT | Zork I, Zork II, Zork III | missing | |
-| CP-CORNER | Zork III | missing | |
-| CP-ORTHO | Zork III | missing | |
-| CPEW | Zork III | missing | |
-| CPGOTO | Zork III | missing | |
-| CPLADDER-JUNK | Zork III | missing | |
-| CPMOVE | Zork III | missing | |
-| CPNEXT | Zork III | missing | |
-| CPNS | Zork III | missing | |
-| CPWHERE> | Zork III | missing | |
-| CRLF> | Zork I, Zork II, Zork III | missing | |
-| CRLF>> | Zork I, Zork II, Zork III | missing | |
-| D-APPLY | Zork I, Zork II, Zork III | missing | |
-| DD-APPLY | Zork I, Zork II, Zork III | missing | |
-| DDESC | Zork III | missing | |
-| DEAD-PALANTIR | Zork II | missing | |
-| DECLINE-AND-FALL> | Zork II | missing | |
-| DEFINE | Zork I, Zork II, Zork III | missing | |
-| DEFMAC | Zork I, Zork II, Zork III | missing | |
-| DEPOSIT-BOOTY | Zork I | missing | |
-| DESCRIBE-MENHIR> | Zork II | missing | |
-| DESCRIBE-OBJECT | Zork I, Zork II, Zork III | missing | |
-| DESCRIBE-OBJECTS | Zork I, Zork II, Zork III | missing | |
-| DESCRIBE-OBJECTS> | Zork I, Zork II, Zork III | missing | |
-| DESCRIBE-ROOM | Zork I, Zork II, Zork III | missing | |
-| DESCRIBE-ROOM> | Zork I, Zork II, Zork III | missing | |
-| DIAMOND-LOSS> | Zork II | missing | |
-| DIM-DOOR-APPEARS> | Zork II | missing | |
-| DIRECTIONS | Zork I, Zork II, Zork III | missing | |
-| DIRIN | Zork I, Zork II, Zork III | ok | |
-| DIROUT | Zork I, Zork II, Zork III | ok | |
-| DISABLE | Zork I, Zork II, Zork III | ok | |
-| DLESS? | Zork I, Zork II, Zork III | ok | |
-| DMISH>>> | Zork III | missing | |
-| DO-FIGHT | Zork I | missing | |
-| DO-SL | Zork I, Zork II, Zork III | missing | |
-| DO-WALK | Zork I, Zork II, Zork III | missing | |
-| DPR | Zork III | missing | |
-| DRAGON-LEAVES> | Zork II | missing | |
-| DROP-JUNK | Zork I | missing | |
-| DUMB-CONTAINER> | Zork I | missing | |
-| DWINDOW-DESC> | Zork II | missing | |
-| EMPTY? | Zork I, Zork II, Zork III | ok | |
-| ENABLE | Zork I, Zork II, Zork III | ok | |
-| EQUAL? | Zork I, Zork II, Zork III | ok | |
-| ERROR | Zork I, Zork II, Zork III | missing | |
-| EWTELL | Zork III | missing | |
-| FCLEAR | Zork I, Zork II, Zork III | ok | |
-| FIGHT-STRENGTH | Zork I | missing | |
-| FIGHT-STRENGTH> | Zork I | missing | |
-| FIGHT-STRENGTH>> | Zork I | missing | |
-| FIGHT-STRENGTH>>> | Zork I | missing | |
-| FIND-IN | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| FIND-TARGET | Zork II | missing | |
-| FIND-WEAPON | Zork I, Zork II, Zork III | missing | |
-| FINISH> | Zork I, Zork II, Zork III | missing | |
-| FINISH>> | Zork III | missing | |
-| FIRST? | Zork I, Zork II, Zork III | ok | |
-| FIRSTER | Zork I, Zork II, Zork III | missing | |
-| FIX-BOAT> | Zork I | missing | |
-| FIX-MAINT-LEAK> | Zork I | missing | |
-| FIXED-FONT-OFF> | Zork II, Zork III | missing | |
-| FIXED-FONT-ON> | Zork II, Zork III | missing | |
-| FLAMING? | Zork I, Zork II, Zork III | missing | |
-| FLATHEAD-SENTENCE> | Zork III | missing | |
-| FLY-ME> | Zork I | missing | |
-| FORCE-FIGHT | Zork II | missing | |
-| FOREST-ROOM?>> | Zork I | missing | |
-| FORM | Zork I, Zork II, Zork III | missing | |
-| FREQUENT-WORDS?> | Zork I, Zork II, Zork III | missing | |
-| FSET | Zork I, Zork II, Zork III | ok | |
-| FSET? | Zork I, Zork II, Zork III | ok | |
-| FUNCTION | Zork I, Zork II, Zork III | missing | |
-| FWEEP | Zork I | missing | |
-| G? | Zork I, Zork II, Zork III | ok | |
-| GASSIGNED? | Zork I, Zork II, Zork III | ok | |
-| GDECL | Zork I, Zork II, Zork III | missing | |
-| GENIE-LEAVES | Zork II | missing | |
-| GENIE-LEAVES> | Zork II | missing | |
-| GET | Zork I, Zork II, Zork III | ok | |
-| GET-OBJECT | Zork I, Zork II, Zork III | missing | |
-| GET-WALL | Zork I, Zork II, Zork III | missing | |
-| GETB | Zork I, Zork II, Zork III | ok | |
-| GETP | Zork I, Zork II, Zork III | ok | |
-| GETPT | Zork I, Zork II, Zork III | ok | |
-| GLOBAL | Zork I, Zork II, Zork III | missing | |
-| GLOBAL-CHECK | Zork I, Zork II, Zork III | missing | |
-| GLOBAL-IN? | Zork I, Zork II, Zork III | ok | |
-| GO | Zork II | missing | |
-| GO-E-W | Zork III | missing | |
-| GO-NEXT | Zork I | missing | |
-| GO-ON-LAKE> | Zork III | missing | |
-| GOTO | Zork I, Zork II, Zork III | ok | |
-| GUARD-CAUGHT> | Zork III | missing | |
-| GUARDS-KILL> | Zork III | missing | |
-| GWIM | Zork I, Zork II, Zork III | missing | |
-| HACK-HACK | Zork I, Zork II, Zork III | missing | |
-| HACK-TREASURES> | Zork I | missing | |
-| HAPPY-NEW-YEAR> | Zork III | missing | |
-| HEAR-FLATHEAD> | Zork III | missing | |
-| HELD? | Zork I, Zork II, Zork III | ok | |
-| HELLO? | Zork II, Zork III | missing | |
-| HERO-BLOW> | Zork I, Zork II, Zork III | missing | |
-| HIT-SPOT> | Zork I, Zork II, Zork III | missing | |
-| I-XB>> | Zork I | missing | |
-| I-XBH> | Zork I | missing | |
-| ICEBOOM> | Zork II | missing | |
-| ID | Zork II, Zork III | missing | |
-| IDROP> | Zork I, Zork II, Zork III | missing | |
-| IDROP>> | Zork I | missing | |
-| IGRTR? | Zork I, Zork II, Zork III | ok | |
-| IKILL | Zork III | missing | |
-| ILLCP | Zork III | missing | |
-| IN? | Zork I, Zork II, Zork III | ok | |
-| INBUF-ADD | Zork I, Zork II, Zork III | missing | |
-| INBUF-STUFF | Zork I, Zork II, Zork III | missing | |
-| INFESTED? | Zork I, Zork II, Zork III | missing | |
-| INSERT-FILE | Zork I, Zork II, Zork III | missing | |
-| INT | Zork I, Zork II, Zork III | ok | |
-| INTEGRAL-PART> | Zork I | missing | |
-| ITABLE | Zork I, Zork II, Zork III | ok | |
-| ITAKE | Zork I, Zork II, Zork III | missing | |
-| ITAKE-CHECK | Zork I, Zork II, Zork III | missing | |
-| ITAKE> | Zork I, Zork II, Zork III | missing | |
-| ITAKE>>> | Zork I, Zork II, Zork III | missing | |
-| JIGS-UP | Zork I, Zork II, Zork III | ok | |
-| JIGS-UP> | Zork II | missing | |
-| KILL-INTERRUPTS> | Zork I, Zork II, Zork III | missing | |
-| L? | Zork I, Zork II, Zork III | ok | |
-| LEAVES-APPEAR> | Zork I | missing | |
-| LENGTH | Zork I, Zork II, Zork III | ok | |
-| LENGTH? | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| LIGHT-INT | Zork I, Zork II, Zork III | missing | |
-| LIT? | Zork I, Zork II, Zork III | ok | |
-| LKP | Zork I, Zork II, Zork III | missing | |
-| LOC | Zork I, Zork II, Zork III | ok | |
-| LOOK-LIKE-DM?> | Zork III | missing | |
-| LOOK-TO | Zork III | missing | |
-| LTABLE | Zork I, Zork II, Zork III | ok | |
-| MAIN-LOOP-1>>>> | Zork I, Zork II, Zork III | missing | |
-| MAIN-LOOP> | Zork I, Zork II, Zork III | missing | |
-| MANY-CHECK> | Zork I, Zork II, Zork III | missing | |
-| MANY-CHECK>> | Zork III | missing | |
-| MAPF | Zork I, Zork II, Zork III | ok | |
-| MAPRET | Zork I, Zork II, Zork III | ok | |
-| MAPSTOP> | Zork I, Zork II, Zork III | missing | |
-| META-LOC | Zork I, Zork II, Zork III | ok | |
-| MIN | Zork I | ok | |
-| MIRBLOCK> | Zork III | missing | |
-| MIREW> | Zork III | missing | |
-| MIRIN | Zork III | missing | |
-| MIRMOVE | Zork III | missing | |
-| MIRNS | Zork III | missing | |
-| MIRROR-DIR? | Zork III | missing | |
-| MIRROR-HERE? | Zork III | missing | |
-| MOBY-FIND | Zork II, Zork III | missing | |
-| MOD | Zork I, Zork II, Zork III | ok | |
-| MOVE | Zork I, Zork II, Zork III | ok | |
-| MOVE-ALL | Zork I | missing | |
-| MOVE-CELL-OBJECTS> | Zork III | missing | |
-| MOVE-JEWELS> | Zork III | missing | |
-| MOVE-TM-OBJECTS> | Zork III | missing | |
-| MULTIBITS | Zork I, Zork II, Zork III | missing | |
-| MULTIFROB | Zork I, Zork II, Zork III | missing | |
-| MUNG-ROOM | Zork I, Zork II | missing | |
-| N==? | Zork I, Zork II, Zork III | missing | |
-| NCLAUSE-WIN> | Zork I, Zork II, Zork III | missing | |
-| NEXT? | Zork I, Zork II, Zork III | ok | |
-| NEXTP | Zork I, Zork II, Zork III | stubbed | partial implementation in zork2_ops.py |
-| NO-GO-TELL | Zork I, Zork II, Zork III | missing | |
-| NOT | Zork I, Zork II, Zork III | ok | |
-| NOT-HERE-OBJECT-F>>> | Zork I, Zork II, Zork III | missing | |
-| NOT-HERE-PRINT | Zork I, Zork II, Zork III | missing | |
-| NTH | Zork I, Zork II, Zork III | ok | |
-| NULL-F> | Zork I, Zork II, Zork III | missing | |
-| NUMBER? | Zork I, Zork II, Zork III | ok | |
-| OBJ-FOUND | Zork I, Zork II, Zork III | missing | |
-| OBJECT | Zork I, Zork II, Zork III | missing | |
-| OPEN-CLOSE | Zork I, Zork II | missing | |
-| OPENABLE? | Zork I, Zork II, Zork III | ok | |
-| OR | Zork I, Zork II, Zork III | ok | |
-| ORPHAN | Zork I, Zork II, Zork III | missing | |
-| ORPHAN-MERGE> | Zork I, Zork II, Zork III | missing | |
-| OTHER-SIDE | Zork I, Zork II, Zork III | missing | |
-| OTVAL-FROB | Zork I | missing | |
-| OTVAL-FROB>>> | Zork I | missing | |
-| P-DOOR | Zork II | missing | |
-| PALANTIR-LOOK | Zork II | missing | |
-| PALANTIR> | Zork II | missing | |
-| PARSE | Zork I, Zork II, Zork III | missing | |
-| PARSER>> | Zork I, Zork II, Zork III | missing | |
-| PASS-THE-BUCKET | Zork II | missing | |
-| PATH-OBJECT> | Zork II, Zork III | missing | |
-| PCHECK> | Zork II | missing | |
-| PERFORM | Zork I, Zork II, Zork III | ok | |
-| PICK-DIRECTION | Zork III | missing | |
-| PICK-ONE | Zork I, Zork II, Zork III | missing | |
-| PKH | Zork II | missing | |
-| PLID | Zork II | missing | |
-| PLID> | Zork II | missing | |
-| PRE-GIVE> | Zork I, Zork II, Zork III | missing | |
-| PREP-FIND | Zork I, Zork II, Zork III | missing | |
-| PREP-PRINT | Zork I, Zork II, Zork III | missing | |
-| PRIMTYPE | Zork I, Zork II, Zork III | ok | |
-| PRINC | Zork I, Zork II, Zork III | ok | |
-| PRINT | Zork I | ok | |
-| PRINT-CONT | Zork I, Zork II, Zork III | missing | |
-| PRINT-CONTENTS | Zork I, Zork II, Zork III | missing | |
-| PRINTB | Zork I, Zork II, Zork III | ok | |
-| PRINTC | Zork I, Zork II, Zork III | ok | |
-| PRINTD | Zork I, Zork II, Zork III | ok | |
-| PRINTI | Zork I, Zork II, Zork III | ok | |
-| PRINTN | Zork I, Zork II, Zork III | ok | |
-| PROB | Zork I, Zork II, Zork III | ok | |
-| PROG | Zork I, Zork II, Zork III | ok | |
-| PROPDEF | Zork I, Zork II, Zork III | missing | |
-| PRSI-PRINT> | Zork II, Zork III | missing | |
-| PRSO-PRINT> | Zork II, Zork III | missing | |
-| PTSIZE | Zork I, Zork II, Zork III | ok | |
-| PUDDLE | Zork II | missing | |
-| PUSH | Zork I, Zork II, Zork III | stubbed | partial stub in zork2_ops.py |
-| PUT | Zork I, Zork II, Zork III | ok | |
-| PUT-BALLOON | Zork II | missing | |
-| PUTB | Zork I, Zork II, Zork III | ok | |
-| PUTP | Zork I, Zork II, Zork III | ok | |
-| PUTREST | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| QUEUE | Zork I, Zork II, Zork III | ok | |
-| QUIT> | Zork I, Zork II, Zork III | missing | |
-| QUIT>> | Zork III | missing | |
-| RANDOM | Zork I, Zork II, Zork III | ok | |
-| RANDOM-BOOK> | Zork II | missing | |
-| RANDOM-ELEMENT | Zork I, Zork II, Zork III | missing | |
-| RANDOM-WALK> | Zork II | missing | |
-| RANDOMIZE-OBJECTS> | Zork I, Zork II, Zork III | missing | |
-| READ | Zork I, Zork II, Zork III | ok | |
-| REALLY-DEAD | Zork III | missing | |
-| RECOVER-STILETTO> | Zork I | missing | |
-| REMARK | Zork I | missing | |
-| REMOVE | Zork I, Zork II, Zork III | ok | |
-| REMOVE-CAREFULLY | Zork I, Zork II, Zork III | missing | |
-| REPEAT | Zork I, Zork II, Zork III | ok | |
-| REST | Zork I, Zork II, Zork III | ok | |
-| RESTART> | Zork I, Zork II, Zork III | missing | |
-| RESTORE> | Zork I, Zork II, Zork III | missing | |
-| RETURN | Zork I, Zork II, Zork III | ok | |
-| RETURN!- | Zork I, Zork II, Zork III | missing | |
-| RETURN!-> | Zork I, Zork II, Zork III | missing | |
-| RETURN> | Zork I, Zork II, Zork III | missing | |
-| RFALSE> | Zork I, Zork II, Zork III | missing | |
-| RFALSE>> | Zork I, Zork II, Zork III | missing | |
-| RFATAL> | Zork I, Zork II, Zork III | missing | |
-| RFATAL>> | Zork I, Zork II, Zork III | missing | |
-| RFATAL>>> | Zork II | missing | |
-| RIPOFF | Zork I, Zork II, Zork III | missing | |
-| RISE-AND-SHINE> | Zork II | missing | |
-| ROB | Zork I, Zork II | missing | |
-| ROB-MAZE | Zork I | missing | |
-| ROOM | Zork I, Zork II, Zork III | missing | |
-| ROOM? | Zork II | missing | |
-| ROUTINE | Zork I, Zork II, Zork III | missing | |
-| RSTACK>>> | Zork I, Zork II, Zork III | missing | |
-| RTRUE> | Zork I, Zork II, Zork III | missing | |
-| RTRUE>> | Zork I, Zork II, Zork III | missing | |
-| RTRUE>>> | Zork I, Zork II, Zork III | missing | |
-| SAND-FUNCTION> | Zork I, Zork II, Zork III | missing | |
-| SAVE> | Zork I, Zork II, Zork III | missing | |
-| SCOL-GO | Zork I, Zork II, Zork III | missing | |
-| SCOL-OBJ | Zork I, Zork II, Zork III | missing | |
-| SCOL-OBJECT | Zork II | missing | |
-| SCOL-THROUGH | Zork I, Zork II, Zork III | missing | |
-| SCORE-OBJ | Zork I, Zork II, Zork III | missing | |
-| SCORE-UPD | Zork I, Zork II, Zork III | missing | |
-| SEARCH-LIST | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| SEE-INSIDE? | Zork I, Zork II, Zork III | ok | |
-| SET | Zork I, Zork II, Zork III | ok | |
-| SETG | Zork I, Zork II, Zork III | ok | |
-| SHADOW-ARRIVAL> | Zork III | missing | |
-| SHADOW-ATTACK> | Zork III | missing | |
-| SHADOW-DIES> | Zork III | missing | |
-| SHAKE-LOOP> | Zork I, Zork II, Zork III | missing | |
-| SLIDER | Zork I | missing | |
-| SNAME | Zork III | missing | |
-| SNARF-OBJECTS> | Zork I, Zork II, Zork III | missing | |
-| SNARFEM | Zork I, Zork II, Zork III | missing | |
-| SPNAME | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| STEAL-JUNK | Zork I | missing | |
-| STOLE-LIGHT?> | Zork I | missing | |
-| STRING | Zork I, Zork II, Zork III | missing | |
-| STUFF | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| STUPID-CONTAINER | Zork I | missing | |
-| SYNONYM | Zork I, Zork II, Zork III | missing | |
-| SYNTAX | Zork I, Zork II, Zork III | missing | |
-| SYNTAX-CHECK> | Zork I, Zork II, Zork III | missing | |
-| SYNTAX-FOUND | Zork I, Zork II, Zork III | missing | |
-| TABLE | Zork I, Zork II, Zork III | ok | |
-| TAKE-CHECK> | Zork III | missing | |
-| TAKE-CHECK>> | Zork I, Zork II, Zork III | missing | |
-| TELL | Zork I, Zork II, Zork III | ok | |
-| TELL-NO-PRSI> | Zork I, Zork II, Zork III | missing | |
-| TGOTO | Zork III | missing | |
-| THIEF-IN-TREASURE> | Zork I | missing | |
-| THIEF-VS-ADVENTURER | Zork I | missing | |
-| THING-PRINT | Zork I, Zork II, Zork III | missing | |
-| THIS-IS-IT | Zork I, Zork II, Zork III | ok | |
-| THIS-IT? | Zork I, Zork II, Zork III | ok | |
-| TOUCH-ALL | Zork I | missing | |
-| TYPE? | Zork I, Zork II, Zork III | ok | |
-| UNKNOWN-WORD | Zork I, Zork II, Zork III | missing | |
-| UVECTOR | Zork III | missing | |
-| V-CLIMB-UP | Zork I, Zork II, Zork III | missing | |
-| V-DISENCHANT> | Zork I, Zork II, Zork III | missing | |
-| V-EAT>> | Zork I, Zork II, Zork III | missing | |
-| V-ECHO> | Zork I | missing | |
-| V-FIRST-LOOK> | Zork I, Zork II, Zork III | missing | |
-| V-LOCK>> | Zork I, Zork II, Zork III | missing | |
-| V-LOOK-INSIDE> | Zork I, Zork II, Zork III | missing | |
-| V-LOOK> | Zork I, Zork II, Zork III | missing | |
-| V-LOWER>> | Zork I, Zork II, Zork III | missing | |
-| V-OPEN> | Zork II | missing | |
-| V-PUT> | Zork I, Zork II, Zork III | missing | |
-| V-QUIT> | Zork I | missing | |
-| V-RESTORE> | Zork I | missing | |
-| V-SAVE> | Zork I | missing | |
-| V-SCORE | Zork I, Zork II, Zork III | missing | |
-| V-SCORE> | Zork I, Zork II, Zork III | missing | |
-| V-SKIP> | Zork I, Zork II, Zork III | missing | |
-| V-SQUEEZE>> | Zork I, Zork II, Zork III | missing | |
-| V-THROUGH | Zork II | missing | |
-| V-VERSION> | Zork I, Zork II, Zork III | missing | |
-| V-WAIT | Zork III | missing | |
-| V-WALK> | Zork II | missing | |
-| VALUE | Zork I, Zork II, Zork III | ok | |
-| VERB? | Zork I, Zork II, Zork III | ok | |
-| VERIFY> | Zork I, Zork II, Zork III | missing | |
-| VERSION | Zork I | missing | |
-| VILLAIN-BLOW | Zork I | missing | |
-| VILLAIN-RESULT | Zork I | missing | |
-| VILLAIN-STRENGTH | Zork I | missing | |
-| WEAPON-FUNCTION | Zork I | missing | |
-| WEIGHT | Zork I, Zork II, Zork III | ok | |
-| WHICH-PRINT | Zork I, Zork II, Zork III | missing | |
-| WINNER-RESULT | Zork I | missing | |
-| WINNING? | Zork I | missing | |
-| WITH-TELL | Zork I | missing | |
-| WORD-PRINT | Zork I, Zork II, Zork III | missing | |
-| WORD-TYPE | Zork III | missing | |
-| WT? | Zork I, Zork II, Zork III | missing | |
-| YES?> | Zork I, Zork II, Zork III | missing | |
-| YES?>> | Zork III | missing | |
-| ZERO? | Zork I, Zork II, Zork III | ok | |
-| ZMEMQ | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
-| ZMEMQB | Zork I, Zork II, Zork III | stubbed | registered but no-op stub in missing_ops.py |
+| ABS | Zork I, Zork III | ok |  |
+| ACCESSIBLE? | Zork I, Zork II, Zork III | ok |  |
+| ACLAUSE-WIN | Zork I, Zork II, Zork III | missing |  |
+| AGAIN | Zork I, Zork II, Zork III | ok |  |
+| AND | Zork I, Zork II, Zork III | ok |  |
+| APPLY | Zork I, Zork II, Zork III | ok |  |
+| ASSIGNED? | Zork I, Zork II, Zork III | ok |  |
+| AWAKEN | Zork I, Zork II, Zork III | missing |  |
+| BACK | Zork I, Zork II, Zork III | ok |  |
+| BAD-EGG | Zork I | missing |  |
+| BALLOON-BURN | Zork I, Zork II, Zork III | missing |  |
+| BAND | Zork I, Zork II, Zork III | ok |  |
+| BCONTENTS | Zork II | missing |  |
+| BEAM-STOPPED? | Zork III | missing |  |
+| BKLEAVEE | Zork II | missing |  |
+| BOMB? | Zork II | missing |  |
+| BOR | Zork I, Zork II, Zork III | ok |  |
+| BTST | Zork I, Zork II, Zork III | ok |  |
+| BUFFER-PRINT | Zork I, Zork II, Zork III | missing |  |
+| BUT-MERGE | Zork I, Zork II, Zork III | missing |  |
+| BUZZ | Zork I, Zork II, Zork III | missing |  |
+| CAKE-CRUMBLE | Zork II | missing |  |
+| CANT-ORPHAN | Zork I, Zork II, Zork III | missing |  |
+| CANT-USE | Zork I, Zork II, Zork III | missing |  |
+| CASE-WORTH | Zork II | missing |  |
+| CC-CRACK-PSEUDO | Zork II | missing |  |
+| CCOUNT | Zork I, Zork II, Zork III | missing |  |
+| CELL-MOVE | Zork III | missing |  |
+| CHTYPE | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| CLAUSE | Zork I, Zork II, Zork III | missing |  |
+| CLAUSE-ADD | Zork I, Zork II, Zork III | missing |  |
+| CLAUSE-COPY | Zork I, Zork II, Zork III | missing |  |
+| CLAUSE-PRINT | Zork III | missing |  |
+| CLOCKER | Zork I, Zork II, Zork III | missing |  |
+| COND | Zork I, Zork II, Zork III | ok |  |
+| CONSTANT | Zork I, Zork II, Zork III | missing |  |
+| CP-CORNER | Zork III | missing |  |
+| CP-ORTHO | Zork III | missing |  |
+| CPEW | Zork III | missing |  |
+| CPGOTO | Zork III | missing |  |
+| CPLADDER-JUNK | Zork III | missing |  |
+| CPMOVE | Zork III | missing |  |
+| CPNEXT | Zork III | missing |  |
+| CPNS | Zork III | missing |  |
+| CPWHERE | Zork III | missing |  |
+| CRLF | Zork I, Zork II, Zork III | ok |  |
+| D-APPLY | Zork I, Zork II, Zork III | missing |  |
+| DD-APPLY | Zork I, Zork II, Zork III | missing |  |
+| DDESC | Zork III | missing |  |
+| DEAD-PALANTIR | Zork II | missing |  |
+| DECLINE-AND-FALL | Zork II | missing |  |
+| DEFINE | Zork I, Zork II, Zork III | missing |  |
+| DEFMAC | Zork I, Zork II, Zork III | missing |  |
+| DEPOSIT-BOOTY | Zork I | missing |  |
+| DESCRIBE-MENHIR | Zork II | missing |  |
+| DESCRIBE-OBJECT | Zork I, Zork II, Zork III | missing |  |
+| DESCRIBE-OBJECTS | Zork I, Zork II, Zork III | missing |  |
+| DESCRIBE-ROOM | Zork I, Zork II, Zork III | missing |  |
+| DIAMOND-LOSS | Zork II | missing |  |
+| DIM-DOOR-APPEARS | Zork II | missing |  |
+| DIRECTIONS | Zork I, Zork II, Zork III | missing |  |
+| DIRIN | Zork I, Zork II, Zork III | ok |  |
+| DIROUT | Zork I, Zork II, Zork III | ok |  |
+| DISABLE | Zork I, Zork II, Zork III | ok |  |
+| DLESS? | Zork I, Zork II, Zork III | ok |  |
+| DMISH | Zork III | missing |  |
+| DO-FIGHT | Zork I | missing |  |
+| DO-SL | Zork I, Zork II, Zork III | missing |  |
+| DO-WALK | Zork I, Zork II, Zork III | missing |  |
+| DPR | Zork III | missing |  |
+| DRAGON-LEAVES | Zork II | missing |  |
+| DROP-JUNK | Zork I | missing |  |
+| DUMB-CONTAINER | Zork I | missing |  |
+| DWINDOW-DESC | Zork II | missing |  |
+| EMPTY? | Zork I, Zork II, Zork III | ok |  |
+| ENABLE | Zork I, Zork II, Zork III | ok |  |
+| EQUAL? | Zork I, Zork II, Zork III | ok |  |
+| ERROR | Zork I, Zork II, Zork III | missing |  |
+| EWTELL | Zork III | missing |  |
+| FCLEAR | Zork I, Zork II, Zork III | ok |  |
+| FIGHT-STRENGTH | Zork I | missing |  |
+| FIND-IN | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| FIND-TARGET | Zork II | missing |  |
+| FIND-WEAPON | Zork I, Zork II, Zork III | missing |  |
+| FINISH | Zork I, Zork II, Zork III | missing |  |
+| FIRST? | Zork I, Zork II, Zork III | ok |  |
+| FIRSTER | Zork I, Zork II, Zork III | missing |  |
+| FIX-BOAT | Zork I | missing |  |
+| FIX-MAINT-LEAK | Zork I | missing |  |
+| FIXED-FONT-OFF | Zork II, Zork III | ok |  |
+| FIXED-FONT-ON | Zork II, Zork III | ok |  |
+| FLAMING? | Zork I, Zork II, Zork III | missing |  |
+| FLATHEAD-SENTENCE | Zork III | missing |  |
+| FLY-ME | Zork I | missing |  |
+| FORCE-FIGHT | Zork II | missing |  |
+| FOREST-ROOM? | Zork I | missing |  |
+| FORM | Zork I, Zork II, Zork III | missing |  |
+| FREQUENT-WORDS? | Zork I, Zork II, Zork III | missing |  |
+| FSET | Zork I, Zork II, Zork III | ok |  |
+| FSET? | Zork I, Zork II, Zork III | ok |  |
+| FUNCTION | Zork I, Zork II, Zork III | missing |  |
+| FWEEP | Zork I | missing |  |
+| G? | Zork I, Zork II, Zork III | ok |  |
+| GASSIGNED? | Zork I, Zork II, Zork III | ok |  |
+| GDECL | Zork I, Zork II, Zork III | missing |  |
+| GENIE-LEAVES | Zork II | missing |  |
+| GET | Zork I, Zork II, Zork III | ok |  |
+| GET-OBJECT | Zork I, Zork II, Zork III | missing |  |
+| GET-WALL | Zork I, Zork II, Zork III | missing |  |
+| GETB | Zork I, Zork II, Zork III | ok |  |
+| GETP | Zork I, Zork II, Zork III | ok |  |
+| GETPT | Zork I, Zork II, Zork III | ok |  |
+| GLOBAL | Zork I, Zork II, Zork III | missing |  |
+| GLOBAL-CHECK | Zork I, Zork II, Zork III | missing |  |
+| GLOBAL-IN? | Zork I, Zork II, Zork III | ok |  |
+| GO | Zork II | missing |  |
+| GO-E-W | Zork III | missing |  |
+| GO-NEXT | Zork I | missing |  |
+| GO-ON-LAKE | Zork III | missing |  |
+| GOTO | Zork I, Zork II, Zork III | ok |  |
+| GUARD-CAUGHT | Zork III | missing |  |
+| GUARDS-KILL | Zork III | missing |  |
+| GWIM | Zork I, Zork II, Zork III | missing |  |
+| HACK-HACK | Zork I, Zork II, Zork III | missing |  |
+| HACK-TREASURES | Zork I | missing |  |
+| HAPPY-NEW-YEAR | Zork III | missing |  |
+| HEAR-FLATHEAD | Zork III | missing |  |
+| HELD? | Zork I, Zork II, Zork III | ok |  |
+| HELLO? | Zork II, Zork III | missing |  |
+| HERO-BLOW | Zork I, Zork II, Zork III | missing |  |
+| HIT-SPOT | Zork I, Zork II, Zork III | missing |  |
+| I-XB | Zork I | missing |  |
+| I-XBH | Zork I | missing |  |
+| ICEBOOM | Zork II | missing |  |
+| ID | Zork II, Zork III | missing |  |
+| IDROP | Zork I, Zork II, Zork III | missing |  |
+| IGRTR? | Zork I, Zork II, Zork III | ok |  |
+| IKILL | Zork III | missing |  |
+| ILLCP | Zork III | missing |  |
+| IN? | Zork I, Zork II, Zork III | ok |  |
+| INBUF-ADD | Zork I, Zork II, Zork III | missing |  |
+| INBUF-STUFF | Zork I, Zork II, Zork III | missing |  |
+| INFESTED? | Zork I, Zork II, Zork III | missing |  |
+| INSERT-FILE | Zork I, Zork II, Zork III | missing |  |
+| INT | Zork I, Zork II, Zork III | ok |  |
+| INTEGRAL-PART | Zork I | missing |  |
+| ITABLE | Zork I, Zork II, Zork III | ok |  |
+| ITAKE | Zork I, Zork II, Zork III | missing |  |
+| ITAKE-CHECK | Zork I, Zork II, Zork III | missing |  |
+| JIGS-UP | Zork I, Zork II, Zork III | ok |  |
+| KILL-INTERRUPTS | Zork I, Zork II, Zork III | missing |  |
+| L? | Zork I, Zork II, Zork III | ok |  |
+| LEAVES-APPEAR | Zork I | missing |  |
+| LENGTH | Zork I, Zork II, Zork III | ok |  |
+| LENGTH? | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| LIGHT-INT | Zork I, Zork II, Zork III | missing |  |
+| LIT? | Zork I, Zork II, Zork III | ok |  |
+| LKP | Zork I, Zork II, Zork III | missing |  |
+| LOC | Zork I, Zork II, Zork III | ok |  |
+| LOOK-LIKE-DM? | Zork III | missing |  |
+| LOOK-TO | Zork III | missing |  |
+| LTABLE | Zork I, Zork II, Zork III | ok |  |
+| MAIN-LOOP | Zork I, Zork II, Zork III | missing |  |
+| MAIN-LOOP-1 | Zork I, Zork II, Zork III | missing |  |
+| MANY-CHECK | Zork I, Zork II, Zork III | missing |  |
+| MAPF | Zork I, Zork II, Zork III | ok |  |
+| MAPRET | Zork I, Zork II, Zork III | ok |  |
+| MAPSTOP | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| META-LOC | Zork I, Zork II, Zork III | ok |  |
+| MIN | Zork I | ok |  |
+| MIRBLOCK | Zork III | missing |  |
+| MIREW | Zork III | missing |  |
+| MIRIN | Zork III | missing |  |
+| MIRMOVE | Zork III | missing |  |
+| MIRNS | Zork III | missing |  |
+| MIRROR-DIR? | Zork III | missing |  |
+| MIRROR-HERE? | Zork III | missing |  |
+| MOBY-FIND | Zork II, Zork III | missing |  |
+| MOD | Zork I, Zork II, Zork III | ok |  |
+| MOVE | Zork I, Zork II, Zork III | ok |  |
+| MOVE-ALL | Zork I | missing |  |
+| MOVE-CELL-OBJECTS | Zork III | missing |  |
+| MOVE-JEWELS | Zork III | missing |  |
+| MOVE-TM-OBJECTS | Zork III | missing |  |
+| MULTIBITS | Zork I, Zork II, Zork III | missing |  |
+| MULTIFROB | Zork I, Zork II, Zork III | missing |  |
+| MUNG-ROOM | Zork I, Zork II | missing |  |
+| N==? | Zork I, Zork II, Zork III | missing |  |
+| NCLAUSE-WIN | Zork I, Zork II, Zork III | missing |  |
+| NEXT? | Zork I, Zork II, Zork III | ok |  |
+| NEXTP | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| NO-GO-TELL | Zork I, Zork II, Zork III | missing |  |
+| NOT | Zork I, Zork II, Zork III | ok |  |
+| NOT-HERE-OBJECT-F | Zork I, Zork II, Zork III | missing |  |
+| NOT-HERE-PRINT | Zork I, Zork II, Zork III | missing |  |
+| NTH | Zork I, Zork II, Zork III | ok |  |
+| NULL-F | Zork I, Zork II, Zork III | missing |  |
+| NUMBER? | Zork I, Zork II, Zork III | ok |  |
+| OBJ-FOUND | Zork I, Zork II, Zork III | missing |  |
+| OBJECT | Zork I, Zork II, Zork III | missing |  |
+| OPEN-CLOSE | Zork I, Zork II | missing |  |
+| OPENABLE? | Zork I, Zork II, Zork III | ok |  |
+| OR | Zork I, Zork II, Zork III | ok |  |
+| ORPHAN | Zork I, Zork II, Zork III | missing |  |
+| ORPHAN-MERGE | Zork I, Zork II, Zork III | missing |  |
+| OTHER-SIDE | Zork I, Zork II, Zork III | missing |  |
+| OTVAL-FROB | Zork I | missing |  |
+| P-DOOR | Zork II | missing |  |
+| PALANTIR | Zork II | missing |  |
+| PALANTIR-LOOK | Zork II | missing |  |
+| PARSE | Zork I, Zork II, Zork III | missing |  |
+| PARSER | Zork I, Zork II, Zork III | missing |  |
+| PASS-THE-BUCKET | Zork II | missing |  |
+| PATH-OBJECT | Zork II, Zork III | missing |  |
+| PCHECK | Zork II | missing |  |
+| PERFORM | Zork I, Zork II, Zork III | ok |  |
+| PICK-DIRECTION | Zork III | missing |  |
+| PICK-ONE | Zork I, Zork II, Zork III | missing |  |
+| PKH | Zork II | missing |  |
+| PLID | Zork II | missing |  |
+| PRE-GIVE | Zork I, Zork II, Zork III | missing |  |
+| PREP-FIND | Zork I, Zork II, Zork III | missing |  |
+| PREP-PRINT | Zork I, Zork II, Zork III | missing |  |
+| PRIMTYPE | Zork I, Zork II, Zork III | ok |  |
+| PRINC | Zork I, Zork II, Zork III | ok |  |
+| PRINT | Zork I | ok |  |
+| PRINT-CONT | Zork I, Zork II, Zork III | missing |  |
+| PRINT-CONTENTS | Zork I, Zork II, Zork III | missing |  |
+| PRINTB | Zork I, Zork II, Zork III | ok |  |
+| PRINTC | Zork I, Zork II, Zork III | ok |  |
+| PRINTD | Zork I, Zork II, Zork III | ok |  |
+| PRINTI | Zork I, Zork II, Zork III | ok |  |
+| PRINTN | Zork I, Zork II, Zork III | ok |  |
+| PROB | Zork I, Zork II, Zork III | ok |  |
+| PROG | Zork I, Zork II, Zork III | ok |  |
+| PROPDEF | Zork I, Zork II, Zork III | missing |  |
+| PRSI-PRINT | Zork II, Zork III | missing |  |
+| PRSO-PRINT | Zork II, Zork III | missing |  |
+| PTSIZE | Zork I, Zork II, Zork III | ok |  |
+| PUDDLE | Zork II | missing |  |
+| PUSH | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| PUT | Zork I, Zork II, Zork III | ok |  |
+| PUT-BALLOON | Zork II | missing |  |
+| PUTB | Zork I, Zork II, Zork III | ok |  |
+| PUTP | Zork I, Zork II, Zork III | ok |  |
+| PUTREST | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| QUEUE | Zork I, Zork II, Zork III | ok |  |
+| QUIT | Zork I, Zork II, Zork III | ok |  |
+| RANDOM | Zork I, Zork II, Zork III | ok |  |
+| RANDOM-BOOK | Zork II | missing |  |
+| RANDOM-ELEMENT | Zork I, Zork II, Zork III | missing |  |
+| RANDOM-WALK | Zork II | missing |  |
+| RANDOMIZE-OBJECTS | Zork I, Zork II, Zork III | missing |  |
+| READ | Zork I, Zork II, Zork III | ok |  |
+| REALLY-DEAD | Zork III | missing |  |
+| RECOVER-STILETTO | Zork I | missing |  |
+| REMARK | Zork I | missing |  |
+| REMOVE | Zork I, Zork II, Zork III | ok |  |
+| REMOVE-CAREFULLY | Zork I, Zork II, Zork III | missing |  |
+| REPEAT | Zork I, Zork II, Zork III | ok |  |
+| REST | Zork I, Zork II, Zork III | ok |  |
+| RESTART | Zork I, Zork II, Zork III | ok |  |
+| RESTORE | Zork I, Zork II, Zork III | ok |  |
+| RETURN | Zork I, Zork II, Zork III | ok |  |
+| RETURN!- | Zork I, Zork II, Zork III | missing |  |
+| RFALSE | Zork I, Zork II, Zork III | ok |  |
+| RFATAL | Zork I, Zork II, Zork III | ok |  |
+| RIPOFF | Zork I, Zork II, Zork III | missing |  |
+| RISE-AND-SHINE | Zork II | missing |  |
+| ROB | Zork I, Zork II | missing |  |
+| ROB-MAZE | Zork I | missing |  |
+| ROOM | Zork I, Zork II, Zork III | missing |  |
+| ROOM? | Zork II | missing |  |
+| ROUTINE | Zork I, Zork II, Zork III | missing |  |
+| RSTACK | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| RTRUE | Zork I, Zork II, Zork III | ok |  |
+| SAND-FUNCTION | Zork I, Zork II, Zork III | missing |  |
+| SAVE | Zork I, Zork II, Zork III | ok |  |
+| SCOL-GO | Zork I, Zork II, Zork III | missing |  |
+| SCOL-OBJ | Zork I, Zork II, Zork III | missing |  |
+| SCOL-OBJECT | Zork II | missing |  |
+| SCOL-THROUGH | Zork I, Zork II, Zork III | missing |  |
+| SCORE-OBJ | Zork I, Zork II, Zork III | missing |  |
+| SCORE-UPD | Zork I, Zork II, Zork III | missing |  |
+| SEARCH-LIST | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| SEE-INSIDE? | Zork I, Zork II, Zork III | ok |  |
+| SET | Zork I, Zork II, Zork III | ok |  |
+| SETG | Zork I, Zork II, Zork III | ok |  |
+| SHADOW-ARRIVAL | Zork III | missing |  |
+| SHADOW-ATTACK | Zork III | missing |  |
+| SHADOW-DIES | Zork III | missing |  |
+| SHAKE-LOOP | Zork I, Zork II, Zork III | missing |  |
+| SLIDER | Zork I | missing |  |
+| SNAME | Zork III | missing |  |
+| SNARF-OBJECTS | Zork I, Zork II, Zork III | missing |  |
+| SNARFEM | Zork I, Zork II, Zork III | missing |  |
+| SPNAME | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| STEAL-JUNK | Zork I | missing |  |
+| STOLE-LIGHT? | Zork I | missing |  |
+| STRING | Zork I, Zork II, Zork III | missing |  |
+| STUFF | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| STUPID-CONTAINER | Zork I | missing |  |
+| SYNONYM | Zork I, Zork II, Zork III | missing |  |
+| SYNTAX | Zork I, Zork II, Zork III | missing |  |
+| SYNTAX-CHECK | Zork I, Zork II, Zork III | missing |  |
+| SYNTAX-FOUND | Zork I, Zork II, Zork III | missing |  |
+| TABLE | Zork I, Zork II, Zork III | ok |  |
+| TAKE-CHECK | Zork I, Zork II, Zork III | missing |  |
+| TELL | Zork I, Zork II, Zork III | ok |  |
+| TELL-NO-PRSI | Zork I, Zork II, Zork III | missing |  |
+| TGOTO | Zork III | missing |  |
+| THIEF-IN-TREASURE | Zork I | missing |  |
+| THIEF-VS-ADVENTURER | Zork I | missing |  |
+| THING-PRINT | Zork I, Zork II, Zork III | missing |  |
+| THIS-IS-IT | Zork I, Zork II, Zork III | ok |  |
+| THIS-IT? | Zork I, Zork II, Zork III | ok |  |
+| TOUCH-ALL | Zork I | missing |  |
+| TYPE? | Zork I, Zork II, Zork III | ok |  |
+| UNKNOWN-WORD | Zork I, Zork II, Zork III | missing |  |
+| UVECTOR | Zork III | missing |  |
+| V-CLIMB-UP | Zork I, Zork II, Zork III | missing |  |
+| V-DISENCHANT | Zork I, Zork II, Zork III | missing |  |
+| V-EAT | Zork I, Zork II, Zork III | missing |  |
+| V-ECHO | Zork I | missing |  |
+| V-FIRST-LOOK | Zork I, Zork II, Zork III | missing |  |
+| V-LOCK | Zork I, Zork II, Zork III | missing |  |
+| V-LOOK | Zork I, Zork II, Zork III | missing |  |
+| V-LOOK-INSIDE | Zork I, Zork II, Zork III | missing |  |
+| V-LOWER | Zork I, Zork II, Zork III | missing |  |
+| V-OPEN | Zork II | missing |  |
+| V-PUT | Zork I, Zork II, Zork III | missing |  |
+| V-QUIT | Zork I | missing |  |
+| V-RESTORE | Zork I | missing |  |
+| V-SAVE | Zork I | missing |  |
+| V-SCORE | Zork I, Zork II, Zork III | missing |  |
+| V-SKIP | Zork I, Zork II, Zork III | missing |  |
+| V-SQUEEZE | Zork I, Zork II, Zork III | missing |  |
+| V-THROUGH | Zork II | missing |  |
+| V-VERSION | Zork I, Zork II, Zork III | missing |  |
+| V-WAIT | Zork III | missing |  |
+| V-WALK | Zork II | missing |  |
+| VALUE | Zork I, Zork II, Zork III | ok |  |
+| VERB? | Zork I, Zork II, Zork III | ok |  |
+| VERIFY | Zork I, Zork II, Zork III | ok |  |
+| VERSION | Zork I | missing |  |
+| VILLAIN-BLOW | Zork I | missing |  |
+| VILLAIN-RESULT | Zork I | missing |  |
+| VILLAIN-STRENGTH | Zork I | missing |  |
+| WEAPON-FUNCTION | Zork I | missing |  |
+| WEIGHT | Zork I, Zork II, Zork III | ok |  |
+| WHICH-PRINT | Zork I, Zork II, Zork III | missing |  |
+| WINNER-RESULT | Zork I | missing |  |
+| WINNING? | Zork I | missing |  |
+| WITH-TELL | Zork I | missing |  |
+| WORD-PRINT | Zork I, Zork II, Zork III | missing |  |
+| WORD-TYPE | Zork III | missing |  |
+| WT? | Zork I, Zork II, Zork III | missing |  |
+| YES? | Zork I, Zork II, Zork III | ok |  |
+| ZERO? | Zork I, Zork II, Zork III | ok |  |
+| ZMEMQ | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
+| ZMEMQB | Zork I, Zork II, Zork III | stubbed | registered but no-op or incomplete |
 
 ## Summary
 
-- Total unique operations across all games: 391
-- Registered in interpreter: 97
-- Missing from interpreter: 294
+- Total unique operations across all games: 361
+- Registered in interpreter: 99
+- Missing from interpreter: 249
 
 ## Missing Operations
 
 - `ACLAUSE-WIN` (used in: Zork I, Zork II, Zork III)
-- `AGAIN>` (used in: Zork I, Zork II, Zork III)
-- `AGAIN>>` (used in: Zork I, Zork II, Zork III)
 - `AWAKEN` (used in: Zork I, Zork II, Zork III)
-- `BAD-EGG>` (used in: Zork I)
-- `BALLOON-BURN>` (used in: Zork I, Zork II, Zork III)
-- `BCONTENTS>` (used in: Zork II)
-- `BEAM-STOPPED?>` (used in: Zork III)
-- `BEAM-STOPPED?>>` (used in: Zork III)
-- `BEAM-STOPPED?>>>` (used in: Zork III)
+- `BAD-EGG` (used in: Zork I)
+- `BALLOON-BURN` (used in: Zork I, Zork II, Zork III)
+- `BCONTENTS` (used in: Zork II)
+- `BEAM-STOPPED?` (used in: Zork III)
 - `BKLEAVEE` (used in: Zork II)
 - `BOMB?` (used in: Zork II)
 - `BUFFER-PRINT` (used in: Zork I, Zork II, Zork III)
 - `BUT-MERGE` (used in: Zork I, Zork II, Zork III)
 - `BUZZ` (used in: Zork I, Zork II, Zork III)
-- `CAKE-CRUMBLE>` (used in: Zork II)
-- `CANT-ORPHAN>` (used in: Zork I, Zork II, Zork III)
+- `CAKE-CRUMBLE` (used in: Zork II)
+- `CANT-ORPHAN` (used in: Zork I, Zork II, Zork III)
 - `CANT-USE` (used in: Zork I, Zork II, Zork III)
-- `CASE-WORTH>>>` (used in: Zork II)
-- `CC-CRACK-PSEUDO>` (used in: Zork II)
+- `CASE-WORTH` (used in: Zork II)
+- `CC-CRACK-PSEUDO` (used in: Zork II)
 - `CCOUNT` (used in: Zork I, Zork II, Zork III)
-- `CELL-MOVE>` (used in: Zork III)
+- `CELL-MOVE` (used in: Zork III)
 - `CLAUSE` (used in: Zork I, Zork II, Zork III)
 - `CLAUSE-ADD` (used in: Zork I, Zork II, Zork III)
 - `CLAUSE-COPY` (used in: Zork I, Zork II, Zork III)
 - `CLAUSE-PRINT` (used in: Zork III)
-- `CLOCKER>` (used in: Zork I, Zork II, Zork III)
-- `CLOCKER>>` (used in: Zork I, Zork II, Zork III)
+- `CLOCKER` (used in: Zork I, Zork II, Zork III)
 - `CONSTANT` (used in: Zork I, Zork II, Zork III)
 - `CP-CORNER` (used in: Zork III)
 - `CP-ORTHO` (used in: Zork III)
@@ -443,62 +408,51 @@ Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered 
 - `CPMOVE` (used in: Zork III)
 - `CPNEXT` (used in: Zork III)
 - `CPNS` (used in: Zork III)
-- `CPWHERE>` (used in: Zork III)
-- `CRLF>` (used in: Zork I, Zork II, Zork III)
-- `CRLF>>` (used in: Zork I, Zork II, Zork III)
+- `CPWHERE` (used in: Zork III)
 - `D-APPLY` (used in: Zork I, Zork II, Zork III)
 - `DD-APPLY` (used in: Zork I, Zork II, Zork III)
 - `DDESC` (used in: Zork III)
 - `DEAD-PALANTIR` (used in: Zork II)
-- `DECLINE-AND-FALL>` (used in: Zork II)
+- `DECLINE-AND-FALL` (used in: Zork II)
 - `DEFINE` (used in: Zork I, Zork II, Zork III)
 - `DEFMAC` (used in: Zork I, Zork II, Zork III)
 - `DEPOSIT-BOOTY` (used in: Zork I)
-- `DESCRIBE-MENHIR>` (used in: Zork II)
+- `DESCRIBE-MENHIR` (used in: Zork II)
 - `DESCRIBE-OBJECT` (used in: Zork I, Zork II, Zork III)
 - `DESCRIBE-OBJECTS` (used in: Zork I, Zork II, Zork III)
-- `DESCRIBE-OBJECTS>` (used in: Zork I, Zork II, Zork III)
 - `DESCRIBE-ROOM` (used in: Zork I, Zork II, Zork III)
-- `DESCRIBE-ROOM>` (used in: Zork I, Zork II, Zork III)
-- `DIAMOND-LOSS>` (used in: Zork II)
-- `DIM-DOOR-APPEARS>` (used in: Zork II)
+- `DIAMOND-LOSS` (used in: Zork II)
+- `DIM-DOOR-APPEARS` (used in: Zork II)
 - `DIRECTIONS` (used in: Zork I, Zork II, Zork III)
-- `DMISH>>>` (used in: Zork III)
+- `DMISH` (used in: Zork III)
 - `DO-FIGHT` (used in: Zork I)
 - `DO-SL` (used in: Zork I, Zork II, Zork III)
 - `DO-WALK` (used in: Zork I, Zork II, Zork III)
 - `DPR` (used in: Zork III)
-- `DRAGON-LEAVES>` (used in: Zork II)
+- `DRAGON-LEAVES` (used in: Zork II)
 - `DROP-JUNK` (used in: Zork I)
-- `DUMB-CONTAINER>` (used in: Zork I)
-- `DWINDOW-DESC>` (used in: Zork II)
+- `DUMB-CONTAINER` (used in: Zork I)
+- `DWINDOW-DESC` (used in: Zork II)
 - `ERROR` (used in: Zork I, Zork II, Zork III)
 - `EWTELL` (used in: Zork III)
 - `FIGHT-STRENGTH` (used in: Zork I)
-- `FIGHT-STRENGTH>` (used in: Zork I)
-- `FIGHT-STRENGTH>>` (used in: Zork I)
-- `FIGHT-STRENGTH>>>` (used in: Zork I)
 - `FIND-TARGET` (used in: Zork II)
 - `FIND-WEAPON` (used in: Zork I, Zork II, Zork III)
-- `FINISH>` (used in: Zork I, Zork II, Zork III)
-- `FINISH>>` (used in: Zork III)
+- `FINISH` (used in: Zork I, Zork II, Zork III)
 - `FIRSTER` (used in: Zork I, Zork II, Zork III)
-- `FIX-BOAT>` (used in: Zork I)
-- `FIX-MAINT-LEAK>` (used in: Zork I)
-- `FIXED-FONT-OFF>` (used in: Zork II, Zork III)
-- `FIXED-FONT-ON>` (used in: Zork II, Zork III)
+- `FIX-BOAT` (used in: Zork I)
+- `FIX-MAINT-LEAK` (used in: Zork I)
 - `FLAMING?` (used in: Zork I, Zork II, Zork III)
-- `FLATHEAD-SENTENCE>` (used in: Zork III)
-- `FLY-ME>` (used in: Zork I)
+- `FLATHEAD-SENTENCE` (used in: Zork III)
+- `FLY-ME` (used in: Zork I)
 - `FORCE-FIGHT` (used in: Zork II)
-- `FOREST-ROOM?>>` (used in: Zork I)
+- `FOREST-ROOM?` (used in: Zork I)
 - `FORM` (used in: Zork I, Zork II, Zork III)
-- `FREQUENT-WORDS?>` (used in: Zork I, Zork II, Zork III)
+- `FREQUENT-WORDS?` (used in: Zork I, Zork II, Zork III)
 - `FUNCTION` (used in: Zork I, Zork II, Zork III)
 - `FWEEP` (used in: Zork I)
 - `GDECL` (used in: Zork I, Zork II, Zork III)
 - `GENIE-LEAVES` (used in: Zork II)
-- `GENIE-LEAVES>` (used in: Zork II)
 - `GET-OBJECT` (used in: Zork I, Zork II, Zork III)
 - `GET-WALL` (used in: Zork I, Zork II, Zork III)
 - `GLOBAL` (used in: Zork I, Zork II, Zork III)
@@ -506,48 +460,42 @@ Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered 
 - `GO` (used in: Zork II)
 - `GO-E-W` (used in: Zork III)
 - `GO-NEXT` (used in: Zork I)
-- `GO-ON-LAKE>` (used in: Zork III)
-- `GUARD-CAUGHT>` (used in: Zork III)
-- `GUARDS-KILL>` (used in: Zork III)
+- `GO-ON-LAKE` (used in: Zork III)
+- `GUARD-CAUGHT` (used in: Zork III)
+- `GUARDS-KILL` (used in: Zork III)
 - `GWIM` (used in: Zork I, Zork II, Zork III)
 - `HACK-HACK` (used in: Zork I, Zork II, Zork III)
-- `HACK-TREASURES>` (used in: Zork I)
-- `HAPPY-NEW-YEAR>` (used in: Zork III)
-- `HEAR-FLATHEAD>` (used in: Zork III)
+- `HACK-TREASURES` (used in: Zork I)
+- `HAPPY-NEW-YEAR` (used in: Zork III)
+- `HEAR-FLATHEAD` (used in: Zork III)
 - `HELLO?` (used in: Zork II, Zork III)
-- `HERO-BLOW>` (used in: Zork I, Zork II, Zork III)
-- `HIT-SPOT>` (used in: Zork I, Zork II, Zork III)
-- `I-XB>>` (used in: Zork I)
-- `I-XBH>` (used in: Zork I)
-- `ICEBOOM>` (used in: Zork II)
+- `HERO-BLOW` (used in: Zork I, Zork II, Zork III)
+- `HIT-SPOT` (used in: Zork I, Zork II, Zork III)
+- `I-XB` (used in: Zork I)
+- `I-XBH` (used in: Zork I)
+- `ICEBOOM` (used in: Zork II)
 - `ID` (used in: Zork II, Zork III)
-- `IDROP>` (used in: Zork I, Zork II, Zork III)
-- `IDROP>>` (used in: Zork I)
+- `IDROP` (used in: Zork I, Zork II, Zork III)
 - `IKILL` (used in: Zork III)
 - `ILLCP` (used in: Zork III)
 - `INBUF-ADD` (used in: Zork I, Zork II, Zork III)
 - `INBUF-STUFF` (used in: Zork I, Zork II, Zork III)
 - `INFESTED?` (used in: Zork I, Zork II, Zork III)
 - `INSERT-FILE` (used in: Zork I, Zork II, Zork III)
-- `INTEGRAL-PART>` (used in: Zork I)
+- `INTEGRAL-PART` (used in: Zork I)
 - `ITAKE` (used in: Zork I, Zork II, Zork III)
 - `ITAKE-CHECK` (used in: Zork I, Zork II, Zork III)
-- `ITAKE>` (used in: Zork I, Zork II, Zork III)
-- `ITAKE>>>` (used in: Zork I, Zork II, Zork III)
-- `JIGS-UP>` (used in: Zork II)
-- `KILL-INTERRUPTS>` (used in: Zork I, Zork II, Zork III)
-- `LEAVES-APPEAR>` (used in: Zork I)
+- `KILL-INTERRUPTS` (used in: Zork I, Zork II, Zork III)
+- `LEAVES-APPEAR` (used in: Zork I)
 - `LIGHT-INT` (used in: Zork I, Zork II, Zork III)
 - `LKP` (used in: Zork I, Zork II, Zork III)
-- `LOOK-LIKE-DM?>` (used in: Zork III)
+- `LOOK-LIKE-DM?` (used in: Zork III)
 - `LOOK-TO` (used in: Zork III)
-- `MAIN-LOOP-1>>>>` (used in: Zork I, Zork II, Zork III)
-- `MAIN-LOOP>` (used in: Zork I, Zork II, Zork III)
-- `MANY-CHECK>` (used in: Zork I, Zork II, Zork III)
-- `MANY-CHECK>>` (used in: Zork III)
-- `MAPSTOP>` (used in: Zork I, Zork II, Zork III)
-- `MIRBLOCK>` (used in: Zork III)
-- `MIREW>` (used in: Zork III)
+- `MAIN-LOOP` (used in: Zork I, Zork II, Zork III)
+- `MAIN-LOOP-1` (used in: Zork I, Zork II, Zork III)
+- `MANY-CHECK` (used in: Zork I, Zork II, Zork III)
+- `MIRBLOCK` (used in: Zork III)
+- `MIREW` (used in: Zork III)
 - `MIRIN` (used in: Zork III)
 - `MIRMOVE` (used in: Zork III)
 - `MIRNS` (used in: Zork III)
@@ -555,137 +503,116 @@ Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered 
 - `MIRROR-HERE?` (used in: Zork III)
 - `MOBY-FIND` (used in: Zork II, Zork III)
 - `MOVE-ALL` (used in: Zork I)
-- `MOVE-CELL-OBJECTS>` (used in: Zork III)
-- `MOVE-JEWELS>` (used in: Zork III)
-- `MOVE-TM-OBJECTS>` (used in: Zork III)
+- `MOVE-CELL-OBJECTS` (used in: Zork III)
+- `MOVE-JEWELS` (used in: Zork III)
+- `MOVE-TM-OBJECTS` (used in: Zork III)
 - `MULTIBITS` (used in: Zork I, Zork II, Zork III)
 - `MULTIFROB` (used in: Zork I, Zork II, Zork III)
 - `MUNG-ROOM` (used in: Zork I, Zork II)
 - `N==?` (used in: Zork I, Zork II, Zork III)
-- `NCLAUSE-WIN>` (used in: Zork I, Zork II, Zork III)
+- `NCLAUSE-WIN` (used in: Zork I, Zork II, Zork III)
 - `NO-GO-TELL` (used in: Zork I, Zork II, Zork III)
-- `NOT-HERE-OBJECT-F>>>` (used in: Zork I, Zork II, Zork III)
+- `NOT-HERE-OBJECT-F` (used in: Zork I, Zork II, Zork III)
 - `NOT-HERE-PRINT` (used in: Zork I, Zork II, Zork III)
-- `NULL-F>` (used in: Zork I, Zork II, Zork III)
+- `NULL-F` (used in: Zork I, Zork II, Zork III)
 - `OBJ-FOUND` (used in: Zork I, Zork II, Zork III)
 - `OBJECT` (used in: Zork I, Zork II, Zork III)
 - `OPEN-CLOSE` (used in: Zork I, Zork II)
 - `ORPHAN` (used in: Zork I, Zork II, Zork III)
-- `ORPHAN-MERGE>` (used in: Zork I, Zork II, Zork III)
+- `ORPHAN-MERGE` (used in: Zork I, Zork II, Zork III)
 - `OTHER-SIDE` (used in: Zork I, Zork II, Zork III)
 - `OTVAL-FROB` (used in: Zork I)
-- `OTVAL-FROB>>>` (used in: Zork I)
 - `P-DOOR` (used in: Zork II)
+- `PALANTIR` (used in: Zork II)
 - `PALANTIR-LOOK` (used in: Zork II)
-- `PALANTIR>` (used in: Zork II)
 - `PARSE` (used in: Zork I, Zork II, Zork III)
-- `PARSER>>` (used in: Zork I, Zork II, Zork III)
+- `PARSER` (used in: Zork I, Zork II, Zork III)
 - `PASS-THE-BUCKET` (used in: Zork II)
-- `PATH-OBJECT>` (used in: Zork II, Zork III)
-- `PCHECK>` (used in: Zork II)
+- `PATH-OBJECT` (used in: Zork II, Zork III)
+- `PCHECK` (used in: Zork II)
 - `PICK-DIRECTION` (used in: Zork III)
 - `PICK-ONE` (used in: Zork I, Zork II, Zork III)
 - `PKH` (used in: Zork II)
 - `PLID` (used in: Zork II)
-- `PLID>` (used in: Zork II)
-- `PRE-GIVE>` (used in: Zork I, Zork II, Zork III)
+- `PRE-GIVE` (used in: Zork I, Zork II, Zork III)
 - `PREP-FIND` (used in: Zork I, Zork II, Zork III)
 - `PREP-PRINT` (used in: Zork I, Zork II, Zork III)
 - `PRINT-CONT` (used in: Zork I, Zork II, Zork III)
 - `PRINT-CONTENTS` (used in: Zork I, Zork II, Zork III)
 - `PROPDEF` (used in: Zork I, Zork II, Zork III)
-- `PRSI-PRINT>` (used in: Zork II, Zork III)
-- `PRSO-PRINT>` (used in: Zork II, Zork III)
+- `PRSI-PRINT` (used in: Zork II, Zork III)
+- `PRSO-PRINT` (used in: Zork II, Zork III)
 - `PUDDLE` (used in: Zork II)
 - `PUT-BALLOON` (used in: Zork II)
-- `QUIT>` (used in: Zork I, Zork II, Zork III)
-- `QUIT>>` (used in: Zork III)
-- `RANDOM-BOOK>` (used in: Zork II)
+- `RANDOM-BOOK` (used in: Zork II)
 - `RANDOM-ELEMENT` (used in: Zork I, Zork II, Zork III)
-- `RANDOM-WALK>` (used in: Zork II)
-- `RANDOMIZE-OBJECTS>` (used in: Zork I, Zork II, Zork III)
+- `RANDOM-WALK` (used in: Zork II)
+- `RANDOMIZE-OBJECTS` (used in: Zork I, Zork II, Zork III)
 - `REALLY-DEAD` (used in: Zork III)
-- `RECOVER-STILETTO>` (used in: Zork I)
+- `RECOVER-STILETTO` (used in: Zork I)
 - `REMARK` (used in: Zork I)
 - `REMOVE-CAREFULLY` (used in: Zork I, Zork II, Zork III)
-- `RESTART>` (used in: Zork I, Zork II, Zork III)
-- `RESTORE>` (used in: Zork I, Zork II, Zork III)
 - `RETURN!-` (used in: Zork I, Zork II, Zork III)
-- `RETURN!->` (used in: Zork I, Zork II, Zork III)
-- `RETURN>` (used in: Zork I, Zork II, Zork III)
-- `RFALSE>` (used in: Zork I, Zork II, Zork III)
-- `RFALSE>>` (used in: Zork I, Zork II, Zork III)
-- `RFATAL>` (used in: Zork I, Zork II, Zork III)
-- `RFATAL>>` (used in: Zork I, Zork II, Zork III)
-- `RFATAL>>>` (used in: Zork II)
 - `RIPOFF` (used in: Zork I, Zork II, Zork III)
-- `RISE-AND-SHINE>` (used in: Zork II)
+- `RISE-AND-SHINE` (used in: Zork II)
 - `ROB` (used in: Zork I, Zork II)
 - `ROB-MAZE` (used in: Zork I)
 - `ROOM` (used in: Zork I, Zork II, Zork III)
 - `ROOM?` (used in: Zork II)
 - `ROUTINE` (used in: Zork I, Zork II, Zork III)
-- `RSTACK>>>` (used in: Zork I, Zork II, Zork III)
-- `RTRUE>` (used in: Zork I, Zork II, Zork III)
-- `RTRUE>>` (used in: Zork I, Zork II, Zork III)
-- `RTRUE>>>` (used in: Zork I, Zork II, Zork III)
-- `SAND-FUNCTION>` (used in: Zork I, Zork II, Zork III)
-- `SAVE>` (used in: Zork I, Zork II, Zork III)
+- `SAND-FUNCTION` (used in: Zork I, Zork II, Zork III)
 - `SCOL-GO` (used in: Zork I, Zork II, Zork III)
 - `SCOL-OBJ` (used in: Zork I, Zork II, Zork III)
 - `SCOL-OBJECT` (used in: Zork II)
 - `SCOL-THROUGH` (used in: Zork I, Zork II, Zork III)
 - `SCORE-OBJ` (used in: Zork I, Zork II, Zork III)
 - `SCORE-UPD` (used in: Zork I, Zork II, Zork III)
-- `SHADOW-ARRIVAL>` (used in: Zork III)
-- `SHADOW-ATTACK>` (used in: Zork III)
-- `SHADOW-DIES>` (used in: Zork III)
-- `SHAKE-LOOP>` (used in: Zork I, Zork II, Zork III)
+- `SHADOW-ARRIVAL` (used in: Zork III)
+- `SHADOW-ATTACK` (used in: Zork III)
+- `SHADOW-DIES` (used in: Zork III)
+- `SHAKE-LOOP` (used in: Zork I, Zork II, Zork III)
 - `SLIDER` (used in: Zork I)
 - `SNAME` (used in: Zork III)
-- `SNARF-OBJECTS>` (used in: Zork I, Zork II, Zork III)
+- `SNARF-OBJECTS` (used in: Zork I, Zork II, Zork III)
 - `SNARFEM` (used in: Zork I, Zork II, Zork III)
 - `STEAL-JUNK` (used in: Zork I)
-- `STOLE-LIGHT?>` (used in: Zork I)
+- `STOLE-LIGHT?` (used in: Zork I)
 - `STRING` (used in: Zork I, Zork II, Zork III)
 - `STUPID-CONTAINER` (used in: Zork I)
 - `SYNONYM` (used in: Zork I, Zork II, Zork III)
 - `SYNTAX` (used in: Zork I, Zork II, Zork III)
-- `SYNTAX-CHECK>` (used in: Zork I, Zork II, Zork III)
+- `SYNTAX-CHECK` (used in: Zork I, Zork II, Zork III)
 - `SYNTAX-FOUND` (used in: Zork I, Zork II, Zork III)
-- `TAKE-CHECK>` (used in: Zork III)
-- `TAKE-CHECK>>` (used in: Zork I, Zork II, Zork III)
-- `TELL-NO-PRSI>` (used in: Zork I, Zork II, Zork III)
+- `TAKE-CHECK` (used in: Zork I, Zork II, Zork III)
+- `TELL-NO-PRSI` (used in: Zork I, Zork II, Zork III)
 - `TGOTO` (used in: Zork III)
-- `THIEF-IN-TREASURE>` (used in: Zork I)
+- `THIEF-IN-TREASURE` (used in: Zork I)
 - `THIEF-VS-ADVENTURER` (used in: Zork I)
 - `THING-PRINT` (used in: Zork I, Zork II, Zork III)
 - `TOUCH-ALL` (used in: Zork I)
 - `UNKNOWN-WORD` (used in: Zork I, Zork II, Zork III)
 - `UVECTOR` (used in: Zork III)
 - `V-CLIMB-UP` (used in: Zork I, Zork II, Zork III)
-- `V-DISENCHANT>` (used in: Zork I, Zork II, Zork III)
-- `V-EAT>>` (used in: Zork I, Zork II, Zork III)
-- `V-ECHO>` (used in: Zork I)
-- `V-FIRST-LOOK>` (used in: Zork I, Zork II, Zork III)
-- `V-LOCK>>` (used in: Zork I, Zork II, Zork III)
-- `V-LOOK-INSIDE>` (used in: Zork I, Zork II, Zork III)
-- `V-LOOK>` (used in: Zork I, Zork II, Zork III)
-- `V-LOWER>>` (used in: Zork I, Zork II, Zork III)
-- `V-OPEN>` (used in: Zork II)
-- `V-PUT>` (used in: Zork I, Zork II, Zork III)
-- `V-QUIT>` (used in: Zork I)
-- `V-RESTORE>` (used in: Zork I)
-- `V-SAVE>` (used in: Zork I)
+- `V-DISENCHANT` (used in: Zork I, Zork II, Zork III)
+- `V-EAT` (used in: Zork I, Zork II, Zork III)
+- `V-ECHO` (used in: Zork I)
+- `V-FIRST-LOOK` (used in: Zork I, Zork II, Zork III)
+- `V-LOCK` (used in: Zork I, Zork II, Zork III)
+- `V-LOOK` (used in: Zork I, Zork II, Zork III)
+- `V-LOOK-INSIDE` (used in: Zork I, Zork II, Zork III)
+- `V-LOWER` (used in: Zork I, Zork II, Zork III)
+- `V-OPEN` (used in: Zork II)
+- `V-PUT` (used in: Zork I, Zork II, Zork III)
+- `V-QUIT` (used in: Zork I)
+- `V-RESTORE` (used in: Zork I)
+- `V-SAVE` (used in: Zork I)
 - `V-SCORE` (used in: Zork I, Zork II, Zork III)
-- `V-SCORE>` (used in: Zork I, Zork II, Zork III)
-- `V-SKIP>` (used in: Zork I, Zork II, Zork III)
-- `V-SQUEEZE>>` (used in: Zork I, Zork II, Zork III)
+- `V-SKIP` (used in: Zork I, Zork II, Zork III)
+- `V-SQUEEZE` (used in: Zork I, Zork II, Zork III)
 - `V-THROUGH` (used in: Zork II)
-- `V-VERSION>` (used in: Zork I, Zork II, Zork III)
+- `V-VERSION` (used in: Zork I, Zork II, Zork III)
 - `V-WAIT` (used in: Zork III)
-- `V-WALK>` (used in: Zork II)
-- `VERIFY>` (used in: Zork I, Zork II, Zork III)
+- `V-WALK` (used in: Zork II)
 - `VERSION` (used in: Zork I)
 - `VILLAIN-BLOW` (used in: Zork I)
 - `VILLAIN-RESULT` (used in: Zork I)
@@ -698,12 +625,3 @@ Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered 
 - `WORD-PRINT` (used in: Zork I, Zork II, Zork III)
 - `WORD-TYPE` (used in: Zork III)
 - `WT?` (used in: Zork I, Zork II, Zork III)
-- `YES?>` (used in: Zork I, Zork II, Zork III)
-- `YES?>>` (used in: Zork III)
-
-## Known Buggy Implementations
-
-These are registered and not stubs, but have known correctness issues:
-
-- **CLIMB verb routing** — routes to nonexistent `V-CLIMB` handler instead of the correct action; affects all climb commands
-- **Object scope resolver** — does not restrict object lookup to the current room; allows referencing objects that should be out of scope

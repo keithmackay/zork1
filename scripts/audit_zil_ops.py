@@ -40,7 +40,18 @@ GAME_DIRS = {
 }
 
 # Regex: match <OP_NAME ..> where OP_NAME is all-caps letters/digits/?/!/- etc
-OP_PATTERN = re.compile(r'<([A-Z][A-Z0-9?!\-+*/=<>]+)')
+# Note: > is intentionally excluded so closing > of a ZIL expression is not captured
+OP_PATTERN = re.compile(r'<([A-Z][A-Z0-9?!\-+*/=<]+)')
+
+# Curated lists — survive re-runs
+KNOWN_STUBS = {
+    "MAPSTOP", "CHTYPE", "SPNAME", "STUFF", "ZMEMQ", "ZMEMQB",
+    "LENGTH?", "PUTREST", "SEARCH-LIST", "FIND-IN",
+    "NEXTP", "PUSH", "RSTACK",
+}
+KNOWN_BUGGY = {
+    "CLIMB": "routes to nonexistent V-CLIMB instead of V-CLIMB-UP/V-CLIMB-DOWN",
+}
 
 def scan_dir(game_dir: Path) -> set[str]:
     ops = set()
@@ -69,8 +80,19 @@ def main():
     rows = []
     for op in sorted(all_ops):
         games = [g for g, ops in all_used.items() if op in ops]
-        status = "ok" if op in registered else "missing"
-        rows.append((op, games, status))
+        if op in KNOWN_BUGGY:
+            status = "buggy"
+            notes = KNOWN_BUGGY[op]
+        elif op in KNOWN_STUBS:
+            status = "stubbed"
+            notes = "registered but no-op or incomplete"
+        elif op in registered:
+            status = "ok"
+            notes = ""
+        else:
+            status = "missing"
+            notes = ""
+        rows.append((op, games, status, notes))
 
     # Print markdown
     print("# ZIL Operation Gap List\n")
@@ -78,9 +100,9 @@ def main():
     print("Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered but no-ops, `buggy` = implemented incorrectly\n")
     print("| Operation | Game(s) | Status | Notes |")
     print("|-----------|---------|--------|-------|")
-    for op, games, status in rows:
+    for op, games, status, notes in rows:
         game_str = ", ".join(games)
-        print(f"| {op} | {game_str} | {status} | |")
+        print(f"| {op} | {game_str} | {status} | {notes} |")
 
     missing = [r for r in rows if r[2] == "missing"]
     print(f"\n## Summary\n")
@@ -88,7 +110,7 @@ def main():
     print(f"- Registered in interpreter: {len([r for r in rows if r[2] == 'ok'])}")
     print(f"- Missing from interpreter: {len(missing)}")
     print(f"\n## Missing Operations\n")
-    for op, games, _ in missing:
+    for op, games, status, _ in missing:
         print(f"- `{op}` (used in: {', '.join(games)})")
 
 if __name__ == "__main__":
