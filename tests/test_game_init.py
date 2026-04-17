@@ -78,6 +78,22 @@ class TestGameInitNoDuplicateUnit:
 @pytest.mark.slow
 @pytest.mark.timeout(120)
 @pytest.mark.skipif(not ZORK1_PATH.exists(), reason="Zork I source not found")
+class TestZorkNumber:
+    """ZORK-NUMBER global is set correctly for each game at load time."""
+
+    def test_zork1_zork_number(self):
+        """ZORK-NUMBER should be 1 for Zork I."""
+        from zil_interpreter.loader.world_loader import WorldLoader
+
+        buf = OutputBuffer()
+        loader = WorldLoader()
+        world, _ = loader.load_world(ZORK1_PATH, buf)
+        assert world.get_global("ZORK-NUMBER") == 1
+
+
+@pytest.mark.slow
+@pytest.mark.timeout(120)
+@pytest.mark.skipif(not ZORK1_PATH.exists(), reason="Zork I source not found")
 class TestGameInitZork1:
     """Integration test: load Zork I and check the initial room is shown exactly once."""
 
