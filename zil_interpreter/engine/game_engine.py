@@ -3,6 +3,7 @@
 from typing import Optional
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.runtime.output_buffer import OutputBuffer
+from zil_interpreter.runtime.interrupt_manager import InterruptManager
 from zil_interpreter.engine.command_parser import CommandParser
 from zil_interpreter.engine.routine_executor import RoutineExecutor
 
@@ -18,8 +19,11 @@ class GameEngine:
     def __init__(self, world: WorldState, output: Optional[OutputBuffer] = None):
         self.world = world
         self.output = output or OutputBuffer()
+        self.interrupt_manager = InterruptManager()
         self.parser = CommandParser(world)
         self.executor = RoutineExecutor(world, self.output)
+        # Attach interrupt_manager to evaluator so interrupt_ops can find it
+        self.executor.evaluator.interrupt_manager = self.interrupt_manager
 
     # Direction word aliases
     DIRECTION_ALIASES = {
@@ -97,7 +101,6 @@ class GameEngine:
         routine_name = f"V-{verb}"
         try:
             self.executor.call_routine(routine_name, [])
-            return True
         except ValueError:
             # Routine not found
             self.output.write(f"I don't know how to {verb.lower()}.\n")
@@ -106,3 +109,13 @@ class GameEngine:
             # Other execution errors - log for debugging
             self.output.write(f"Error: {e}\n")
             return False
+
+        # Advance game clock and fire any ready interrupts
+        ready = self.interrupt_manager.tick()
+        for routine in ready:
+            try:
+                self.executor.call_routine(routine, [])
+            except Exception:
+                pass  # Interrupt errors don't abort the turn
+
+        return True

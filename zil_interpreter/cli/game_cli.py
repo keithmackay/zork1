@@ -46,6 +46,8 @@ class GameCLI:
             # Create game engine with the SAME output buffer
             self.engine = GameEngine(self.world, self.output_buffer)
             self.engine.executor = executor
+            # Re-attach interrupt_manager to the actual executor's evaluator
+            executor.evaluator.interrupt_manager = self.engine.interrupt_manager
 
             if not self.json_mode:
                 print(f"Loaded: {self.game_file.name}")

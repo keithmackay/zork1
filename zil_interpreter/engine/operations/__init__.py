@@ -174,7 +174,9 @@ def create_default_registry() -> OperationRegistry:
 
     registry.register(LessEqualOperation())
     registry.register(GreaterEqualOperation())
-    registry.register(ZeroCheckOperation())
+    zero_check = ZeroCheckOperation()
+    registry.register(zero_check)
+    registry._operations["0?"] = zero_check  # Alias 0? for ZERO?
     registry.register(NumericEqualOperation())
     registry.register(DlessOperation())
     registry.register(AssignOrEqualOperation())
