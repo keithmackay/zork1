@@ -625,3 +625,22 @@ Status: `ok` = implemented, `missing` = not in registry, `stubbed` = registered 
 - `WORD-PRINT` (used in: Zork I, Zork II, Zork III)
 - `WORD-TYPE` (used in: Zork III)
 - `WT?` (used in: Zork I, Zork II, Zork III)
+
+## Diff File Analysis
+
+### Zork II
+- `gsyntax.diffs`: TOPS-20 comparison listing between `SS:<ZORK2>GSYNTAX.ZIL.140` and `SS:<ZORK1>GSYNTAX.ZIL.141`. Shows real content differences: Zork II's file has the extra BUZZ words (`FEEBLE FUMBLE FEAR FILCH` etc.) as a flat list, while Zork I's version wraps them in a `<COND (<==? ,ZORK-NUMBER 2> ...)>` block. Zork II adds `V-ATTACK` and `V-KILL` syntaxes without the conditional, and has slightly different CLIMB/DIG/EXAMINE/FILL syntax definitions. These differences reflect the Zork II-specific version of the shared file.
+- `gverbs.diffs`: TOPS-20 comparison listing between `SS:<ZORK2>GVERBS.ZIL.407` and `SS:<ZORK1>GVERBS.ZIL.391`. Shows real differences: Zork II has `V-DEBUG` where Zork I has `V-COMMAND-FILE`, `V-RANDOM`, `V-RECORD`, and `V-UNRECORD`. Copyright year strings differ. Burn logic differs (Zork II lacks the "in container" case). These are genuine per-game divergences already accounted for by `ZORK-NUMBER` conditionals in the shared files.
+- **Action required:** None — informational only. The diffs describe what the Zork I shared files (`gsyntax.zil`/`gverbs.zil`) already contain via `ZORK-NUMBER` conditionals. No patches needed in `WorldLoader`; the interpreter must evaluate those conditionals correctly at load time.
+
+### Zork III
+- `syntax.diffs`: TOPS-20 comparison listing between `SS:<ZORK2>GSYNTAX.ZIL.148` and `SS:<ZORK3>SYNTAX.ZIL.43`. Shows that Zork III used its own standalone `syntax.zil` (not a renamed copy of the generic file). Vocabulary, BUZZ words, SYNONYM sets, and SYNTAX definitions differ substantially — Zork III uses `VILLAIN` flag for ATTACK targeting, has different VERIFY verb name (`V-$VERIFY`), and reorders many syntax entries.
+- `verbs.diffs`: TOPS-20 comparison listing between `SS:<ZORK2>GVERBS.ZIL.426` and `SS:<ZORK3>VERBS.ZIL.103`. Shows Zork III had its own standalone `verbs.zil` with substantially different verb implementations (different INVENTORY, SCORE, QUIT, and many game-specific routines).
+- **Action required:** None — informational only. The Zork III source files (`syntax.zil`, `verbs.zil`) in the zork3 repo are the correct, already-diverged files. No patches needed in `WorldLoader`; load them directly as Zork III's own source.
+
+## Macro Expansion Profiling
+
+- **Load time:** Timed out at 30 seconds (did not complete).
+- **Root cause of hang:** The `FileProcessor` uses a Lark **Earley parser** (via `xearley.py`) to parse ZIL source files. Earley parsing is O(n³) in the worst case and is extremely slow on large, ambiguous grammars. The ZIL grammar appears to trigger worst-case behavior: after 30 seconds, 193,440 calls to `predict_and_complete` had been made with 3.8M `EarleyItem` objects created. The parser never finishes processing the large ZIL files.
+- **Fix required:** Switch the Lark parser from Earley to LALR(1) in `FileProcessor.__init__`. The ZIL grammar is a well-structured LISP-like s-expression language that should be unambiguous and suitable for LALR parsing. Change `parser='earley'` (or the implicit default) to `parser='lalr'` in the `Lark(...)` call. This will reduce parse time from >30s to milliseconds.
+- **Top hotspot:** `lark/parsers/xearley.py:39(_parse)` — 22.3s cumulative out of 30s total.
