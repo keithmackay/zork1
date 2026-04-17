@@ -5,6 +5,7 @@ from zil_interpreter.parser.ast_nodes import Form, Atom, String, Number, ASTNode
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.runtime.output_buffer import OutputBuffer
 from zil_interpreter.engine.operations import create_default_registry
+from zil_interpreter.engine.zil_errors import ZILRuntimeError
 
 
 class ReturnValue(Exception):
@@ -137,6 +138,7 @@ class Evaluator:
                 args = [self.evaluate(arg) for arg in form.args]
                 return executor.call_routine(op, args)
 
-        # Graceful fallback for unimplemented operations
-        # Return None instead of crashing - allows game to continue
-        return None
+        # Unknown operation — raise so bugs are visible rather than silent
+        raise ZILRuntimeError(
+            f"Unknown ZIL operation '{op}' in expression: {form!r}"
+        )

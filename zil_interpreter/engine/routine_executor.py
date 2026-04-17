@@ -5,6 +5,7 @@ from zil_interpreter.parser.ast_nodes import Routine, Atom, String, Form
 from zil_interpreter.world.world_state import WorldState
 from zil_interpreter.runtime.output_buffer import OutputBuffer
 from zil_interpreter.engine.evaluator import Evaluator, ReturnValue
+from zil_interpreter.engine.zil_errors import ZILRuntimeError
 
 
 class RoutineExecutor:
@@ -106,7 +107,9 @@ class RoutineExecutor:
         routine_name = name.upper()
         routine = self.routines.get(routine_name)
         if not routine:
-            raise ValueError(f"Unknown routine: {name}")
+            raise ZILRuntimeError(
+                f"Missing routine '{name}' — not registered in world"
+            )
 
         # Create local variable scope
         local_scope: Dict[str, Any] = {}
