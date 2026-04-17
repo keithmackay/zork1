@@ -40,6 +40,10 @@ class ZILTransformer(Transformer):
         """Transform list (parenthesized expressions)."""
         return [item for item in items if item is not None]
 
+    def bracket_list(self, items: List[Any]) -> List[Any]:
+        """Transform bracket list [...] (UVECTOR/type annotation syntax)."""
+        return [item for item in items if item is not None]
+
     def form(self, items: List[Any]) -> Form | InsertFile | Routine | Object | Global | MacroDef:
         """Transform form <operator args...>"""
         # Handle empty form <> (represents false/nil in ZIL)
