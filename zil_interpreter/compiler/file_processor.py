@@ -17,6 +17,13 @@ class FileProcessor:
 
     def __init__(self, base_path: Path, max_depth: int = 100):
         self.base_path = Path(base_path)
+        # Using Earley parser with dynamic lexer rather than LALR.
+        # LALR produces grammar conflicts with ZIL's deeply nested <expr*> forms
+        # where the _RANGLE token is not in the LALR parser's expected set at depth 4+.
+        # The contextual lexer is not supported by Earley (only basic/dynamic/dynamic_complete).
+        # Earley is O(n^3) but the dynamic lexer variant is fast enough in practice
+        # (~10s for the full Zork I world). A grammar refactor to resolve LALR conflicts
+        # is required to achieve sub-5s load times.
         self.parser = Lark(ZIL_GRAMMAR, parser='earley', lexer='dynamic', ambiguity='resolve', start='start')
         self.transformer = ZILTransformer()
         self.loaded_files: Set[str] = set()
