@@ -17,7 +17,7 @@ ZIL_GRAMMAR = r"""
               | number
               | comment_expr
 
-    form: "<" atom? expression* ">"
+    form: _LANGLE atom? expression* _RANGLE
     percent_eval: "%" form
     list: "(" expression* ")"
     splice: "!" form
@@ -35,6 +35,8 @@ ZIL_GRAMMAR = r"""
     string: ESCAPED_STRING
     number: SIGNED_NUMBER
 
+    _LANGLE.3: "<"
+    _RANGLE.3: ">"
     SEMICOLON: ";"
     OPERATOR.2: /N?==\?|[LG]=\?|[LG01]\?|<=\?|>=\?|=\?|>\?|<\?/
     ATOM: /\$?[A-Z][A-Z0-9\-?!+*\/=:]*/i | /[0-9]+[A-Z\-?!=:]+[A-Z0-9\-?!=:]*/i | /[+\-*\/=](?!\?)/

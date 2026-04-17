@@ -17,7 +17,7 @@ class FileProcessor:
 
     def __init__(self, base_path: Path, max_depth: int = 100):
         self.base_path = Path(base_path)
-        self.parser = Lark(ZIL_GRAMMAR, parser='lalr', start='start')
+        self.parser = Lark(ZIL_GRAMMAR, parser='earley', lexer='dynamic', ambiguity='resolve', start='start')
         self.transformer = ZILTransformer()
         self.loaded_files: Set[str] = set()
         self.max_depth = max_depth
