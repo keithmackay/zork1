@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 PYTHON="${PYTHON:-python3}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GAME="$SCRIPT_DIR/../../zork3/zork3/zork3.zil"
+# Support running from project root (like smoke_test.sh) or from scripts/
+GAME="${GAME:-../zork3/zork3/zork3.zil}"
 
 if [ ! -f "$GAME" ]; then
     echo "SKIP: Zork III not found at $GAME"

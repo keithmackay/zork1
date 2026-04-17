@@ -25,6 +25,8 @@ from .control import (
     ProgOperation,
     DoOperation,
     QuitOperation,
+    FalseOperation,
+    TrueOperation,
 )
 from .arithmetic import (
     AddOperation,
@@ -302,6 +304,10 @@ def create_default_registry() -> OperationRegistry:
     registry.register(FixedFontOffOp())
     registry.register(PushOp())
     registry.register(RstackOp())
+
+    # ZIL literal functions
+    registry.register(FalseOperation())
+    registry.register(TrueOperation())
 
     # Missing Operations (needed by Zork I)
     registry.register(ProbOperation())

@@ -93,6 +93,28 @@ class ReturnOperation(Operation):
         raise ReturnValue(value)
 
 
+class FalseOperation(Operation):
+    """FALSE - ZIL false literal used as 0-arg function."""
+
+    @property
+    def name(self) -> str:
+        return "FALSE"
+
+    def execute(self, args: list, evaluator) -> bool:
+        return False
+
+
+class TrueOperation(Operation):
+    """T - ZIL true literal used as 0-arg function."""
+
+    @property
+    def name(self) -> str:
+        return "T"
+
+    def execute(self, args: list, evaluator) -> bool:
+        return True
+
+
 class RepeatOperation(Operation):
     """REPEAT - Loop construct."""
 
