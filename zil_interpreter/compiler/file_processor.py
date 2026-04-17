@@ -15,11 +15,20 @@ class CircularDependencyError(Exception):
 class FileProcessor:
     """Processes ZIL files with INSERT-FILE support."""
 
-    def __init__(self, base_path: Path):
+    def __init__(self, base_path: Path, max_depth: int = 100):
         self.base_path = Path(base_path)
-        self.parser = Lark(ZIL_GRAMMAR, start='start')
+        self.parser = Lark(ZIL_GRAMMAR, parser='lalr', start='start')
         self.transformer = ZILTransformer()
         self.loaded_files: Set[str] = set()
+        self.max_depth = max_depth
+        self._depth = 0
+
+    def _check_depth(self):
+        if self._depth > self.max_depth:
+            raise CircularDependencyError(
+                f"INSERT-FILE nesting depth {self._depth} exceeds maximum "
+                f"{self.max_depth}. Possible infinite recursion in ZIL files."
+            )
 
     def _resolve_path(self, filename: str) -> Path:
         """Resolve filename to actual path.
@@ -114,7 +123,12 @@ class FileProcessor:
         forms = self.load_file(filename)
         for form in forms:
             if isinstance(form, InsertFile):
-                self._load_recursive(form.filename, result, stack)
+                self._depth += 1
+                self._check_depth()
+                try:
+                    self._load_recursive(form.filename, result, stack)
+                finally:
+                    self._depth -= 1
             else:
                 result.append(form)
 
