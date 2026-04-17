@@ -58,7 +58,14 @@ class ObjectResolver:
         noun_phrase: NounPhrase,
         current_room: GameObject
     ) -> List[GameObject]:
-        """Find all objects matching noun phrase.
+        """Find all objects matching noun phrase within accessible scope.
+
+        Only searches objects that are actually accessible to the player:
+        - Directly in the current room
+        - Contents of open/transparent containers in the current room
+        - Player's inventory
+        - Contents of open/transparent containers in inventory
+        - LOCAL-GLOBALS (room-scoped ambient objects)
 
         Args:
             noun_phrase: NounPhrase to match
@@ -67,25 +74,40 @@ class ObjectResolver:
         Returns:
             List of matching accessible objects
         """
-        matches = []
+        candidates: List[GameObject] = []
 
-        for obj in self._world.objects.values():
-            # Check accessibility first
-            if not self.is_accessible(obj, current_room):
-                continue
+        # 1. Objects directly in the current room (and contents of open containers)
+        for obj in current_room.children:
+            candidates.append(obj)
+            if self._is_open_container(obj):
+                candidates.extend(obj.children)
 
-            # Check if noun matches
-            if not self._matches_noun(obj, noun_phrase.noun):
-                continue
+        # 2. Player inventory (and contents of open containers in inventory)
+        player = self._world.get_global("WINNER")
+        if player and isinstance(player, GameObject):
+            for obj in player.children:
+                candidates.append(obj)
+                if self._is_open_container(obj):
+                    candidates.extend(obj.children)
 
-            # Check adjectives if present
-            if noun_phrase.adjectives:
-                if not self._matches_adjectives(obj, noun_phrase.adjectives):
-                    continue
+        # 3. LOCAL-GLOBALS (room-scoped ambient objects like "stream", "chasm")
+        local_globals = self._world.get_object("LOCAL-GLOBALS")
+        if local_globals:
+            candidates.extend(local_globals.children)
 
-            matches.append(obj)
+        # Filter by noun and adjectives
+        return [
+            obj for obj in candidates
+            if self._matches_noun(obj, noun_phrase.noun)
+            and (
+                not noun_phrase.adjectives
+                or self._matches_adjectives(obj, noun_phrase.adjectives)
+            )
+        ]
 
-        return matches
+    def _is_open_container(self, obj: GameObject) -> bool:
+        """Return True if obj is a container that can be seen into."""
+        return obj.has_flag(ObjectFlag.CONTAINER) and obj.has_flag(ObjectFlag.OPEN)
 
     def is_accessible(
         self,
